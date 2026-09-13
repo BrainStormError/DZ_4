@@ -47,8 +47,7 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
   const [amount, setAmount] = useState('');
   const [wishText, setWishText] = useState('');
 
-  // Employee never sees collected totals — only own contribution
-  const isAdmin = user?.role === 'admin';
+  // Participation is role-agnostic: everyone goes through the same scenario
   const parsedAmount = parsePositiveInt(amount);
   const displayAmount = parsedAmount ?? 0;
   const canConfirm = !!recipient && parsedAmount !== null;
@@ -92,7 +91,7 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
   const handleAmountSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!recipient || parsedAmount === null) return;
-    setStep(isAdmin ? 'confirm' : 'message');
+    setStep('message');
   };
 
   const handleMessageSubmit = (e: React.FormEvent) => {
@@ -104,7 +103,7 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
   const handleConfirm = () => {
     if (!recipient || !user || parsedAmount === null) return;
     addDonation(recipient.id, parsedAmount);
-    if (!isAdmin && wishText.trim()) {
+    if (wishText.trim()) {
       addWish({
         authorEmail: user.email,
         targetUserId: recipient.id,
@@ -195,7 +194,7 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
               )}
               <div className="rounded-lg bg-muted/50 p-3 text-xs text-muted-foreground">
                 <p className="font-medium text-foreground mb-1">Участие добровольное</p>
-                <p>Поздравить без взноса можно на доске пожеланий — кнопкой «Оставить пожелание». Сумма сбора видна только администратору.</p>
+                <p>Поздравить без взноса можно на доске пожеланий — кнопкой «Оставить пожелание».</p>
               </div>
               <Button type="submit">Продолжить</Button>
             </form>
@@ -205,11 +204,9 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
         {step === 'amount' && (
           <>
             <DialogHeader>
-              <DialogTitle>{isAdmin ? 'Укажите сумму' : 'Ваш вклад'}</DialogTitle>
+              <DialogTitle>Ваш вклад</DialogTitle>
               <DialogDescription>
-                {isAdmin
-                  ? `Получатель: ${recipientName}. Средства будут добавлены к сбору.`
-                  : `Получатель: ${recipientName}. Сумма добавится к сбору; итоговая сумма скрыта от сотрудников.`}
+                Получатель: {recipientName}. Сумма добавится к сбору.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleAmountSubmit} className="flex flex-col gap-4">
@@ -234,7 +231,7 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
           </>
         )}
 
-        {step === 'message' && !isAdmin && (
+        {step === 'message' && (
           <>
             <DialogHeader>
               <DialogTitle>Поздравление</DialogTitle>
@@ -283,21 +280,19 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
                 <span className="font-medium">{recipientName}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">{isAdmin ? 'Сумма:' : 'Ваш вклад:'}</span>
+                <span className="text-muted-foreground">Ваш вклад:</span>
                 <span className="font-medium">{displayAmount} ₽</span>
               </div>
-              {!isAdmin && wishText.trim() && (
+              {wishText.trim() && (
                 <div className="flex flex-col gap-1 rounded-lg border border-border p-3">
                   <span className="text-xs text-muted-foreground">Поздравление</span>
                   <span className="text-sm">{wishText.trim()}</span>
                 </div>
               )}
-              {!isAdmin && (
-                <div className="flex items-center gap-2 rounded-lg bg-muted/50 p-3 text-xs text-muted-foreground">
-                  <Lock className="h-4 w-4 shrink-0" />
-                  <span>Итоговая сумма сбора скрыта. Ваше пожелание будет отправлено на доску.</span>
-                </div>
-              )}
+              <div className="flex items-center gap-2 rounded-lg bg-muted/50 p-3 text-xs text-muted-foreground">
+                <Lock className="h-4 w-4 shrink-0" />
+                <span>Итоговая сумма сбора скрыта. Ваше пожелание будет отправлено на доску.</span>
+              </div>
               {!canConfirm && (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
@@ -312,13 +307,13 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
             <DialogFooter>
               <Button
                 variant="outline"
-                onClick={() => setStep(isAdmin ? 'amount' : 'message')}
+                onClick={() => setStep('message')}
               >
                 Назад
               </Button>
               <Button onClick={handleConfirm} disabled={!canConfirm}>
                 <Gift className="h-4 w-4 mr-1" />
-                {isAdmin ? 'Отправить' : 'Поздравить'}
+                Поздравить
               </Button>
             </DialogFooter>
           </>
@@ -332,9 +327,7 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
                 Готово!
               </DialogTitle>
               <DialogDescription>
-                {isAdmin
-                  ? `Получатель: ${recipientName}. Сумма добавлена к сбору.`
-                  : `Получатель: ${recipientName}. Поздравление отправлено.`}
+                Получатель: {recipientName}. Поздравление отправлено.
               </DialogDescription>
             </DialogHeader>
             <div className="flex flex-col items-center gap-3 py-4">
@@ -342,9 +335,7 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
                 <Gift className="h-8 w-8 text-primary" />
               </div>
               <p className="text-sm text-muted-foreground text-center max-w-xs">
-                {isAdmin
-                  ? 'Сумма добавлена к сбору. Спасибо за участие!'
-                  : 'Спасибо за участие! Поздравление будет передано имениннику.'}
+                Спасибо за участие! Поздравление будет передано имениннику.
               </p>
             </div>
             <DialogFooter>

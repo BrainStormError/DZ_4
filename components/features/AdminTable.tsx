@@ -261,7 +261,7 @@ export function AdminTable() {
                       {reasonLabel('refund_declined')}
                     </Label>
                     <p className="text-xs text-muted-foreground">
-                      Поздравляемый отказался от подарка
+                      Именинник не принял поздравление
                     </p>
                   </div>
                 </div>
@@ -272,7 +272,7 @@ export function AdminTable() {
                       {reasonLabel('emergency_refund')}
                     </Label>
                     <p className="text-xs text-muted-foreground">
-                      Экстренный возврат по прямому запросу
+                      Средства возвращаются по прямому запросу
                     </p>
                   </div>
                 </div>

@@ -25,6 +25,10 @@ export function useDataStore() {
     return newWish;
   }, []);
 
+  const updateWish = useCallback((id: string, text: string) => {
+    setWishes((prev) => prev.map((w) => (w.id === id ? { ...w, text } : w)));
+  }, []);
+
   const addDonation = useCallback((userId: string, amount: number) => {
     setDonations((prev) =>
       prev.map((d) =>
@@ -80,6 +84,21 @@ export function useDataStore() {
 
   const getAllThreads = useCallback((): ChatThread[] => chats, [chats]);
 
+  const markThreadRead = useCallback((userEmail: string) => {
+    setChats((prev) =>
+      prev.map((c) =>
+        c.userEmail === userEmail
+          ? {
+              ...c,
+              messages: c.messages.map((m) =>
+                m.isAdmin === false ? { ...m, readByAdmin: true } : m
+              ),
+            }
+          : c
+      )
+    );
+  }, []);
+
   const getChatThread = useCallback(
     (userEmail: string): ChatThread => {
       return (
@@ -98,15 +117,23 @@ export function useDataStore() {
     history,
     chats,
     addWish,
+    updateWish,
     addDonation,
     updateDonation,
     addChatMessage,
     getChatThread,
     getAllThreads,
+    markThreadRead,
   };
 }
 
 export type DataStore = ReturnType<typeof useDataStore>;
+
+export function countUnreadThreads(threads: ChatThread[]): number {
+  return threads.filter((thread) =>
+    thread.messages.some((message) => !message.isAdmin && message.readByAdmin !== true)
+  ).length;
+}
 
 export function reasonLabel(reason: RefundReason): string {
   return reason === 'refund_declined'

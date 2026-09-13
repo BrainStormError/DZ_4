@@ -11,7 +11,7 @@ export function Footer() {
             <span className="text-sm">— добровольный сбор на подарки</span>
           </div>
           <p className="text-xs text-muted-foreground">
-            Участие добровольное. Суммы сборов видны только администратору.
+            Участие добровольное.
           </p>
         </div>
       </div>

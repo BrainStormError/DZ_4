@@ -44,6 +44,7 @@ export interface ChatMessage {
   text: string;
   isAdmin: boolean;
   createdAt: string;
+  readByAdmin?: boolean;
 }
 
 export interface ChatThread {

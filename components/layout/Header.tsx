@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { useData } from '@/lib/data-context';
+import { countUnreadThreads } from '@/lib/data-store';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Gift, Home, CalendarDays, HelpCircle, Shield, LogOut, User as UserIcon } from 'lucide-react';
+import { Gift, Home, CalendarDays, HelpCircle, Shield, LogOut, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -25,9 +27,12 @@ const navItems = [
 
 export function Header() {
   const { user, logout } = useAuth();
+  const { chats } = useData();
   const pathname = usePathname();
 
   if (!user) return null;
+
+  const unreadCount = user.role === 'admin' ? countUnreadThreads(chats) : 0;
 
   const initials = user.fullName
     .split(' ')
@@ -35,6 +40,44 @@ export function Header() {
     .join('')
     .toUpperCase()
     .slice(0, 2);
+
+  const renderNav = (linkClassName: string, iconClassName: string) => (
+    <>
+      {navItems.map((item) => {
+        const Icon = item.icon;
+        const active = pathname === item.href;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={cn(
+              linkClassName,
+              active
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+            )}
+          >
+            <Icon className={iconClassName} />
+            {item.label}
+          </Link>
+        );
+      })}
+      {user.role === 'admin' && (
+        <Link
+          href="/admin"
+          className={cn(
+            linkClassName,
+            pathname === '/admin'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+          )}
+        >
+          <Shield className={iconClassName} />
+          Админ
+        </Link>
+      )}
+    </>
+  );
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
@@ -49,42 +92,29 @@ export function Header() {
             </span>
           </Link>
           <nav className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const active = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    'flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors',
-                    active
-                      ? 'bg-primary text-primary-foreground'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  )}
-                >
-                  <Icon className="h-4 w-4" />
-                  {item.label}
-                </Link>
-              );
-            })}
-            {user.role === 'admin' && (
-              <Link
-                href="/admin"
-                className={cn(
-                  'flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors',
-                  pathname === '/admin'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                )}
-              >
-                <Shield className="h-4 w-4" />
-                Админ
-              </Link>
+            {renderNav(
+              'flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors',
+              'h-4 w-4'
             )}
           </nav>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
+          {unreadCount > 0 && (
+            <Button
+              asChild
+              variant="ghost"
+              size="icon"
+              className="relative"
+              aria-label={`Непрочитанных сообщений: ${unreadCount}`}
+            >
+              <Link href="/faq?tab=messages">
+                <MessageCircle className="h-5 w-5" />
+                <span className="absolute -right-0.5 -top-0.5 inline-flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground">
+                  {unreadCount}
+                </span>
+              </Link>
+            </Button>
+          )}
           <ThemeSwitcher />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -109,11 +139,6 @@ export function Header() {
                 <span className="text-xs font-normal text-muted-foreground">{user.email}</span>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="gap-2">
-                <UserIcon className="h-4 w-4" />
-                {user.department}
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={logout} className="gap-2 text-destructive">
                 <LogOut className="h-4 w-4" />
                 Выйти
@@ -124,38 +149,9 @@ export function Header() {
       </div>
       {/* Mobile nav */}
       <nav className="md:hidden flex items-center gap-1 px-4 pb-2 overflow-x-auto">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const active = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap',
-                active
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-              )}
-            >
-              <Icon className="h-3.5 w-3.5" />
-              {item.label}
-            </Link>
-          );
-        })}
-        {user.role === 'admin' && (
-          <Link
-            href="/admin"
-            className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap',
-              pathname === '/admin'
-                ? 'bg-primary text-primary-foreground'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-            )}
-          >
-            <Shield className="h-3.5 w-3.5" />
-            Админ
-          </Link>
+        {renderNav(
+          'flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap',
+          'h-3.5 w-3.5'
         )}
       </nav>
     </header>

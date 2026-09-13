@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -10,7 +10,10 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ChatThread } from '@/components/features/ChatThread';
-import { HelpCircle, Mail, ShieldCheck, EyeOff, Gift, Users } from 'lucide-react';
+import { HelpCircle, Mail } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
+import { useData } from '@/lib/data-context';
+import { countUnreadThreads } from '@/lib/data-store';
 
 const FAQ_ITEMS = [
   {
@@ -46,6 +49,20 @@ const FAQ_ITEMS = [
 ];
 
 export default function FAQPage() {
+  const { user } = useAuth();
+  const { chats } = useData();
+  const [tab, setTab] = useState('faq');
+
+  const isAdmin = user?.role === 'admin';
+  const unreadCount = isAdmin ? countUnreadThreads(chats) : 0;
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('tab') === 'messages') {
+      setTab('chat');
+    }
+  }, []);
+
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
@@ -58,36 +75,21 @@ export default function FAQPage() {
         </p>
       </div>
 
-      <Tabs defaultValue="faq" className="w-full">
+      <Tabs value={tab} onValueChange={setTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-6">
           <TabsTrigger value="faq">Вопросы и ответы</TabsTrigger>
-          <TabsTrigger value="chat">Написать админу</TabsTrigger>
+          <TabsTrigger value="chat" className="gap-1.5">
+            {isAdmin ? 'Сообщения' : 'Написать админу'}
+            {unreadCount > 0 && (
+              <span className="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-destructive px-1.5 text-[10px] font-semibold text-destructive-foreground">
+                {unreadCount}
+              </span>
+            )}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="faq">
           <div className="flex flex-col gap-4">
-            {/* Quick info cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-2">
-              <Card className="card-shadow">
-                <CardContent className="p-4 flex items-center gap-3">
-                  <ShieldCheck className="h-5 w-5 text-primary shrink-0" />
-                  <p className="text-xs font-medium">Добровольное участие</p>
-                </CardContent>
-              </Card>
-              <Card className="card-shadow">
-                <CardContent className="p-4 flex items-center gap-3">
-                  <EyeOff className="h-5 w-5 text-primary shrink-0" />
-                  <p className="text-xs font-medium">Суммы скрыты от сотрудников</p>
-                </CardContent>
-              </Card>
-              <Card className="card-shadow">
-                <CardContent className="p-4 flex items-center gap-3">
-                  <Gift className="h-5 w-5 text-primary shrink-0" />
-                  <p className="text-xs font-medium">Подарок = внимание, а не сумма</p>
-                </CardContent>
-              </Card>
-            </div>
-
             <Card className="card-shadow">
               <CardContent className="p-4">
                 <Accordion type="single" collapsible className="w-full">
@@ -113,10 +115,12 @@ export default function FAQPage() {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Mail className="h-5 w-5 text-primary" />
-                  Написать администратору
+                  {isAdmin ? 'Сообщения' : 'Написать администратору'}
                 </CardTitle>
                 <CardDescription>
-                  Ваша личная ветка переписки. Видите только свои сообщения.
+                  {isAdmin
+                    ? 'Обращения сотрудников и ответы в их ветки.'
+                    : 'Ваша личная ветка переписки. Видите только свои сообщения.'}
                 </CardDescription>
               </CardHeader>
             </Card>

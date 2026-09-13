@@ -6,7 +6,7 @@ import { WishBoard } from '@/components/features/WishBoard';
 import { DonateDialog } from '@/components/features/DonateDialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Heart, Gift, Sparkles, Users, ShieldCheck, EyeOff } from 'lucide-react';
+import { Heart, Gift, Users } from 'lucide-react';
 import { mockUsers } from '@/lib/mock-data';
 import { useAuth } from '@/lib/auth-context';
 import type { User } from '@/lib/types';
@@ -62,10 +62,6 @@ export default function HomePage() {
         <div className="hero-overlay absolute inset-0" />
         <div className="relative px-6 py-12 sm:px-10 sm:py-16 lg:px-16 lg:py-20">
           <div className="flex flex-col items-start gap-4 max-w-2xl">
-            <div className="flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
-              <Sparkles className="h-4 w-4" />
-              Участие добровольное
-            </div>
             <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
               Корпоративные подарки
               <br />
@@ -74,7 +70,6 @@ export default function HomePage() {
             <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
               Мы собираем средства на подарки коллегам к их дню рождения.
               Любой сотрудник может присоединиться — но это <strong className="text-foreground">полностью добровольно</strong>.
-              Суммы сборов видит только администратор.
             </p>
             <div className="flex flex-wrap gap-3 mt-2">
               <Button size="lg" onClick={() => handleDonate()} className="gap-2">
@@ -98,34 +93,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Privacy badges */}
-      <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-        <Card className="card-shadow">
-          <CardContent className="p-5 flex items-start gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 shrink-0">
-              <ShieldCheck className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-sm">Добровольное участие</h3>
-              <p className="text-xs text-muted-foreground mt-1">
-                Никто не обязан участвовать. Можно поздравить только пожеланием.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="card-shadow">
-          <CardContent className="p-5 flex items-start gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 shrink-0">
-              <EyeOff className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-sm">Суммы скрыты</h3>
-              <p className="text-xs text-muted-foreground mt-1">
-                Обычные сотрудники не видят суммы сборов — ни свои, ни чужие.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Team value */}
+      <section className="mb-10">
         <Card className="card-shadow">
           <CardContent className="p-5 flex items-start gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 shrink-0">
@@ -134,7 +103,7 @@ export default function HomePage() {
             <div>
               <h3 className="font-semibold text-sm">Команда — это важно</h3>
               <p className="text-xs text-muted-foreground mt-1">
-                Каждый подарок — знак внимания от коллег. Тёплые слова важнее суммы.
+                Каждый подарок — знак внимания от коллег.
               </p>
             </div>
           </CardContent>

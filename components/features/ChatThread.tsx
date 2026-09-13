@@ -15,7 +15,7 @@ import { ru } from 'date-fns/locale';
 
 export function ChatThread() {
   const { user } = useAuth();
-  const { getChatThread, getAllThreads, addChatMessage } = useData();
+  const { getChatThread, getAllThreads, addChatMessage, markThreadRead } = useData();
   const [text, setText] = useState('');
   const [selectedEmail, setSelectedEmail] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -123,7 +123,10 @@ export function ChatThread() {
                   <button
                     key={u.id}
                     type="button"
-                    onClick={() => setSelectedEmail(u.email)}
+                    onClick={() => {
+                      setSelectedEmail(u.email);
+                      markThreadRead(u.email);
+                    }}
                     className={cn(
                       'flex w-full items-center gap-2 border-b border-border/60 p-3 text-left transition-colors',
                       active ? 'bg-primary/10' : 'hover:bg-muted'

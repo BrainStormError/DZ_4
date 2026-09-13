@@ -215,6 +215,7 @@ export const mockChats: ChatThread[] = [
         text: 'Здравствуйте! А можно ли подарить больше указанной суммы?',
         isAdmin: false,
         createdAt: '2026-09-09T08:00:00Z',
+        readByAdmin: true,
       },
       {
         id: 'c2',

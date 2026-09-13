@@ -6,7 +6,7 @@ import { DataProvider } from '@/lib/data-context';
 
 export const metadata: Metadata = {
   title: 'Корпоративные подарки',
-  description: 'Добровольный сбор средств на подарки сотрудникам ко дню рождения',
+  description: 'Сервис корпоративных подарков: поздравляйте коллег с днём рождения вместе',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
