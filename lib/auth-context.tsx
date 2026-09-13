@@ -6,6 +6,7 @@ import { checkCorpEmail } from './corp-email';
 
 interface AuthState {
   user: User | null;
+  ready: boolean;
   login: (email: string) => { ok: boolean; error?: string };
   logout: () => void;
 }
@@ -16,7 +17,7 @@ const STORAGE_KEY = 'corp-gift-auth-email';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [hydrated, setHydrated] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const stored = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
@@ -24,7 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const result = checkCorpEmail(stored);
       if (result.ok && result.user) setUser(result.user);
     }
-    setHydrated(true);
+    setReady(true);
   }, []);
 
   const login = useCallback((email: string) => {
@@ -42,11 +43,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (typeof window !== 'undefined') localStorage.removeItem(STORAGE_KEY);
   }, []);
 
-  if (!hydrated) {
-    return null;
-  }
-
-  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, ready, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {

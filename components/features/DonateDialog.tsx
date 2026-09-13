@@ -21,12 +21,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Gift, Mail, CheckCircle2, AlertCircle, Lock } from 'lucide-react';
+import { Gift, Mail, CheckCircle2, AlertCircle } from 'lucide-react';
 import type { User } from '@/lib/types';
 import { useAuth } from '@/lib/auth-context';
 import { useData } from '@/lib/data-context';
+import { useAppDate } from '@/lib/date-context';
 import { checkCorpEmail } from '@/lib/corp-email';
 import { mockUsers } from '@/lib/mock-data';
+import { getCongratulatableUsers } from '@/lib/birthdays';
 import { parsePositiveInt } from '@/lib/utils';
 
 interface DonateDialogProps {
@@ -40,6 +42,7 @@ type Step = 'recipient' | 'email' | 'amount' | 'message' | 'confirm' | 'success'
 export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogProps) {
   const { user } = useAuth();
   const { addDonation, addWish } = useData();
+  const { today, isPreview } = useAppDate();
   const [step, setStep] = useState<Step>('recipient');
   const [recipient, setRecipient] = useState<User | null>(null);
   const [email, setEmail] = useState('');
@@ -50,9 +53,10 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
   // Participation is role-agnostic: everyone goes through the same scenario
   const parsedAmount = parsePositiveInt(amount);
   const displayAmount = parsedAmount ?? 0;
-  const canConfirm = !!recipient && parsedAmount !== null;
+  const hasWish = wishText.trim().length > 0;
+  const canConfirm = !!recipient && parsedAmount !== null && !isPreview;
   const recipientName = recipient?.fullName ?? '';
-  const recipientOptions = mockUsers.filter((u) => u.id !== user?.id);
+  const recipientOptions = getCongratulatableUsers(today, mockUsers, user?.id);
 
   useEffect(() => {
     if (open) {
@@ -71,6 +75,7 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isPreview) return;
     if (!recipient) {
       setEmailError('Сначала выберите получателя');
       return;
@@ -90,20 +95,23 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
 
   const handleAmountSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isPreview) return;
     if (!recipient || parsedAmount === null) return;
     setStep('message');
   };
 
   const handleMessageSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!recipient || !wishText.trim()) return;
+    if (isPreview) return;
+    if (!recipient) return;
     setStep('confirm');
   };
 
   const handleConfirm = () => {
+    if (isPreview) return;
     if (!recipient || !user || parsedAmount === null) return;
     addDonation(recipient.id, parsedAmount);
-    if (wishText.trim()) {
+    if (hasWish) {
       addWish({
         authorEmail: user.email,
         targetUserId: recipient.id,
@@ -141,7 +149,7 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
                   <SelectContent>
                     {recipientOptions.map((u) => (
                       <SelectItem key={u.id} value={u.id}>
-                        {u.fullName} — {u.department}
+                        {u.fullName} — {u.department} — {u.email}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -149,7 +157,7 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
               </div>
               <Button
                 type="button"
-                disabled={!recipient}
+                disabled={!recipient || isPreview}
                 onClick={() => recipient && setStep('email')}
               >
                 Продолжить
@@ -196,7 +204,7 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
                 <p className="font-medium text-foreground mb-1">Участие добровольное</p>
                 <p>Поздравить без взноса можно на доске пожеланий — кнопкой «Оставить пожелание».</p>
               </div>
-              <Button type="submit">Продолжить</Button>
+              <Button type="submit" disabled={isPreview}>Продолжить</Button>
             </form>
           </>
         )}
@@ -224,7 +232,7 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
                   autoFocus
                 />
               </div>
-              <Button type="submit" disabled={parsedAmount === null}>
+              <Button type="submit" disabled={parsedAmount === null || isPreview}>
                 Продолжить
               </Button>
             </form>
@@ -236,7 +244,7 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
             <DialogHeader>
               <DialogTitle>Поздравление</DialogTitle>
               <DialogDescription>
-                Получатель: {recipientName}. Тёплые слова появятся на доске пожеланий.
+                Получатель: {recipientName}. Шаг необязательный — можно отправить средства без текста.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleMessageSubmit} className="flex flex-col gap-4">
@@ -248,15 +256,17 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
                   value={wishText}
                   onChange={(e) => setWishText(e.target.value)}
                   rows={3}
-                  required
                   autoFocus
                 />
+                <p className="text-xs text-muted-foreground">
+                  Если оставить поле пустым, пожелание не будет создано — только добавится сумма.
+                </p>
               </div>
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setStep('amount')}>
                   Назад
                 </Button>
-                <Button type="submit" disabled={!wishText.trim()}>
+                <Button type="submit" disabled={isPreview}>
                   Продолжить
                 </Button>
               </DialogFooter>
@@ -283,16 +293,17 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
                 <span className="text-muted-foreground">Ваш вклад:</span>
                 <span className="font-medium">{displayAmount} ₽</span>
               </div>
-              {wishText.trim() && (
+              {hasWish ? (
                 <div className="flex flex-col gap-1 rounded-lg border border-border p-3">
                   <span className="text-xs text-muted-foreground">Поздравление</span>
                   <span className="text-sm">{wishText.trim()}</span>
                 </div>
+              ) : (
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Поздравление:</span>
+                  <span className="font-medium">Без текста</span>
+                </div>
               )}
-              <div className="flex items-center gap-2 rounded-lg bg-muted/50 p-3 text-xs text-muted-foreground">
-                <Lock className="h-4 w-4 shrink-0" />
-                <span>Итоговая сумма сбора скрыта. Ваше пожелание будет отправлено на доску.</span>
-              </div>
               {!canConfirm && (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
@@ -313,7 +324,7 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
               </Button>
               <Button onClick={handleConfirm} disabled={!canConfirm}>
                 <Gift className="h-4 w-4 mr-1" />
-                Поздравить
+                {hasWish ? 'Поздравить' : 'Отправить средства'}
               </Button>
             </DialogFooter>
           </>
@@ -327,7 +338,9 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
                 Готово!
               </DialogTitle>
               <DialogDescription>
-                Получатель: {recipientName}. Поздравление отправлено.
+                {hasWish
+                  ? `Получатель: ${recipientName}. Поздравление отправлено.`
+                  : `Получатель: ${recipientName}. Средства добавлены к сбору.`}
               </DialogDescription>
             </DialogHeader>
             <div className="flex flex-col items-center gap-3 py-4">
@@ -335,7 +348,9 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
                 <Gift className="h-8 w-8 text-primary" />
               </div>
               <p className="text-sm text-muted-foreground text-center max-w-xs">
-                Спасибо за участие! Поздравление будет передано имениннику.
+                {hasWish
+                  ? 'Спасибо за участие! Поздравление будет передано имениннику.'
+                  : 'Спасибо за участие! Средства добавлены к сбору подарка.'}
               </p>
             </div>
             <DialogFooter>

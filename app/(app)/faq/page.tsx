@@ -13,7 +13,7 @@ import { ChatThread } from '@/components/features/ChatThread';
 import { HelpCircle, Mail } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useData } from '@/lib/data-context';
-import { countUnreadThreads } from '@/lib/data-store';
+import { countUnreadMessages } from '@/lib/data-store';
 
 const FAQ_ITEMS = [
   {
@@ -34,7 +34,7 @@ const FAQ_ITEMS = [
   {
     id: 'q4',
     question: 'Как автор отображается на доске пожеланий?',
-    answer: 'Автор пожелания отображается под корпоративным ником — это часть вашей корпоративной почты (до символа @). Например, anna.smirnova@company.com будет показана как anna.smirnova.',
+    answer: 'Автор пожелания отображается настоящим именем, а в скобках указывается корпоративный ник — часть адреса до символа @. Формат: Фамилия Имя (ник), например: Смирнова Анна (anna.smirnova). Полный адрес почты при этом не раскрывается.',
   },
   {
     id: 'q5',
@@ -54,7 +54,7 @@ export default function FAQPage() {
   const [tab, setTab] = useState('faq');
 
   const isAdmin = user?.role === 'admin';
-  const unreadCount = isAdmin ? countUnreadThreads(chats) : 0;
+  const unreadCount = isAdmin ? countUnreadMessages(chats) : 0;
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);

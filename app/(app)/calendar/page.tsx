@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { BirthdayCard } from '@/components/features/BirthdayCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, CalendarDays } from 'lucide-react';
 import { mockUsers } from '@/lib/mock-data';
+import { useAppDate } from '@/lib/date-context';
+import { parseIsoLocal } from '@/lib/birthdays';
 import { pluralizeRu, prepositionalMonth } from '@/lib/utils';
 
 const MONTHS = [
@@ -15,7 +17,7 @@ const MONTHS = [
 ];
 
 export default function CalendarPage() {
-  const today = useMemo(() => new Date(), []);
+  const { today } = useAppDate();
   const todayYear = today.getFullYear();
   const todayMonth = today.getMonth();
   const todayDay = today.getDate();
@@ -23,15 +25,20 @@ export default function CalendarPage() {
   const [year, setYear] = useState(todayYear);
   const [month, setMonth] = useState(todayMonth);
 
+  useEffect(() => {
+    setYear(today.getFullYear());
+    setMonth(today.getMonth());
+  }, [today]);
+
   const birthdaysInMonth = useMemo(() => {
     return mockUsers
       .filter((u) => {
-        const bd = new Date(u.birthDate);
+        const bd = parseIsoLocal(u.birthDate);
         if (bd.getMonth() !== month) return false;
         // Birthday exists only from the employee's birth year onward
         return year >= bd.getFullYear();
       })
-      .sort((a, b) => new Date(a.birthDate).getDate() - new Date(b.birthDate).getDate());
+      .sort((a, b) => parseIsoLocal(a.birthDate).getDate() - parseIsoLocal(b.birthDate).getDate());
   }, [month, year]);
 
   // Build calendar grid
@@ -42,7 +49,7 @@ export default function CalendarPage() {
   const birthdaysByDay = useMemo(() => {
     const map: Record<number, typeof mockUsers> = {};
     birthdaysInMonth.forEach((u) => {
-      const day = new Date(u.birthDate).getDate();
+      const day = parseIsoLocal(u.birthDate).getDate();
       if (!map[day]) map[day] = [];
       map[day].push(u);
     });
@@ -106,7 +113,7 @@ export default function CalendarPage() {
       {/* Calendar grid */}
       <Card className="card-shadow mb-8">
         <CardContent className="p-4">
-          <div className="grid grid-cols-7 gap-1">
+          <div key={`${year}-${month}`} className="grid grid-cols-7 gap-1">
             {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map((d) => (
               <div key={d} className="text-center text-xs font-semibold text-muted-foreground py-2">
                 {d}
@@ -167,7 +174,7 @@ export default function CalendarPage() {
           </h3>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {birthdaysInMonth.map((u) => {
-              const bd = new Date(u.birthDate);
+              const bd = parseIsoLocal(u.birthDate);
               const isToday =
                 year === todayYear && month === todayMonth && bd.getDate() === todayDay;
               return <BirthdayCard key={u.id} user={u} year={year} isToday={isToday} />;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { BirthdayCard } from '@/components/features/BirthdayCard';
 import { WishBoard } from '@/components/features/WishBoard';
 import { DonateDialog } from '@/components/features/DonateDialog';
@@ -8,42 +8,37 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Heart, Gift, Users } from 'lucide-react';
 import { mockUsers } from '@/lib/mock-data';
-import { useAuth } from '@/lib/auth-context';
+import { useAppDate } from '@/lib/date-context';
+import { getPersonColors, getTodayBirthdays, parseIsoLocal } from '@/lib/birthdays';
 import type { User } from '@/lib/types';
 
 export default function HomePage() {
-  const { user } = useAuth();
+  const { today, isPreview } = useAppDate();
   const [donateOpen, setDonateOpen] = useState(false);
   const [donateTarget, setDonateTarget] = useState<User | null>(null);
   const [wishFormOpen, setWishFormOpen] = useState(false);
 
-  const [today, setToday] = useState(() => new Date());
+  const todayBirthdays = useMemo(() => getTodayBirthdays(today, mockUsers), [today]);
 
-  useEffect(() => {
-    setToday(new Date());
-  }, []);
-
-  const todayMonth = today.getMonth() + 1;
-  const todayDay = today.getDate();
-
-  const todayBirthdays = useMemo(
-    () =>
-      mockUsers.filter((u) => {
-        const bd = new Date(u.birthDate);
-        return bd.getMonth() + 1 === todayMonth && bd.getDate() === todayDay;
-      }),
-    [todayMonth, todayDay]
+  const todayBirthdayColors = useMemo(
+    () => getPersonColors(todayBirthdays),
+    [todayBirthdays]
   );
 
+  const hasTodayBirthdays = todayBirthdays.length > 0;
+
   const upcomingBirthdays = useMemo(() => {
+    const horizon = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 30);
     const rest = mockUsers.filter((u) => {
-      const bd = new Date(u.birthDate);
+      const bd = parseIsoLocal(u.birthDate);
       const bdThisYear = new Date(today.getFullYear(), bd.getMonth(), bd.getDate());
-      return bdThisYear.getTime() > today.getTime() && bdThisYear.getTime() <= today.getTime() + 30 * 24 * 60 * 60 * 1000;
+      return bdThisYear.getTime() > today.getTime() && bdThisYear.getTime() <= horizon.getTime();
     });
     return rest.sort((a, b) => {
-      const aDate = new Date(today.getFullYear(), new Date(a.birthDate).getMonth(), new Date(a.birthDate).getDate());
-      const bDate = new Date(today.getFullYear(), new Date(b.birthDate).getMonth(), new Date(b.birthDate).getDate());
+      const aBd = parseIsoLocal(a.birthDate);
+      const bBd = parseIsoLocal(b.birthDate);
+      const aDate = new Date(today.getFullYear(), aBd.getMonth(), aBd.getDate());
+      const bDate = new Date(today.getFullYear(), bBd.getMonth(), bBd.getDate());
       return aDate.getTime() - bDate.getTime();
     });
   }, [today]);
@@ -52,8 +47,6 @@ export default function HomePage() {
     setDonateTarget(u || null);
     setDonateOpen(true);
   };
-
-  if (!user) return null;
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
@@ -68,11 +61,11 @@ export default function HomePage() {
               <span className="text-primary">ко дню рождения</span>
             </h1>
             <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-              Мы собираем средства на подарки коллегам к их дню рождения.
-              Любой сотрудник может присоединиться — но это <strong className="text-foreground">полностью добровольно</strong>.
+              Мы собираем средства на подарки коллегам к их дню рождения. Любой сотрудник может
+              присоединиться — это добровольно.
             </p>
             <div className="flex flex-wrap gap-3 mt-2">
-              <Button size="lg" onClick={() => handleDonate()} className="gap-2">
+              <Button size="lg" onClick={() => handleDonate()} className="gap-2" disabled={isPreview}>
                 <Gift className="h-5 w-5" />
                 Поздравить / отправить средства
               </Button>
@@ -80,6 +73,7 @@ export default function HomePage() {
                 size="lg"
                 variant="outline"
                 className="gap-2"
+                disabled={isPreview || !hasTodayBirthdays}
                 onClick={() => {
                   setWishFormOpen(true);
                   document.getElementById('wish-board')?.scrollIntoView({ behavior: 'smooth' });
@@ -89,6 +83,12 @@ export default function HomePage() {
                 Оставить пожелание
               </Button>
             </div>
+            {!hasTodayBirthdays && (
+              <p className="text-xs text-muted-foreground">
+                Сегодня именинников нет — пожелание доступно только в день рождения, а поздравить
+                заранее можно денежным взносом.
+              </p>
+            )}
           </div>
         </div>
       </section>
@@ -121,7 +121,13 @@ export default function HomePage() {
         {todayBirthdays.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {todayBirthdays.map((u) => (
-              <BirthdayCard key={u.id} user={u} isToday onDonate={handleDonate} />
+              <BirthdayCard
+                key={u.id}
+                user={u}
+                isToday
+                accentColor={todayBirthdayColors.get(u.id)}
+                onDonate={handleDonate}
+              />
             ))}
           </div>
         ) : (

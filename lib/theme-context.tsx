@@ -13,19 +13,27 @@ const ThemeContext = createContext<ThemeState | undefined>(undefined);
 
 const STORAGE_KEY = 'corp-gift-theme';
 
+function isThemeKey(value: string | null): value is ThemeKey {
+  return value === 'warm' || value === 'festival' || value === 'premium';
+}
+
+function readDomTheme(): ThemeKey {
+  if (typeof document === 'undefined') return DEFAULT_THEME;
+  const attr = document.documentElement.getAttribute('data-theme');
+  return isThemeKey(attr) ? attr : DEFAULT_THEME;
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeKey>(DEFAULT_THEME);
-  const [hydrated, setHydrated] = useState(false);
+  const [theme, setThemeState] = useState<ThemeKey>(readDomTheme);
 
   useEffect(() => {
     const stored = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
-    if (stored === 'warm' || stored === 'festival' || stored === 'premium') {
+    if (isThemeKey(stored)) {
       setThemeState(stored);
       document.documentElement.setAttribute('data-theme', stored);
     } else {
       document.documentElement.setAttribute('data-theme', DEFAULT_THEME);
     }
-    setHydrated(true);
   }, []);
 
   const setTheme = useCallback((t: ThemeKey) => {
@@ -33,10 +41,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEY, t);
     document.documentElement.setAttribute('data-theme', t);
   }, []);
-
-  if (!hydrated) {
-    return null;
-  }
 
   return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>;
 }

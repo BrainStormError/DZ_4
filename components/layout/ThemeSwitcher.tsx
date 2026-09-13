@@ -21,8 +21,12 @@ export function ThemeSwitcher() {
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2" aria-label="Сменить тему">
           <Palette className="h-4 w-4" />
-          <span className="hidden sm:inline">{THEMES[theme].label}</span>
-          <span className="sm:hidden">{THEMES[theme].emoji}</span>
+          <span className="hidden sm:inline" suppressHydrationWarning>
+            {THEMES[theme].label}
+          </span>
+          <span className="sm:hidden" suppressHydrationWarning>
+            {THEMES[theme].emoji}
+          </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">

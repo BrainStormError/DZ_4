@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MessageCircle, Send, Inbox } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useData } from '@/lib/data-context';
+import { countUnreadInThread } from '@/lib/data-store';
 import { mockUsers } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -119,6 +120,7 @@ export function ChatThread() {
                 const thread = getChatThread(u.email);
                 const last = thread.messages[thread.messages.length - 1];
                 const active = selectedEmail === u.email;
+                const unread = countUnreadInThread(thread);
                 return (
                   <button
                     key={u.id}
@@ -129,7 +131,7 @@ export function ChatThread() {
                     }}
                     className={cn(
                       'flex w-full items-center gap-2 border-b border-border/60 p-3 text-left transition-colors',
-                      active ? 'bg-primary/10' : 'hover:bg-muted'
+                      active ? 'bg-primary/10' : unread > 0 ? 'bg-primary/5 hover:bg-muted' : 'hover:bg-muted'
                     )}
                   >
                     <Avatar className="h-8 w-8 shrink-0">
@@ -139,11 +141,21 @@ export function ChatThread() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium truncate">{u.fullName}</p>
+                      <p className={cn('text-sm truncate', unread > 0 ? 'font-semibold' : 'font-medium')}>
+                        {u.fullName}
+                      </p>
                       <p className="text-xs text-muted-foreground truncate">
                         {last ? last.text : 'Нет сообщений'}
                       </p>
                     </div>
+                    {unread > 0 && (
+                      <span
+                        className="inline-flex h-5 min-w-[1.25rem] shrink-0 items-center justify-center rounded-full bg-destructive px-1.5 text-[10px] font-semibold text-destructive-foreground"
+                        aria-label={`Непрочитанных сообщений: ${unread}`}
+                      >
+                        {unread}
+                      </span>
+                    )}
                   </button>
                 );
               })}

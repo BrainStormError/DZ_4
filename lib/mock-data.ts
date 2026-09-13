@@ -168,18 +168,18 @@ export const mockWishes: Wish[] = [
 ];
 
 export const mockDonations: Donation[] = [
-  { userId: 'u1', totalAmount: 12500 },
-  { userId: 'u2', totalAmount: 8300 },
-  { userId: 'u3', totalAmount: 15600 },
-  { userId: 'u4', totalAmount: 4200 },
-  { userId: 'u5', totalAmount: 9800 },
-  { userId: 'u6', totalAmount: 6700 },
-  { userId: 'u7', totalAmount: 11200 },
-  { userId: 'u8', totalAmount: 5400 },
-  { userId: 'u9', totalAmount: 7900 },
-  { userId: 'u10', totalAmount: 0 },
-  { userId: 'u11', totalAmount: 13400 },
-  { userId: 'u12', totalAmount: 6100 },
+  { userId: 'u1', totalAmount: 12500, giftSent: false },
+  { userId: 'u2', totalAmount: 8300, giftSent: false },
+  { userId: 'u3', totalAmount: 0, giftSent: false },
+  { userId: 'u4', totalAmount: 4200, giftSent: false },
+  { userId: 'u5', totalAmount: 9800, giftSent: false },
+  { userId: 'u6', totalAmount: 6700, giftSent: false },
+  { userId: 'u7', totalAmount: 11200, giftSent: false },
+  { userId: 'u8', totalAmount: 5400, giftSent: false },
+  { userId: 'u9', totalAmount: 7900, giftSent: false },
+  { userId: 'u10', totalAmount: 0, giftSent: false },
+  { userId: 'u11', totalAmount: 13400, giftSent: false },
+  { userId: 'u12', totalAmount: 6100, giftSent: false },
 ];
 
 export const mockDonationHistory: DonationHistoryEntry[] = [
@@ -187,8 +187,8 @@ export const mockDonationHistory: DonationHistoryEntry[] = [
     id: 'h1',
     userId: 'u3',
     adminEmail: 'alexander.petrov@company.com',
-    previousAmount: 17600,
-    newAmount: 15600,
+    previousAmount: 15600,
+    newAmount: 0,
     reason: 'refund_declined',
     comment: 'Екатерина отказалась от подарка, возврат средств участникам.',
     createdAt: '2026-09-05T10:00:00Z',

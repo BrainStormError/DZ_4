@@ -5,20 +5,12 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export function AuthGate({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
+  const { user, ready } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) router.replace('/login');
-  }, [user, router]);
-
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-muted-foreground text-sm">Перенаправление на вход...</p>
-      </div>
-    );
-  }
+    if (ready && !user) router.replace('/login');
+  }, [ready, user, router]);
 
   return <>{children}</>;
 }

@@ -8,11 +8,8 @@ export function Footer() {
           <div className="flex items-center gap-2 text-muted-foreground">
             <Gift className="h-4 w-4" />
             <span className="text-sm font-medium">Корподарки</span>
-            <span className="text-sm">— добровольный сбор на подарки</span>
+            <span className="text-sm">— сбор на подарки коллегам</span>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Участие добровольное.
-          </p>
         </div>
       </div>
     </footer>

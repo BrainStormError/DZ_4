@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Cake, Gift } from 'lucide-react';
 import type { User } from '@/lib/types';
+import { parseIsoLocal } from '@/lib/birthdays';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
@@ -12,11 +13,12 @@ interface BirthdayCardProps {
   user: User;
   isToday?: boolean;
   year?: number;
+  accentColor?: string;
   onDonate?: (user: User) => void;
   compact?: boolean;
 }
 
-export function BirthdayCard({ user, isToday, year, onDonate, compact }: BirthdayCardProps) {
+export function BirthdayCard({ user, isToday, year, accentColor, onDonate, compact }: BirthdayCardProps) {
   const initials = user.fullName
     .split(' ')
     .map((n) => n[0])
@@ -24,15 +26,16 @@ export function BirthdayCard({ user, isToday, year, onDonate, compact }: Birthda
     .toUpperCase()
     .slice(0, 2);
 
-  const birthDate = new Date(user.birthDate);
+  const birthDate = parseIsoLocal(user.birthDate);
   const formatted = year
     ? format(new Date(year, birthDate.getMonth(), birthDate.getDate()), 'd MMMM yyyy', { locale: ru })
     : format(birthDate, 'd MMMM', { locale: ru });
 
   return (
     <Card
+      style={isToday && accentColor ? { boxShadow: `0 0 0 2px ${accentColor}` } : undefined}
       className={`card-shadow overflow-hidden transition-all hover:scale-[1.02] ${
-        isToday ? 'ring-2 ring-primary' : ''
+        isToday && !accentColor ? 'ring-2 ring-primary' : ''
       }`}
     >
       <CardContent className={compact ? 'p-3' : 'p-4'}>

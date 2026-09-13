@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { useData } from '@/lib/data-context';
-import { countUnreadThreads } from '@/lib/data-store';
+import { countUnreadMessages } from '@/lib/data-store';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { Button } from '@/components/ui/button';
 import {
@@ -30,16 +30,17 @@ export function Header() {
   const { chats } = useData();
   const pathname = usePathname();
 
-  if (!user) return null;
+  const isAdmin = user?.role === 'admin';
+  const unreadCount = isAdmin ? countUnreadMessages(chats) : 0;
 
-  const unreadCount = user.role === 'admin' ? countUnreadThreads(chats) : 0;
-
-  const initials = user.fullName
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
+  const initials = user
+    ? user.fullName
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
+    : '';
 
   const renderNav = (linkClassName: string, iconClassName: string) => (
     <>
@@ -62,7 +63,7 @@ export function Header() {
           </Link>
         );
       })}
-      {user.role === 'admin' && (
+      {isAdmin && (
         <Link
           href="/admin"
           className={cn(
@@ -116,35 +117,37 @@ export function Header() {
             </Button>
           )}
           <ThemeSwitcher />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2"
-                aria-label={`Меню пользователя: ${user.fullName}`}
-              >
-                <Avatar className="h-7 w-7">
-                  <AvatarImage src={user.avatarUrl} alt={user.fullName} />
-                  <AvatarFallback className="text-xs">{initials}</AvatarFallback>
-                </Avatar>
-                <span className="hidden sm:inline text-sm font-medium">
-                  {user.fullName.split(' ')[0]}
-                </span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel className="flex flex-col gap-1">
-                <span>{user.fullName}</span>
-                <span className="text-xs font-normal text-muted-foreground">{user.email}</span>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={logout} className="gap-2 text-destructive">
-                <LogOut className="h-4 w-4" />
-                Выйти
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {user && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2"
+                  aria-label={`Меню пользователя: ${user.fullName}`}
+                >
+                  <Avatar className="h-7 w-7">
+                    <AvatarImage src={user.avatarUrl} alt={user.fullName} />
+                    <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+                  </Avatar>
+                  <span className="hidden sm:inline text-sm font-medium">
+                    {user.fullName.split(' ')[0]}
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="flex flex-col gap-1">
+                  <span>{user.fullName}</span>
+                  <span className="text-xs font-normal text-muted-foreground">{user.email}</span>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={logout} className="gap-2 text-destructive">
+                  <LogOut className="h-4 w-4" />
+                  Выйти
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </div>
       {/* Mobile nav */}

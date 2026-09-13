@@ -23,6 +23,7 @@ export interface Wish {
 export interface Donation {
   userId: string;
   totalAmount: number;
+  giftSent: boolean;
 }
 
 export type RefundReason = 'refund_declined' | 'emergency_refund';
