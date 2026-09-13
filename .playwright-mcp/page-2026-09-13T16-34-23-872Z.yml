@@ -1,0 +1,176 @@
+- generic [ref=f4e1]:
+  - alert [ref=f4e2]
+  - generic [ref=f4e3]:
+    - banner [ref=f4e4]:
+      - generic [ref=f4e5]:
+        - generic [ref=f4e6]:
+          - link "Корподарки" [ref=f4e7] [cursor=pointer]:
+            - /url: /
+          - navigation [ref=f4e14]:
+            - link "Главная" [ref=f4e15] [cursor=pointer]:
+              - /url: /
+            - link "Календарь ДР" [ref=f4e19] [cursor=pointer]:
+              - /url: /calendar
+            - link "FAQ" [ref=f4e22] [cursor=pointer]:
+              - /url: /faq
+            - link "Админ" [ref=f4e26] [cursor=pointer]:
+              - /url: /admin
+        - generic [ref=f4e29]:
+          - button "Сменить тему" [ref=f4e30] [cursor=pointer]:
+            - generic [ref=f4e37]: Корпоративный фестиваль
+          - 'button "Меню пользователя: Александр Петров" [ref=f4e38] [cursor=pointer]':
+            - img "Александр Петров" [ref=f4e40]
+            - generic [ref=f4e41]: Александр
+    - main [ref=f4e42]:
+      - generic [ref=f4e44]:
+        - generic [ref=f4e45]:
+          - generic [ref=f4e46]:
+            - heading "Админ-панель" [level=1] [ref=f4e47]
+            - paragraph [ref=f4e50]: Управление суммами сборов. Изменение доступно только при указании причины.
+          - button "Журнал изменений" [ref=f4e51] [cursor=pointer]
+        - table [ref=f4e60]:
+          - rowgroup [ref=f4e61]:
+            - row [ref=f4e62]:
+              - columnheader "Сотрудник" [ref=f4e63]
+              - columnheader "Отдел" [ref=f4e64]
+              - columnheader "Сумма сбора" [ref=f4e65]
+              - columnheader "Действие" [ref=f4e66]
+          - rowgroup [ref=f4e67]:
+            - row [ref=f4e68]:
+              - cell [ref=f4e69]:
+                - generic [ref=f4e70]:
+                  - img "Анна Смирнова" [ref=f4e72]
+                  - generic [ref=f4e73]:
+                    - paragraph [ref=f4e74]: Анна Смирнова
+                    - paragraph [ref=f4e75]: anna.smirnova@company.com
+              - cell "Маркетинг" [ref=f4e76]
+              - cell "12 500 ₽" [ref=f4e77]
+              - cell [ref=f4e78]:
+                - button "Изменить" [ref=f4e79] [cursor=pointer]
+            - row [ref=f4e83]:
+              - cell [ref=f4e84]:
+                - generic [ref=f4e85]:
+                  - img "Дмитрий Волков" [ref=f4e87]
+                  - generic [ref=f4e88]:
+                    - paragraph [ref=f4e89]: Дмитрий Волков
+                    - paragraph [ref=f4e90]: dmitry.volkov@company.com
+              - cell "Разработка" [ref=f4e91]
+              - cell "8 300 ₽" [ref=f4e92]
+              - cell [ref=f4e93]:
+                - button "Изменить" [ref=f4e94] [cursor=pointer]
+            - row [ref=f4e98]:
+              - cell [ref=f4e99]:
+                - generic [ref=f4e100]:
+                  - img "Екатерина Лебедева" [ref=f4e102]
+                  - generic [ref=f4e103]:
+                    - paragraph [ref=f4e104]: Екатерина Лебедева
+                    - paragraph [ref=f4e105]: ekaterina.lebedeva@company.com
+              - cell "Дизайн" [ref=f4e106]
+              - cell "15 600 ₽" [ref=f4e107]
+              - cell [ref=f4e108]:
+                - button "Изменить" [ref=f4e109] [cursor=pointer]
+            - row [ref=f4e113]:
+              - cell [ref=f4e114]:
+                - generic [ref=f4e115]:
+                  - img "Михаил Орлов" [ref=f4e117]
+                  - generic [ref=f4e118]:
+                    - paragraph [ref=f4e119]: Михаил Орлов
+                    - paragraph [ref=f4e120]: mikhail.orlov@company.com
+              - cell "Разработка" [ref=f4e121]
+              - cell "4 200 ₽" [ref=f4e122]
+              - cell [ref=f4e123]:
+                - button "Изменить" [ref=f4e124] [cursor=pointer]
+            - row [ref=f4e128]:
+              - cell [ref=f4e129]:
+                - generic [ref=f4e130]:
+                  - img "Ольга Кузнецова" [ref=f4e132]
+                  - generic [ref=f4e133]:
+                    - paragraph [ref=f4e134]: Ольга Кузнецова
+                    - paragraph [ref=f4e135]: olga.kuznetsova@company.com
+              - cell "HR" [ref=f4e136]
+              - cell "9 800 ₽" [ref=f4e137]
+              - cell [ref=f4e138]:
+                - button "Изменить" [ref=f4e139] [cursor=pointer]
+            - row [ref=f4e143]:
+              - cell [ref=f4e144]:
+                - generic [ref=f4e145]:
+                  - img "Сергей Морозов" [ref=f4e147]
+                  - generic [ref=f4e148]:
+                    - paragraph [ref=f4e149]: Сергей Морозов
+                    - paragraph [ref=f4e150]: sergey.morozov@company.com
+              - cell "Разработка" [ref=f4e151]
+              - cell "6 700 ₽" [ref=f4e152]
+              - cell [ref=f4e153]:
+                - button "Изменить" [ref=f4e154] [cursor=pointer]
+            - row [ref=f4e158]:
+              - cell [ref=f4e159]:
+                - generic [ref=f4e160]:
+                  - img "Мария Зайцева" [ref=f4e162]
+                  - generic [ref=f4e163]:
+                    - paragraph [ref=f4e164]: Мария Зайцева
+                    - paragraph [ref=f4e165]: maria.zaytseva@company.com
+              - cell "Финансы" [ref=f4e166]
+              - cell "11 200 ₽" [ref=f4e167]
+              - cell [ref=f4e168]:
+                - button "Изменить" [ref=f4e169] [cursor=pointer]
+            - row [ref=f4e173]:
+              - cell [ref=f4e174]:
+                - generic [ref=f4e175]:
+                  - img "Павел Соколов" [ref=f4e177]
+                  - generic [ref=f4e178]:
+                    - paragraph [ref=f4e179]: Павел Соколов
+                    - paragraph [ref=f4e180]: pavel.sokolov@company.com
+              - cell "Разработка" [ref=f4e181]
+              - cell "5 400 ₽" [ref=f4e182]
+              - cell [ref=f4e183]:
+                - button "Изменить" [ref=f4e184] [cursor=pointer]
+            - row [ref=f4e188]:
+              - cell [ref=f4e189]:
+                - generic [ref=f4e190]:
+                  - img "Ирина Новикова" [ref=f4e192]
+                  - generic [ref=f4e193]:
+                    - paragraph [ref=f4e194]: Ирина Новикова
+                    - paragraph [ref=f4e195]: irina.novikova@company.com
+              - cell "Маркетинг" [ref=f4e196]
+              - cell "7 900 ₽" [ref=f4e197]
+              - cell [ref=f4e198]:
+                - button "Изменить" [ref=f4e199] [cursor=pointer]
+            - row [ref=f4e203]:
+              - cell [ref=f4e204]:
+                - generic [ref=f4e205]:
+                  - img "Александр Петров" [ref=f4e207]
+                  - generic [ref=f4e208]:
+                    - paragraph [ref=f4e209]: Александр Петров
+                    - paragraph [ref=f4e210]: alexander.petrov@company.com
+              - cell "Управление" [ref=f4e211]
+              - cell "0 ₽" [ref=f4e212]
+              - cell [ref=f4e213]:
+                - button "Изменить" [ref=f4e214] [cursor=pointer]
+            - row [ref=f4e218]:
+              - cell [ref=f4e219]:
+                - generic [ref=f4e220]:
+                  - img "Наталья Васильева" [ref=f4e222]
+                  - generic [ref=f4e223]:
+                    - paragraph [ref=f4e224]: Наталья Васильева
+                    - paragraph [ref=f4e225]: natalia.vasileva@company.com
+              - cell "Дизайн" [ref=f4e226]
+              - cell "13 400 ₽" [ref=f4e227]
+              - cell [ref=f4e228]:
+                - button "Изменить" [ref=f4e229] [cursor=pointer]
+            - row [ref=f4e233]:
+              - cell [ref=f4e234]:
+                - generic [ref=f4e235]:
+                  - img "Роман Михайлов" [ref=f4e237]
+                  - generic [ref=f4e238]:
+                    - paragraph [ref=f4e239]: Роман Михайлов
+                    - paragraph [ref=f4e240]: roman.mikhailov@company.com
+              - cell "Разработка" [ref=f4e241]
+              - cell "6 100 ₽" [ref=f4e242]
+              - cell [ref=f4e243]:
+                - button "Изменить" [ref=f4e244] [cursor=pointer]
+    - contentinfo [ref=f4e248]:
+      - generic [ref=f4e250]:
+        - generic [ref=f4e251]:
+          - generic [ref=f4e256]: Корподарки
+          - generic [ref=f4e257]: — добровольный сбор на подарки
+        - paragraph [ref=f4e258]: Участие добровольное. Суммы сборов видны только администратору.

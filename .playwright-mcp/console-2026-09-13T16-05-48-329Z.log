@@ -1,0 +1,6 @@
+[      77ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/hot-reloader-client.js:147
+[     837ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:36808
+[   41876ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_RESET @ https://i.pravatar.cc/150?img=21:0
+[   42183ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_RESET @ https://i.pravatar.cc/150?img=23:0
+[   42183ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_RESET @ https://i.pravatar.cc/150?img=17:0
+[   42196ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_RESET @ https://i.pravatar.cc/150?img=15:0

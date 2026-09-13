@@ -1,0 +1,209 @@
+- generic:
+  - alert
+  - generic [aria-hidden]:
+    - banner:
+      - generic:
+        - generic:
+          - link:
+            - /url: /
+            - generic: Корподарки
+          - navigation:
+            - link:
+              - /url: /
+              - text: Главная
+            - link:
+              - /url: /calendar
+              - text: Календарь ДР
+            - link:
+              - /url: /faq
+              - text: FAQ
+            - link:
+              - /url: /admin
+              - text: Админ
+        - generic:
+          - button:
+            - generic: Корпоративный фестиваль
+          - button:
+            - generic: Александр
+    - main:
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - heading [level=1]: Админ-панель
+              - paragraph: Управление суммами сборов. Изменение доступно только при указании причины.
+            - button: Журнал изменений
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - table:
+                    - rowgroup:
+                      - row:
+                        - columnheader: Сотрудник
+                        - columnheader: Отдел
+                        - columnheader: Сумма сбора
+                        - columnheader: Действие
+                    - rowgroup:
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic:
+                              - paragraph: Анна Смирнова
+                              - paragraph: anna.smirnova@company.com
+                        - cell: Маркетинг
+                        - cell: 13 500 ₽
+                        - cell:
+                          - button: Изменить
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic:
+                              - paragraph: Дмитрий Волков
+                              - paragraph: dmitry.volkov@company.com
+                        - cell: Разработка
+                        - cell: 8 300 ₽
+                        - cell:
+                          - button: Изменить
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic:
+                              - paragraph: Екатерина Лебедева
+                              - paragraph: ekaterina.lebedeva@company.com
+                        - cell: Дизайн
+                        - cell: 15 600 ₽
+                        - cell:
+                          - button: Изменить
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic:
+                              - paragraph: Михаил Орлов
+                              - paragraph: mikhail.orlov@company.com
+                        - cell: Разработка
+                        - cell: 4 200 ₽
+                        - cell:
+                          - button: Изменить
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic:
+                              - paragraph: Ольга Кузнецова
+                              - paragraph: olga.kuznetsova@company.com
+                        - cell: HR
+                        - cell: 9 800 ₽
+                        - cell:
+                          - button: Изменить
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic:
+                              - paragraph: Сергей Морозов
+                              - paragraph: sergey.morozov@company.com
+                        - cell: Разработка
+                        - cell: 6 700 ₽
+                        - cell:
+                          - button: Изменить
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic:
+                              - paragraph: Мария Зайцева
+                              - paragraph: maria.zaytseva@company.com
+                        - cell: Финансы
+                        - cell: 11 200 ₽
+                        - cell:
+                          - button: Изменить
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic: ПС
+                            - generic:
+                              - paragraph: Павел Соколов
+                              - paragraph: pavel.sokolov@company.com
+                        - cell: Разработка
+                        - cell: 5 400 ₽
+                        - cell:
+                          - button: Изменить
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic: ИН
+                            - generic:
+                              - paragraph: Ирина Новикова
+                              - paragraph: irina.novikova@company.com
+                        - cell: Маркетинг
+                        - cell: 7 900 ₽
+                        - cell:
+                          - button: Изменить
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic:
+                              - paragraph: Александр Петров
+                              - paragraph: alexander.petrov@company.com
+                        - cell: Управление
+                        - cell: 0 ₽
+                        - cell:
+                          - button: Изменить
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic: НВ
+                            - generic:
+                              - paragraph: Наталья Васильева
+                              - paragraph: natalia.vasileva@company.com
+                        - cell: Дизайн
+                        - cell: 13 400 ₽
+                        - cell:
+                          - button: Изменить
+                      - row:
+                        - cell:
+                          - generic:
+                            - generic: РМ
+                            - generic:
+                              - paragraph: Роман Михайлов
+                              - paragraph: roman.mikhailov@company.com
+                        - cell: Разработка
+                        - cell: 6 100 ₽
+                        - cell:
+                          - button: Изменить
+    - contentinfo:
+      - generic:
+        - generic:
+          - generic:
+            - generic: Корподарки
+            - generic: — добровольный сбор на подарки
+          - paragraph: Участие добровольное. Суммы сборов видны только администратору.
+  - dialog [ref=f2e745]:
+    - generic [ref=f2e746]:
+      - heading "Изменить сумму сбора" [level=2] [ref=f2e747]
+      - paragraph [ref=f2e748]: "Анна Смирнова — текущая сумма: 13 500 ₽"
+    - generic [ref=f2e749]:
+      - generic [ref=f2e750]:
+        - generic [ref=f2e751]: Новая сумма (₽)
+        - spinbutton "Новая сумма (₽)" [ref=f2e752]: "-100"
+      - generic [ref=f2e753]:
+        - generic [ref=f2e754]: Причина изменения (обязательно)
+        - radiogroup [ref=f2e755]:
+          - generic [ref=f2e756]:
+            - radio "Возврат (отказ от подарка)" [ref=f2e757] [cursor=pointer]
+            - generic [ref=f2e758]:
+              - text: Возврат (отказ от подарка)
+              - paragraph [ref=f2e759]: Поздравляемый отказался от подарка
+          - generic [ref=f2e760]:
+            - radio "Экстренный возврат" [checked] [active] [ref=f2e761] [cursor=pointer]
+            - generic [ref=f2e762]:
+              - text: Экстренный возврат
+              - paragraph [ref=f2e763]: Экстренный возврат по прямому запросу
+      - generic [ref=f2e764]:
+        - generic [ref=f2e765]: Комментарий (обязательно)
+        - textbox "Комментарий (обязательно)" [ref=f2e766]:
+          - /placeholder: Опишите причину изменения...
+      - alert [ref=f2e767]:
+        - generic [ref=f2e770]: Напишите комментарий для сохранения
+    - generic [ref=f2e771]:
+      - button "Отмена" [ref=f2e772] [cursor=pointer]
+      - button "Сохранить" [disabled]
+    - button "Close" [ref=f2e773] [cursor=pointer]

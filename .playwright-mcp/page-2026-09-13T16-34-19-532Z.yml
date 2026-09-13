@@ -1,0 +1,57 @@
+- generic [active] [ref=f3e1]:
+  - alert [ref=f3e2]
+  - generic [ref=f3e3]:
+    - banner [ref=f3e4]:
+      - generic [ref=f3e5]:
+        - generic [ref=f3e6]:
+          - link "Корподарки" [ref=f3e7] [cursor=pointer]:
+            - /url: /
+          - navigation [ref=f3e14]:
+            - link "Главная" [ref=f3e15] [cursor=pointer]:
+              - /url: /
+            - link "Календарь ДР" [ref=f3e19] [cursor=pointer]:
+              - /url: /calendar
+            - link "FAQ" [ref=f3e22] [cursor=pointer]:
+              - /url: /faq
+            - link "Админ" [ref=f3e26] [cursor=pointer]:
+              - /url: /admin
+        - generic [ref=f3e29]:
+          - button "Сменить тему" [ref=f3e30] [cursor=pointer]:
+            - generic [ref=f3e37]: Корпоративный фестиваль
+          - 'button "Меню пользователя: Александр Петров" [ref=f3e38] [cursor=pointer]':
+            - img "Александр Петров" [ref=f3e40]
+            - generic [ref=f3e41]: Александр
+    - main [ref=f3e42]:
+      - generic [ref=f3e43]:
+        - generic [ref=f3e44]:
+          - heading "Частые вопросы" [level=1] [ref=f3e45]
+          - paragraph [ref=f3e49]: Ответы на популярные вопросы о сборе средств на подарки
+        - generic [ref=f3e50]:
+          - tablist [ref=f3e51]:
+            - tab "Вопросы и ответы" [selected] [ref=f3e52] [cursor=pointer]
+            - tab "Написать админу" [ref=f3e53] [cursor=pointer]
+          - tabpanel "Вопросы и ответы" [ref=f3e54]:
+            - generic [ref=f3e55]:
+              - generic [ref=f3e56]:
+                - paragraph [ref=f3e62]: Добровольное участие
+                - paragraph [ref=f3e70]: Суммы скрыты от сотрудников
+                - paragraph [ref=f3e77]: Подарок = внимание, а не сумма
+              - generic [ref=f3e80]:
+                - heading [level=3] [ref=f3e82]:
+                  - button "Обязательно ли участвовать в сборе?" [ref=f3e83] [cursor=pointer]
+                - heading [level=3] [ref=f3e87]:
+                  - button "Кто видит суммы сборов?" [ref=f3e88] [cursor=pointer]
+                - heading [level=3] [ref=f3e92]:
+                  - button "Может ли администратор изменить сумму сбора?" [ref=f3e93] [cursor=pointer]
+                - heading [level=3] [ref=f3e97]:
+                  - button "Как автор отображается на доске пожеланий?" [ref=f3e98] [cursor=pointer]
+                - heading [level=3] [ref=f3e102]:
+                  - button "Как войти в систему?" [ref=f3e103] [cursor=pointer]
+                - heading [level=3] [ref=f3e107]:
+                  - button "Что если именинник отказался от подарка?" [ref=f3e108] [cursor=pointer]
+    - contentinfo [ref=f3e111]:
+      - generic [ref=f3e113]:
+        - generic [ref=f3e114]:
+          - generic [ref=f3e119]: Корподарки
+          - generic [ref=f3e120]: — добровольный сбор на подарки
+        - paragraph [ref=f3e121]: Участие добровольное. Суммы сборов видны только администратору.

@@ -1,0 +1,123 @@
+- generic [active] [ref=f4e1]:
+  - alert [ref=f4e2]
+  - generic [ref=f4e3]:
+    - banner [ref=f4e4]:
+      - generic [ref=f4e5]:
+        - generic [ref=f4e6]:
+          - link "Корподарки" [ref=f4e7] [cursor=pointer]:
+            - /url: /
+          - navigation [ref=f4e14]:
+            - link "Главная" [ref=f4e15] [cursor=pointer]:
+              - /url: /
+            - link "Календарь ДР" [ref=f4e19] [cursor=pointer]:
+              - /url: /calendar
+            - link "FAQ" [ref=f4e22] [cursor=pointer]:
+              - /url: /faq
+            - link "Админ" [ref=f4e26] [cursor=pointer]:
+              - /url: /admin
+        - generic [ref=f4e29]:
+          - button "Корпоративный фестиваль" [ref=f4e30] [cursor=pointer]
+          - button "Александр Петров Александр" [ref=f4e38] [cursor=pointer]:
+            - img "Александр Петров" [ref=f4e40]
+            - generic [ref=f4e41]: Александр
+    - main [ref=f4e42]:
+      - generic [ref=f4e43]:
+        - generic [ref=f4e44]:
+          - heading "Частые вопросы" [level=1] [ref=f4e45]
+          - paragraph [ref=f4e49]: Ответы на популярные вопросы о сборе средств на подарки
+        - generic [ref=f4e50]:
+          - tablist [ref=f4e51]:
+            - tab "Вопросы и ответы" [ref=f4e52] [cursor=pointer]
+            - tab "Написать админу" [selected] [ref=f4e53] [cursor=pointer]
+          - tabpanel "Написать админу" [ref=f4e124]:
+            - generic [ref=f4e125]:
+              - generic [ref=f4e127]:
+                - heading "Написать администратору" [level=3] [ref=f4e128]
+                - paragraph [ref=f4e132]: Ваша личная ветка переписки. Видите только свои сообщения.
+              - generic [ref=f4e133]:
+                - generic [ref=f4e134]:
+                  - heading "Все обращения" [level=3] [ref=f4e135]
+                  - paragraph [ref=f4e138]: "Обращения сотрудников и ответы в их ветки. Активных веток: 2"
+                - generic [ref=f4e140]:
+                  - generic [ref=f4e141]:
+                    - button [ref=f4e234] [cursor=pointer]:
+                      - img "Анна Смирнова" [ref=f4e144]
+                      - generic [ref=f4e145]:
+                        - paragraph [ref=f4e146]: Анна Смирнова
+                        - paragraph [ref=f4e147]: Добрый день, Анна!
+                    - button [ref=f4e148] [cursor=pointer]:
+                      - img "Дмитрий Волков" [ref=f4e150]
+                      - generic [ref=f4e151]:
+                        - paragraph [ref=f4e152]: Дмитрий Волков
+                        - paragraph [ref=f4e153]: Когда ближайший сбор? Хочу успеть поздравить коллегу.
+                    - button [ref=f4e154] [cursor=pointer]:
+                      - img "Екатерина Лебедева" [ref=f4e156]
+                      - generic [ref=f4e157]:
+                        - paragraph [ref=f4e158]: Екатерина Лебедева
+                        - paragraph [ref=f4e159]: Нет сообщений
+                    - button [ref=f4e160] [cursor=pointer]:
+                      - img "Михаил Орлов" [ref=f4e162]
+                      - generic [ref=f4e163]:
+                        - paragraph [ref=f4e164]: Михаил Орлов
+                        - paragraph [ref=f4e165]: Нет сообщений
+                    - button [ref=f4e166] [cursor=pointer]:
+                      - img "Ольга Кузнецова" [ref=f4e168]
+                      - generic [ref=f4e169]:
+                        - paragraph [ref=f4e170]: Ольга Кузнецова
+                        - paragraph [ref=f4e171]: Нет сообщений
+                    - button [ref=f4e172] [cursor=pointer]:
+                      - img "Сергей Морозов" [ref=f4e174]
+                      - generic [ref=f4e175]:
+                        - paragraph [ref=f4e176]: Сергей Морозов
+                        - paragraph [ref=f4e177]: Нет сообщений
+                    - button [ref=f4e178] [cursor=pointer]:
+                      - img "Мария Зайцева" [ref=f4e180]
+                      - generic [ref=f4e181]:
+                        - paragraph [ref=f4e182]: Мария Зайцева
+                        - paragraph [ref=f4e183]: Нет сообщений
+                    - button "П Павел Соколов Нет сообщений" [ref=f4e184] [cursor=pointer]:
+                      - generic [ref=f4e185]: П
+                      - generic [ref=f4e187]:
+                        - paragraph [ref=f4e188]: Павел Соколов
+                        - paragraph [ref=f4e189]: Нет сообщений
+                    - button "И Ирина Новикова Нет сообщений" [ref=f4e190] [cursor=pointer]:
+                      - generic [ref=f4e191]: И
+                      - generic [ref=f4e193]:
+                        - paragraph [ref=f4e194]: Ирина Новикова
+                        - paragraph [ref=f4e195]: Нет сообщений
+                    - button "Н Наталья Васильева Нет сообщений" [ref=f4e196] [cursor=pointer]:
+                      - generic [ref=f4e197]: Н
+                      - generic [ref=f4e199]:
+                        - paragraph [ref=f4e200]: Наталья Васильева
+                        - paragraph [ref=f4e201]: Нет сообщений
+                    - button "Р Роман Михайлов Нет сообщений" [ref=f4e202] [cursor=pointer]:
+                      - generic [ref=f4e203]: Р
+                      - generic [ref=f4e205]:
+                        - paragraph [ref=f4e206]: Роман Михайлов
+                        - paragraph [ref=f4e207]: Нет сообщений
+                  - generic [ref=f4e208]:
+                    - generic [ref=f4e209]:
+                      - generic [ref=f4e218]:
+                        - img "Анна Смирнова" [ref=f4e220]
+                        - generic [ref=f4e221]:
+                          - generic [ref=f4e222]: Здравствуйте! А можно ли подарить больше указанной суммы?
+                          - generic [ref=f4e223]: 9 сент., 11:00
+                      - generic [ref=f4e224]:
+                        - img "Александр Петров" [ref=f4e226]
+                        - generic [ref=f4e227]:
+                          - generic [ref=f4e228]: Здравствуйте, Анна! Да, конечно — любая сумма приветствуется, участие добровольное.
+                          - generic [ref=f4e229]: 9 сент., 12:30
+                      - generic [ref=f4e235]:
+                        - img "Александр Петров" [ref=f4e237]
+                        - generic [ref=f4e238]:
+                          - generic [ref=f4e239]: Добрый день, Анна!
+                          - generic [ref=f4e240]: 13 сент., 19:08
+                    - generic [ref=f4e216]:
+                      - textbox "Ответить сотруднику..." [ref=f4e217]
+                      - button [disabled]
+    - contentinfo [ref=f4e111]:
+      - generic [ref=f4e113]:
+        - generic [ref=f4e114]:
+          - generic [ref=f4e119]: Корподарки
+          - generic [ref=f4e120]: — добровольный сбор на подарки
+        - paragraph [ref=f4e121]: Участие добровольное. Суммы сборов видны только администратору.

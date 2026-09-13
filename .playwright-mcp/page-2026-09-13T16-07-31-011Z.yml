@@ -1,0 +1,77 @@
+- generic [ref=f2e1]:
+  - alert [ref=f2e2]
+  - generic [ref=f2e3]:
+    - banner [ref=f2e4]:
+      - generic [ref=f2e5]:
+        - generic [ref=f2e6]:
+          - link "Корподарки" [ref=f2e7] [cursor=pointer]:
+            - /url: /
+          - navigation [ref=f2e14]:
+            - link "Главная" [ref=f2e15] [cursor=pointer]:
+              - /url: /
+            - link "Календарь ДР" [ref=f2e19] [cursor=pointer]:
+              - /url: /calendar
+            - link "FAQ" [ref=f2e22] [cursor=pointer]:
+              - /url: /faq
+            - link "Админ" [ref=f2e26] [cursor=pointer]:
+              - /url: /admin
+        - generic [ref=f2e29]:
+          - button "Корпоративный фестиваль" [ref=f2e30] [cursor=pointer]
+          - button "Александр Петров Александр" [ref=f2e38] [cursor=pointer]:
+            - img "Александр Петров" [ref=f2e40]
+            - generic [ref=f2e41]: Александр
+    - main [ref=f2e42]:
+      - generic [ref=f2e540]:
+        - generic [ref=f2e541]:
+          - generic [ref=f2e542]:
+            - heading "Админ-панель" [level=1] [ref=f2e543]
+            - paragraph [ref=f2e546]: Управление суммами сборов. Изменение доступно только при указании причины.
+          - button "Журнал изменений" [active] [ref=f2e547] [cursor=pointer]
+        - generic [ref=f2e552]:
+          - heading "Журнал изменений сумм" [level=3] [ref=f2e785]
+          - generic [ref=f2e787]:
+            - generic [ref=f2e788]:
+              - generic [ref=f2e789]:
+                - generic [ref=f2e790]:
+                  - img "Анна Смирнова" [ref=f2e792]
+                  - generic [ref=f2e793]: Анна Смирнова
+                - generic [ref=f2e794]: 13 сент. 2026, 19:07
+              - generic [ref=f2e795]:
+                - generic [ref=f2e796]: Экстренный возврат
+                - generic [ref=f2e797]:
+                  - text: 13500 ₽ →
+                  - generic [ref=f2e798]: "-100 ₽"
+              - paragraph [ref=f2e799]: «Тестовое изменение»
+              - paragraph [ref=f2e800]: "Админ: alexander.petrov@company.com"
+            - generic [ref=f2e801]:
+              - generic [ref=f2e802]:
+                - generic [ref=f2e803]:
+                  - img "Екатерина Лебедева" [ref=f2e805]
+                  - generic [ref=f2e806]: Екатерина Лебедева
+                - generic [ref=f2e807]: 5 сент. 2026, 13:00
+              - generic [ref=f2e808]:
+                - generic [ref=f2e809]: Возврат (отказ от подарка)
+                - generic [ref=f2e810]:
+                  - text: 17600 ₽ →
+                  - generic [ref=f2e811]: 15600 ₽
+              - paragraph [ref=f2e812]: «Екатерина отказалась от подарка, возврат средств участникам.»
+              - paragraph [ref=f2e813]: "Админ: alexander.petrov@company.com"
+            - generic [ref=f2e814]:
+              - generic [ref=f2e815]:
+                - generic [ref=f2e816]:
+                  - img "Мария Зайцева" [ref=f2e818]
+                  - generic [ref=f2e819]: Мария Зайцева
+                - generic [ref=f2e820]: 8 сент. 2026, 17:30
+              - generic [ref=f2e821]:
+                - generic [ref=f2e822]: Экстренный возврат
+                - generic [ref=f2e823]:
+                  - text: 13200 ₽ →
+                  - generic [ref=f2e824]: 11200 ₽
+              - paragraph [ref=f2e825]: «Экстренный возврат по личной просьбе сотрудницы.»
+              - paragraph [ref=f2e826]: "Админ: alexander.petrov@company.com"
+    - contentinfo [ref=f2e248]:
+      - generic [ref=f2e250]:
+        - generic [ref=f2e251]:
+          - generic [ref=f2e256]: Корподарки
+          - generic [ref=f2e257]: — добровольный сбор на подарки
+        - paragraph [ref=f2e258]: Участие добровольное. Суммы сборов видны только администратору.

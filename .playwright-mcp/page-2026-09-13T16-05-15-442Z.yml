@@ -1,0 +1,19 @@
+- generic [active] [ref=f1e1]:
+  - alert [ref=f1e2]
+  - generic [ref=f1e536]:
+    - button "Корпоративный фестиваль" [ref=f1e538] [cursor=pointer]
+    - generic [ref=f1e546]:
+      - generic [ref=f1e547]:
+        - heading "Корподарки" [level=1] [ref=f1e553]
+        - paragraph [ref=f1e554]: Добровольный сбор средств на подарки сотрудникам ко дню рождения
+      - generic [ref=f1e555]:
+        - generic [ref=f1e556]:
+          - heading "Вход в систему" [level=3] [ref=f1e557]
+          - paragraph [ref=f1e558]: Войдите с помощью корпоративной почты @company.com
+        - generic [ref=f1e560]:
+          - generic [ref=f1e561]:
+            - generic [ref=f1e562]: Корпоративная почта
+            - textbox "Корпоративная почта" [ref=f1e567]:
+              - /placeholder: name@company.com
+          - button "Войти" [ref=f1e568] [cursor=pointer]
+          - paragraph [ref=f1e569]: "Это демо-режим. Попробуйте: anna.smirnova@company.com или alexander.petrov@company.com (админ)"

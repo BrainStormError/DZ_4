@@ -1,0 +1,192 @@
+- generic:
+  - alert
+  - generic [aria-hidden]:
+    - banner:
+      - generic:
+        - generic:
+          - link:
+            - /url: /
+            - generic: Корподарки
+          - navigation:
+            - link:
+              - /url: /
+              - text: Главная
+            - link:
+              - /url: /calendar
+              - text: Календарь ДР
+            - link:
+              - /url: /faq
+              - text: FAQ
+            - link:
+              - /url: /admin
+              - text: Админ
+        - generic:
+          - button:
+            - generic: Корпоративный фестиваль
+          - button:
+            - generic: Александр
+    - main:
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic: Участие добровольное
+              - heading [level=1]: Корпоративные подарки ко дню рождения
+              - paragraph:
+                - text: Мы собираем средства на подарки коллегам к их дню рождения. Любой сотрудник может присоединиться — но это
+                - strong: полностью добровольно
+                - text: . Суммы сборов видит только администратор.
+              - generic:
+                - button: Поздравить / отправить средства
+                - button: Оставить пожелание
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - heading [level=3]: Добровольное участие
+                - paragraph: Никто не обязан участвовать. Можно поздравить только пожеланием.
+          - generic:
+            - generic:
+              - generic:
+                - heading [level=3]: Суммы скрыты
+                - paragraph: Обычные сотрудники не видят суммы сборов — ни свои, ни чужие.
+          - generic:
+            - generic:
+              - generic:
+                - heading [level=3]: Команда — это важно
+                - paragraph: Каждый подарок — знак внимания от коллег. Тёплые слова важнее суммы.
+        - generic:
+          - generic:
+            - heading [level=2]:
+              - generic: 🎂
+              - text: Именинники сегодня
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic: 🎉
+                  - generic:
+                    - generic:
+                      - heading [level=3]: Анна Смирнова
+                      - generic: Сегодня
+                    - generic:
+                      - generic: 13 сентября
+                      - generic: ·
+                      - generic: Маркетинг
+                - button: Поздравить
+        - generic:
+          - heading [level=2]: Скоро день рождения
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - heading [level=3]: Дмитрий Волков
+                    - generic:
+                      - generic: 14 сентября
+                      - generic: ·
+                      - generic: Разработка
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - heading [level=3]: Екатерина Лебедева
+                    - generic:
+                      - generic: 25 сентября
+                      - generic: ·
+                      - generic: Дизайн
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - heading [level=3]: Михаил Орлов
+                    - generic:
+                      - generic: 2 октября
+                      - generic: ·
+                      - generic: Разработка
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - heading [level=2]: Доска пожеланий
+                - paragraph: Автор отображается под корпоративным ником
+              - button: Оставить пожелание
+            - generic:
+              - generic:
+                - generic:
+                  - paragraph: Дмитрий, с днём рождения! Код без багов и побольше кофе! ☕
+                  - generic:
+                    - generic:
+                      - generic:
+                        - paragraph: olga.kuznetsova
+                        - paragraph: 12 сент., 12:15
+                    - generic: → Дмитрий
+              - generic:
+                - generic:
+                  - paragraph: С праздником, Анна! Желаю новых интересных проектов и тёплых улыбок!
+                  - generic:
+                    - generic:
+                      - generic:
+                        - paragraph: ekaterina.lebedeva
+                        - paragraph: 11 сент., 15:30
+                    - generic: → Анна
+              - generic:
+                - generic:
+                  - paragraph: Анна, с днём рождения! Пусть каждый день приносит радость и вдохновение! 🎂
+                  - generic:
+                    - generic:
+                      - generic:
+                        - paragraph: dmitry.volkov
+                        - paragraph: 10 сент., 13:00
+                    - generic: → Анна
+              - generic:
+                - generic:
+                  - paragraph: Ольга, с праздником! Пусть в HR всегда царит гармония!
+                  - generic:
+                    - generic:
+                      - generic:
+                        - paragraph: sergey.morozov
+                        - paragraph: 9 сент., 19:45
+                    - generic: → Ольга
+              - generic:
+                - generic:
+                  - paragraph: Катя, с днём рождения! Творческих успехов и ярких идей! 🎨
+                  - generic:
+                    - generic:
+                      - generic:
+                        - paragraph: anna.smirnova
+                        - paragraph: 8 сент., 17:00
+                    - generic: → Екатерина
+              - generic:
+                - generic:
+                  - paragraph: Михаил, с днём рождения! Здоровья и успехов во всех начинаниях!
+                  - generic:
+                    - generic:
+                      - generic:
+                        - paragraph: maria.zaytseva
+                        - paragraph: 7 сент., 14:20
+                    - generic: → Михаил
+    - contentinfo:
+      - generic:
+        - generic:
+          - generic:
+            - generic: Корподарки
+            - generic: — добровольный сбор на подарки
+          - paragraph: Участие добровольное. Суммы сборов видны только администратору.
+  - dialog [ref=f5e263]:
+    - generic [ref=f5e264]:
+      - heading "Поздравить сотрудника" [level=2] [ref=f5e265]
+      - paragraph [ref=f5e270]: Подтвердите корпоративную почту для участия
+    - generic [ref=f5e271]:
+      - generic [ref=f5e272]:
+        - generic [ref=f5e273]: Ваша корпоративная почта
+        - textbox "Ваша корпоративная почта" [active] [ref=f5e278]:
+          - /placeholder: name@company.com
+      - generic [ref=f5e279]:
+        - paragraph [ref=f5e280]: Участие добровольное
+        - paragraph [ref=f5e281]: Вы можете поздравить коллегу пожеланием без отправки средств. Сумма сбора видна только администратору.
+      - button "Продолжить" [ref=f5e282] [cursor=pointer]
+    - button "Close" [ref=f5e283] [cursor=pointer]

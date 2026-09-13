@@ -1,0 +1,152 @@
+- generic [active] [ref=f7e1]:
+  - alert [ref=f7e2]
+  - generic [ref=f7e3]:
+    - banner [ref=f7e4]:
+      - generic [ref=f7e5]:
+        - link [ref=f7e7] [cursor=pointer]:
+          - /url: /
+        - generic [ref=f7e13]:
+          - button "🎉" [ref=f7e14] [cursor=pointer]
+          - button [ref=f7e22] [cursor=pointer]:
+            - img "Анна Смирнова" [ref=f7e24]
+      - navigation [ref=f7e25]:
+        - link "Главная" [ref=f7e26] [cursor=pointer]:
+          - /url: /
+        - link "Календарь ДР" [ref=f7e30] [cursor=pointer]:
+          - /url: /calendar
+        - link "FAQ" [ref=f7e33] [cursor=pointer]:
+          - /url: /faq
+    - main [ref=f7e37]:
+      - generic [ref=f7e38]:
+        - generic [ref=f7e42]:
+          - generic [ref=f7e43]: Участие добровольное
+          - heading "Корпоративные подарки ко дню рождения" [level=1] [ref=f7e46]: Корпоративные подаркико дню рождения
+          - paragraph [ref=f7e47]:
+            - text: Мы собираем средства на подарки коллегам к их дню рождения. Любой сотрудник может присоединиться — но это
+            - strong [ref=f7e48]: полностью добровольно
+            - text: . Суммы сборов видит только администратор.
+          - generic [ref=f7e49]:
+            - button "Поздравить / отправить средства" [ref=f7e50] [cursor=pointer]
+            - button "Оставить пожелание" [ref=f7e55] [cursor=pointer]
+        - generic [ref=f7e58]:
+          - generic [ref=f7e65]:
+            - heading "Добровольное участие" [level=3] [ref=f7e66]
+            - paragraph [ref=f7e67]: Никто не обязан участвовать. Можно поздравить только пожеланием.
+          - generic [ref=f7e76]:
+            - heading "Суммы скрыты" [level=3] [ref=f7e77]
+            - paragraph [ref=f7e78]: Обычные сотрудники не видят суммы сборов — ни свои, ни чужие.
+          - generic [ref=f7e87]:
+            - heading "Команда — это важно" [level=3] [ref=f7e88]
+            - paragraph [ref=f7e89]: Каждый подарок — знак внимания от коллег. Тёплые слова важнее суммы.
+        - generic [ref=f7e90]:
+          - heading "🎂 Именинники сегодня" [level=2] [ref=f7e92]:
+            - generic [ref=f7e93]: 🎂
+            - text: Именинники сегодня
+          - generic [ref=f7e96]:
+            - generic [ref=f7e97]:
+              - generic [ref=f7e98]:
+                - img "Анна Смирнова" [ref=f7e100]
+                - generic [ref=f7e101]: 🎉
+              - generic [ref=f7e102]:
+                - generic [ref=f7e103]:
+                  - heading "Анна Смирнова" [level=3] [ref=f7e104]
+                  - generic [ref=f7e105]: Сегодня
+                - generic [ref=f7e106]:
+                  - generic [ref=f7e110]: 13 сентября
+                  - generic [ref=f7e111]: ·
+                  - generic [ref=f7e112]: Маркетинг
+            - button "Поздравить" [ref=f7e113] [cursor=pointer]
+        - generic [ref=f7e118]:
+          - heading "Скоро день рождения" [level=2] [ref=f7e119]
+          - generic [ref=f7e120]:
+            - generic [ref=f7e123]:
+              - img "Дмитрий Волков" [ref=f7e126]
+              - generic [ref=f7e127]:
+                - heading "Дмитрий Волков" [level=3] [ref=f7e129]
+                - generic [ref=f7e130]:
+                  - generic [ref=f7e134]: 14 сентября
+                  - generic [ref=f7e135]: ·
+                  - generic [ref=f7e136]: Разработка
+            - generic [ref=f7e139]:
+              - img "Екатерина Лебедева" [ref=f7e142]
+              - generic [ref=f7e143]:
+                - heading "Екатерина Лебедева" [level=3] [ref=f7e145]
+                - generic [ref=f7e146]:
+                  - generic [ref=f7e150]: 25 сентября
+                  - generic [ref=f7e151]: ·
+                  - generic [ref=f7e152]: Дизайн
+            - generic [ref=f7e155]:
+              - img "Михаил Орлов" [ref=f7e158]
+              - generic [ref=f7e159]:
+                - heading "Михаил Орлов" [level=3] [ref=f7e161]
+                - generic [ref=f7e162]:
+                  - generic [ref=f7e166]: 2 октября
+                  - generic [ref=f7e167]: ·
+                  - generic [ref=f7e168]: Разработка
+        - generic [ref=f7e170]:
+          - generic [ref=f7e171]:
+            - generic [ref=f7e172]:
+              - heading "Доска пожеланий" [level=2] [ref=f7e173]
+              - paragraph [ref=f7e177]: Автор отображается под корпоративным ником
+            - button "Оставить пожелание" [ref=f7e178] [cursor=pointer]
+          - generic [ref=f7e179]:
+            - generic [ref=f7e181]:
+              - paragraph [ref=f7e182]: Дмитрий, с днём рождения! Код без багов и побольше кофе! ☕
+              - generic [ref=f7e183]:
+                - generic [ref=f7e184]:
+                  - img "Ольга Кузнецова" [ref=f7e186]
+                  - generic [ref=f7e187]:
+                    - paragraph [ref=f7e188]: olga.kuznetsova
+                    - paragraph [ref=f7e189]: 12 сент., 12:15
+                - generic [ref=f7e190]: → Дмитрий
+            - generic [ref=f7e192]:
+              - paragraph [ref=f7e193]: С праздником, Анна! Желаю новых интересных проектов и тёплых улыбок!
+              - generic [ref=f7e194]:
+                - generic [ref=f7e195]:
+                  - img "Екатерина Лебедева" [ref=f7e197]
+                  - generic [ref=f7e198]:
+                    - paragraph [ref=f7e199]: ekaterina.lebedeva
+                    - paragraph [ref=f7e200]: 11 сент., 15:30
+                - generic [ref=f7e201]: → Анна
+            - generic [ref=f7e203]:
+              - paragraph [ref=f7e204]: Анна, с днём рождения! Пусть каждый день приносит радость и вдохновение! 🎂
+              - generic [ref=f7e205]:
+                - generic [ref=f7e206]:
+                  - img "Дмитрий Волков" [ref=f7e208]
+                  - generic [ref=f7e209]:
+                    - paragraph [ref=f7e210]: dmitry.volkov
+                    - paragraph [ref=f7e211]: 10 сент., 13:00
+                - generic [ref=f7e212]: → Анна
+            - generic [ref=f7e214]:
+              - paragraph [ref=f7e215]: Ольга, с праздником! Пусть в HR всегда царит гармония!
+              - generic [ref=f7e216]:
+                - generic [ref=f7e217]:
+                  - img "Сергей Морозов" [ref=f7e219]
+                  - generic [ref=f7e220]:
+                    - paragraph [ref=f7e221]: sergey.morozov
+                    - paragraph [ref=f7e222]: 9 сент., 19:45
+                - generic [ref=f7e223]: → Ольга
+            - generic [ref=f7e225]:
+              - paragraph [ref=f7e226]: Катя, с днём рождения! Творческих успехов и ярких идей! 🎨
+              - generic [ref=f7e227]:
+                - generic [ref=f7e228]:
+                  - img "Анна Смирнова" [ref=f7e230]
+                  - generic [ref=f7e231]:
+                    - paragraph [ref=f7e232]: anna.smirnova
+                    - paragraph [ref=f7e233]: 8 сент., 17:00
+                - generic [ref=f7e234]: → Екатерина
+            - generic [ref=f7e236]:
+              - paragraph [ref=f7e237]: Михаил, с днём рождения! Здоровья и успехов во всех начинаниях!
+              - generic [ref=f7e238]:
+                - generic [ref=f7e239]:
+                  - img "Мария Зайцева" [ref=f7e241]
+                  - generic [ref=f7e242]:
+                    - paragraph [ref=f7e243]: maria.zaytseva
+                    - paragraph [ref=f7e244]: 7 сент., 14:20
+                - generic [ref=f7e245]: → Михаил
+    - contentinfo [ref=f7e246]:
+      - generic [ref=f7e248]:
+        - generic [ref=f7e249]:
+          - generic [ref=f7e254]: Корподарки
+          - generic [ref=f7e255]: — добровольный сбор на подарки
+        - paragraph [ref=f7e256]: Участие добровольное. Суммы сборов видны только администратору.
