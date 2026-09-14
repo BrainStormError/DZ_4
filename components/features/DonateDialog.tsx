@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { usePathname } from 'next/navigation';
 import {
   Dialog,
   DialogContent,
@@ -29,6 +30,7 @@ import { useAppDate } from '@/lib/date-context';
 import { checkCorpEmail } from '@/lib/corp-email';
 import { mockUsers } from '@/lib/mock-data';
 import { getCongratulatableUsers } from '@/lib/birthdays';
+import { isGiftDeclined } from '@/lib/data-store';
 import { parsePositiveInt } from '@/lib/utils';
 
 interface DonateDialogProps {
@@ -41,7 +43,7 @@ type Step = 'recipient' | 'email' | 'amount' | 'message' | 'confirm' | 'success'
 
 export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogProps) {
   const { user } = useAuth();
-  const { addDonation, addWish } = useData();
+  const { addDonation, addWish, history } = useData();
   const { today, isPreview } = useAppDate();
   const [step, setStep] = useState<Step>('recipient');
   const [recipient, setRecipient] = useState<User | null>(null);
@@ -49,6 +51,7 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
   const [emailError, setEmailError] = useState('');
   const [amount, setAmount] = useState('');
   const [wishText, setWishText] = useState('');
+  const pathname = usePathname();
 
   // Participation is role-agnostic: everyone goes through the same scenario
   const parsedAmount = parsePositiveInt(amount);
@@ -57,19 +60,33 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
   const canConfirm = !!recipient && parsedAmount !== null && !isPreview;
   const recipientName = recipient?.fullName ?? '';
   const recipientOptions = getCongratulatableUsers(today, mockUsers, user?.id);
+  const declinedUserIds = useMemo(
+    () =>
+      new Set(
+        mockUsers.filter((u) => isGiftDeclined(u.id, history)).map((u) => u.id)
+      ),
+    [history]
+  );
 
   useEffect(() => {
     if (open) {
-      setRecipient(targetUser);
-      setStep(targetUser ? 'email' : 'recipient');
+      const initialRecipient =
+        targetUser && !declinedUserIds.has(targetUser.id) ? targetUser : null;
+      setRecipient(initialRecipient);
+      setStep(initialRecipient ? 'email' : 'recipient');
       setEmail(user?.email ?? '');
       setEmailError('');
       setAmount('');
       setWishText('');
     }
-  }, [open, targetUser, user?.email]);
+  }, [open, targetUser, user?.email, declinedUserIds]);
+
+  useEffect(() => {
+    onOpenChange(false);
+  }, [pathname, onOpenChange]);
 
   const handleRecipientSelect = (id: string) => {
+    if (declinedUserIds.has(id)) return;
     setRecipient(mockUsers.find((u) => u.id === id) ?? null);
   };
 
@@ -147,11 +164,15 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
                     <SelectValue placeholder="Выберите сотрудника" />
                   </SelectTrigger>
                   <SelectContent>
-                    {recipientOptions.map((u) => (
-                      <SelectItem key={u.id} value={u.id}>
-                        {u.fullName} — {u.department} — {u.email}
-                      </SelectItem>
-                    ))}
+                    {recipientOptions.map((u) => {
+                      const declined = declinedUserIds.has(u.id);
+                      return (
+                        <SelectItem key={u.id} value={u.id} disabled={declined}>
+                          {u.fullName} — {u.department} — {u.email}
+                          {declined ? ' — отказался от подарка' : ''}
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>

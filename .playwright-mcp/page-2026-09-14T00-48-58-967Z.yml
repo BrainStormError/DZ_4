@@ -1,0 +1,47 @@
+- generic [ref=f10e2]:
+  - banner [ref=f10e3]:
+    - generic [ref=f10e4]:
+      - generic [ref=f10e5]:
+        - link "Корподарки" [ref=f10e6] [cursor=pointer]:
+          - /url: /
+        - navigation [ref=f10e12]:
+          - link "Главная" [ref=f10e13] [cursor=pointer]:
+            - /url: /
+          - link "Календарь ДР" [ref=f10e17] [cursor=pointer]:
+            - /url: /calendar
+          - link "FAQ" [ref=f10e20] [cursor=pointer]:
+            - /url: /faq
+      - button "Сменить тему" [ref=f10e25]: Тёплый праздник🎂
+    - navigation [ref=f10e32]:
+      - link "Главная" [ref=f10e33] [cursor=pointer]:
+        - /url: /
+      - link "Календарь ДР" [ref=f10e37] [cursor=pointer]:
+        - /url: /calendar
+      - link "FAQ" [ref=f10e40] [cursor=pointer]:
+        - /url: /faq
+  - main [ref=f10e44]:
+    - generic [ref=f10e45]:
+      - generic [ref=f10e48]:
+        - heading "Корпоративные подарки ко дню рождения" [level=1] [ref=f10e49]: Корпоративные подаркико дню рождения
+        - paragraph [ref=f10e50]: Мы собираем средства на подарки коллегам к их дню рождения. Любой сотрудник может присоединиться — это добровольно.
+        - generic [ref=f10e51]:
+          - button "Поздравить / отправить средства" [ref=f10e52]
+          - button "Оставить пожелание" [disabled] [ref=f10e57]
+        - paragraph [ref=f10e60]: Сегодня именинников нет — пожелание доступно только в день рождения, а поздравить заранее можно денежным взносом.
+      - generic [ref=f10e70]:
+        - heading "Команда — это важно" [level=3] [ref=f10e71]
+        - paragraph [ref=f10e72]: Каждый подарок — знак внимания от коллег.
+      - generic [ref=f10e73]:
+        - heading "🎂Именинники сегодня" [level=2] [ref=f10e75]
+        - generic [ref=f10e77]:
+          - paragraph [ref=f10e78]: 🎈
+          - paragraph [ref=f10e79]: Сегодня именинников нет. Загляните в календарь, чтобы не пропустить ближайший день рождения!
+      - generic [ref=f10e80]:
+        - heading "Скоро день рождения" [level=2] [ref=f10e81]
+        - generic [ref=f10e85]:
+          - generic [ref=f10e86]: АП
+          - generic [ref=f10e88]:
+            - heading "Александр Петров" [level=3] [ref=f10e90]
+            - generic [ref=f10e91]: 7 января·Управление
+  - contentinfo [ref=f10e95]:
+    - generic [ref=f10e96]: Корподарки— сбор на подарки коллегам

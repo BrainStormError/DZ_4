@@ -1,0 +1,118 @@
+- generic [ref=f3e1]:
+  - generic [ref=f3e2]:
+    - banner [ref=f3e3]:
+      - generic [ref=f3e4]:
+        - generic [ref=f3e5]:
+          - link "Корподарки" [ref=f3e6] [cursor=pointer]:
+            - /url: /
+          - navigation [ref=f3e13]:
+            - link "Главная" [ref=f3e14] [cursor=pointer]:
+              - /url: /
+            - link "Календарь ДР" [ref=f3e18] [cursor=pointer]:
+              - /url: /calendar
+            - link "FAQ" [ref=f3e21] [cursor=pointer]:
+              - /url: /faq
+            - link "Админ" [ref=f3e25] [cursor=pointer]:
+              - /url: /admin
+        - generic [ref=f3e28]:
+          - 'link "Непрочитанных сообщений: 1" [ref=f3e29] [cursor=pointer]':
+            - /url: /faq?tab=messages
+            - generic [ref=f3e32]: "1"
+          - button "Сменить тему" [ref=f3e33] [cursor=pointer]:
+            - generic [ref=f3e40]: Тёплый праздник
+          - 'button "Меню пользователя: Александр Петров" [ref=f3e41] [cursor=pointer]':
+            - img "Александр Петров" [ref=f3e43]
+            - generic [ref=f3e44]: Александр
+    - main [ref=f3e45]:
+      - generic [ref=f3e46]:
+        - generic [ref=f3e47]:
+          - heading "Календарь дней рождений" [level=1] [ref=f3e48]
+          - paragraph [ref=f3e51]: Дни рождения сотрудников в 2026 году
+        - generic [ref=f3e52]:
+          - generic [ref=f3e53]:
+            - button "Предыдущий год" [ref=f3e54] [cursor=pointer]
+            - button "Предыдущий месяц" [ref=f3e58] [cursor=pointer]
+            - heading "Сентябрь 2026" [level=2] [ref=f3e61]
+            - button "Следующий месяц" [ref=f3e62] [cursor=pointer]
+            - button "Следующий год" [ref=f3e65] [cursor=pointer]
+          - generic [ref=f3e69]: 3 именинника
+        - generic [ref=f3e72]:
+          - generic [ref=f3e73]: Пн
+          - generic [ref=f3e74]: Вт
+          - generic [ref=f3e75]: Ср
+          - generic [ref=f3e76]: Чт
+          - generic [ref=f3e77]: Пт
+          - generic [ref=f3e78]: Сб
+          - generic [ref=f3e79]: Вс
+          - generic [ref=f3e81]: "1"
+          - generic [ref=f3e82]: "2"
+          - generic [ref=f3e83]: "3"
+          - generic [ref=f3e84]: "4"
+          - generic [ref=f3e85]: "5"
+          - generic [ref=f3e86]: "6"
+          - generic [ref=f3e87]: "7"
+          - generic [ref=f3e88]: "8"
+          - generic [ref=f3e89]: "9"
+          - generic [ref=f3e90]: "10"
+          - generic [ref=f3e91]: "11"
+          - generic [ref=f3e92]: "12"
+          - generic [ref=f3e93]:
+            - text: "13"
+            - generic "Анна Смирнова" [ref=f3e95]: 🎂Анна
+          - generic [ref=f3e96]:
+            - text: "14"
+            - generic "Дмитрий Волков" [ref=f3e98]: 🎂Дмитрий
+          - generic [ref=f3e99]: "15"
+          - generic [ref=f3e100]: "16"
+          - generic [ref=f3e101]: "17"
+          - generic [ref=f3e102]: "18"
+          - generic [ref=f3e103]: "19"
+          - generic [ref=f3e104]: "20"
+          - generic [ref=f3e105]: "21"
+          - generic [ref=f3e106]: "22"
+          - generic [ref=f3e107]: "23"
+          - generic [ref=f3e108]: "24"
+          - generic [ref=f3e109]:
+            - text: "25"
+            - generic "Екатерина Лебедева" [ref=f3e111]: 🎂Екатерина
+          - generic [ref=f3e112]: "26"
+          - generic [ref=f3e113]: "27"
+          - generic [ref=f3e114]: "28"
+          - generic [ref=f3e115]: "29"
+          - generic [ref=f3e116]: "30"
+        - generic [ref=f3e117]:
+          - heading "Именинники в сентябре 2026" [level=3] [ref=f3e118]
+          - generic [ref=f3e119]:
+            - generic [ref=f3e122]:
+              - img "Анна Смирнова" [ref=f3e125]
+              - generic [ref=f3e126]:
+                - heading "Анна Смирнова" [level=3] [ref=f3e128]
+                - generic [ref=f3e129]:
+                  - generic [ref=f3e133]: 13 сентября 2026
+                  - generic [ref=f3e134]: ·
+                  - generic [ref=f3e135]: Маркетинг
+            - generic [ref=f3e138]:
+              - generic [ref=f3e139]:
+                - img "Дмитрий Волков" [ref=f3e141]
+                - generic [ref=f3e142]: 🎉
+              - generic [ref=f3e143]:
+                - generic [ref=f3e144]:
+                  - heading "Дмитрий Волков" [level=3] [ref=f3e145]
+                  - generic [ref=f3e146]: Сегодня
+                - generic [ref=f3e147]:
+                  - generic [ref=f3e151]: 14 сентября 2026
+                  - generic [ref=f3e152]: ·
+                  - generic [ref=f3e153]: Разработка
+            - generic [ref=f3e156]:
+              - img "Екатерина Лебедева" [ref=f3e159]
+              - generic [ref=f3e160]:
+                - heading "Екатерина Лебедева" [level=3] [ref=f3e162]
+                - generic [ref=f3e163]:
+                  - generic [ref=f3e167]: 25 сентября 2026
+                  - generic [ref=f3e168]: ·
+                  - generic [ref=f3e169]: Дизайн
+    - contentinfo [ref=f3e170]:
+      - generic [ref=f3e173]:
+        - generic [ref=f3e178]: Корподарки
+        - generic [ref=f3e179]: — сбор на подарки коллегам
+  - alert [ref=f3e180]

@@ -100,7 +100,7 @@ export function ChatThread() {
   };
 
   return (
-    <Card className="card-shadow flex flex-col max-h-[600px]">
+    <Card className="card-shadow flex flex-col max-h-[600px] md:h-[600px]">
       <CardHeader className="border-b border-border">
         <CardTitle className="text-lg flex items-center gap-2">
           <MessageCircle className="h-5 w-5 text-primary" />
@@ -113,9 +113,9 @@ export function ChatThread() {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 overflow-hidden p-0">
-        <div className={cn('flex h-full', isAdmin ? 'flex-col md:flex-row' : 'flex-col')}>
+        <div className={cn('flex h-full min-h-0', isAdmin ? 'flex-col md:flex-row' : 'flex-col')}>
           {isAdmin && (
-            <div className="md:w-56 shrink-0 border-b md:border-b-0 md:border-r border-border overflow-y-auto max-h-44 md:max-h-none">
+            <div className="md:w-56 shrink-0 min-h-0 border-b md:border-b-0 md:border-r border-border overflow-y-auto max-h-44 md:max-h-none">
               {employeeUsers.map((u) => {
                 const thread = getChatThread(u.email);
                 const last = thread.messages[thread.messages.length - 1];
@@ -161,7 +161,7 @@ export function ChatThread() {
               })}
             </div>
           )}
-          <div className="flex flex-1 flex-col overflow-hidden">
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
             <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
               {renderMessages()}
             </div>

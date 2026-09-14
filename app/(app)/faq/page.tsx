@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   Accordion,
   AccordionContent,
@@ -48,20 +49,28 @@ const FAQ_ITEMS = [
   },
 ];
 
-export default function FAQPage() {
+function FAQContent() {
   const { user } = useAuth();
   const { chats } = useData();
-  const [tab, setTab] = useState('faq');
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const tab = searchParams.get('tab') === 'messages' ? 'chat' : 'faq';
 
   const isAdmin = user?.role === 'admin';
   const unreadCount = isAdmin ? countUnreadMessages(chats) : 0;
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('tab') === 'messages') {
-      setTab('chat');
+  const handleTabChange = (value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value === 'chat') {
+      params.set('tab', 'messages');
+    } else {
+      params.delete('tab');
     }
-  }, []);
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  };
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8">
@@ -75,7 +84,7 @@ export default function FAQPage() {
         </p>
       </div>
 
-      <Tabs value={tab} onValueChange={setTab} className="w-full">
+      <Tabs value={tab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-6">
           <TabsTrigger value="faq">Вопросы и ответы</TabsTrigger>
           <TabsTrigger value="chat" className="gap-1.5">
@@ -129,5 +138,20 @@ export default function FAQPage() {
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+export default function FAQPage() {
+  return (
+    <Suspense
+      fallback={
+        <div
+          className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8 min-h-[60vh]"
+          aria-busy="true"
+        />
+      }
+    >
+      <FAQContent />
+    </Suspense>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import {
   Table,
   TableBody,
@@ -41,7 +42,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useData } from '@/lib/data-context';
 import { useAppDate } from '@/lib/date-context';
 import { mockUsers } from '@/lib/mock-data';
-import { reasonLabel } from '@/lib/data-store';
+import { isGiftDeclined, reasonLabel } from '@/lib/data-store';
 import { parseIsoLocal } from '@/lib/birthdays';
 import { parseNonNegativeInt } from '@/lib/utils';
 import type { RefundReason, User, DonationHistoryEntry } from '@/lib/types';
@@ -81,6 +82,11 @@ export function AdminTable() {
   const [editComment, setEditComment] = useState('');
   const [previewOpen, setPreviewOpen] = useState(false);
   const [view, setView] = useState<'table' | 'history'>('table');
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setEditTarget(null);
+  }, [pathname]);
 
   if (!ready) {
     return (
@@ -299,6 +305,7 @@ export function AdminTable() {
                 <TableBody>
                   {mockUsers.map((u) => {
                     const donation = getDonation(u.id);
+                    const declined = isGiftDeclined(u.id, history);
                     return (
                       <TableRow key={u.id}>
                         <TableCell>
@@ -323,22 +330,28 @@ export function AdminTable() {
                           {donation.totalAmount.toLocaleString('ru-RU')} ₽
                         </TableCell>
                         <TableCell className="text-center">
-                          <Button
-                            variant={donation.giftSent ? 'default' : 'outline'}
-                            size="sm"
-                            aria-pressed={donation.giftSent}
-                            onClick={() => setGiftSent(u.id, !donation.giftSent)}
-                            disabled={isPreview}
-                          >
-                            {donation.giftSent ? 'Выслано' : 'Не выслано'}
-                          </Button>
+                          {declined ? (
+                            <Badge variant="secondary" aria-disabled="true">
+                              Отказ
+                            </Badge>
+                          ) : (
+                            <Button
+                              variant={donation.giftSent ? 'default' : 'outline'}
+                              size="sm"
+                              aria-pressed={donation.giftSent}
+                              onClick={() => setGiftSent(u.id, !donation.giftSent)}
+                              disabled={isPreview}
+                            >
+                              {donation.giftSent ? 'Выслано' : 'Не выслано'}
+                            </Button>
+                          )}
                         </TableCell>
                         <TableCell className="text-right">
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handleOpenEdit(u)}
-                            disabled={isPreview}
+                            disabled={isPreview || declined}
                           >
                             <Edit className="h-3.5 w-3.5 mr-1" />
                             Изменить

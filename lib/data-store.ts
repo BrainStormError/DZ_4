@@ -37,11 +37,15 @@ export function useDataStore() {
     );
   }, []);
 
-  const setGiftSent = useCallback((userId: string, sent: boolean) => {
-    setDonations((prev) =>
-      prev.map((d) => (d.userId === userId ? { ...d, giftSent: sent } : d))
-    );
-  }, []);
+  const setGiftSent = useCallback(
+    (userId: string, sent: boolean) => {
+      if (isGiftDeclined(userId, history)) return;
+      setDonations((prev) =>
+        prev.map((d) => (d.userId === userId ? { ...d, giftSent: sent } : d))
+      );
+    },
+    [history]
+  );
 
   const updateDonation = useCallback(
     (entry: Omit<DonationHistoryEntry, 'id' | 'createdAt'>) => {
@@ -135,6 +139,15 @@ export function useDataStore() {
 }
 
 export type DataStore = ReturnType<typeof useDataStore>;
+
+export function isGiftDeclined(
+  userId: string,
+  history: DonationHistoryEntry[]
+): boolean {
+  return history.some(
+    (entry) => entry.userId === userId && entry.reason === 'refund_declined'
+  );
+}
 
 export function countUnreadInThread(thread: ChatThread): number {
   return thread.messages.filter(

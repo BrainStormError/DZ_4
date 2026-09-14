@@ -1,0 +1,95 @@
+- generic [ref=f6e1]:
+  - generic [ref=f6e2]:
+    - banner [ref=f6e3]:
+      - generic [ref=f6e4]:
+        - generic [ref=f6e5]:
+          - link "Корподарки" [ref=f6e6] [cursor=pointer]:
+            - /url: /
+          - navigation [ref=f6e13]:
+            - link "Главная" [ref=f6e14] [cursor=pointer]:
+              - /url: /
+            - link "Календарь ДР" [ref=f6e18] [cursor=pointer]:
+              - /url: /calendar
+            - link "FAQ" [ref=f6e21] [cursor=pointer]:
+              - /url: /faq
+            - link "Админ" [ref=f6e25] [cursor=pointer]:
+              - /url: /admin
+        - generic [ref=f6e28]:
+          - 'link "Непрочитанных сообщений: 1" [ref=f6e29] [cursor=pointer]':
+            - /url: /faq?tab=messages
+            - generic [ref=f6e32]: "1"
+          - button "Сменить тему" [ref=f6e33] [cursor=pointer]:
+            - generic [ref=f6e40]: Тёплый праздник
+          - 'button "Меню пользователя: Александр Петров" [ref=f6e41] [cursor=pointer]':
+            - img "Александр Петров" [ref=f6e43]
+            - generic [ref=f6e44]: Александр
+    - main [ref=f6e45]:
+      - generic [ref=f6e46]:
+        - generic [ref=f6e50]:
+          - heading "Корпоративные подарки ко дню рождения" [level=1] [ref=f6e51]: Корпоративные подаркико дню рождения
+          - paragraph [ref=f6e52]: Мы собираем средства на подарки коллегам к их дню рождения. Любой сотрудник может присоединиться — это добровольно.
+          - generic [ref=f6e53]:
+            - button "Поздравить / отправить средства" [ref=f6e54] [cursor=pointer]
+            - button "Оставить пожелание" [ref=f6e59] [cursor=pointer]
+        - generic [ref=f6e71]:
+          - heading "Команда — это важно" [level=3] [ref=f6e72]
+          - paragraph [ref=f6e73]: Каждый подарок — знак внимания от коллег.
+        - generic [ref=f6e74]:
+          - heading "🎂 Именинники сегодня" [level=2] [ref=f6e76]:
+            - generic [ref=f6e77]: 🎂
+            - text: Именинники сегодня
+          - generic [ref=f6e80]:
+            - generic [ref=f6e81]:
+              - generic [ref=f6e82]:
+                - img "Дмитрий Волков" [ref=f6e84]
+                - generic [ref=f6e85]: 🎉
+              - generic [ref=f6e86]:
+                - generic [ref=f6e87]:
+                  - heading "Дмитрий Волков" [level=3] [ref=f6e88]
+                  - generic [ref=f6e89]: Сегодня
+                - generic [ref=f6e90]:
+                  - generic [ref=f6e94]: 14 сентября
+                  - generic [ref=f6e95]: ·
+                  - generic [ref=f6e96]: Разработка
+            - button "Поздравить" [ref=f6e97] [cursor=pointer]
+        - generic [ref=f6e102]:
+          - heading "Скоро день рождения" [level=2] [ref=f6e103]
+          - generic [ref=f6e104]:
+            - generic [ref=f6e107]:
+              - img "Екатерина Лебедева" [ref=f6e110]
+              - generic [ref=f6e111]:
+                - heading "Екатерина Лебедева" [level=3] [ref=f6e113]
+                - generic [ref=f6e114]:
+                  - generic [ref=f6e118]: 25 сентября
+                  - generic [ref=f6e119]: ·
+                  - generic [ref=f6e120]: Дизайн
+            - generic [ref=f6e123]:
+              - img "Михаил Орлов" [ref=f6e126]
+              - generic [ref=f6e127]:
+                - heading "Михаил Орлов" [level=3] [ref=f6e129]
+                - generic [ref=f6e130]:
+                  - generic [ref=f6e134]: 2 октября
+                  - generic [ref=f6e135]: ·
+                  - generic [ref=f6e136]: Разработка
+        - generic [ref=f6e138]:
+          - generic [ref=f6e140]:
+            - heading "Доска пожеланий" [level=2] [ref=f6e141]
+            - paragraph [ref=f6e145]: Поздравления появляются в день рождения получателя
+          - paragraph [ref=f6e146]: "Поздравления: Дмитрий Волков"
+          - generic "Лента поздравлений" [ref=f6e147]:
+            - list [ref=f6e149]:
+              - listitem [ref=f6e150]:
+                - generic [ref=f6e152]:
+                  - generic [ref=f6e153]:
+                    - paragraph [ref=f6e154]: Дмитрий, с днём рождения! Код без багов и побольше кофе! ☕
+                    - button "Изменить пожелание" [ref=f6e155] [cursor=pointer]
+                  - generic [ref=f6e159]:
+                    - paragraph [ref=f6e160]:
+                      - text: "От: Ольга Кузнецова"
+                      - generic [ref=f6e161]: (olga.kuznetsova)
+                    - paragraph [ref=f6e162]: "Кому: Дмитрий Волков"
+    - contentinfo [ref=f6e163]:
+      - generic [ref=f6e166]:
+        - generic [ref=f6e171]: Корподарки
+        - generic [ref=f6e172]: — сбор на подарки коллегам
+  - alert [ref=f6e173]

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -27,8 +28,6 @@ import { useAppDate } from '@/lib/date-context';
 import { mockUsers } from '@/lib/mock-data';
 import { getBoardDate, getPersonColors, getTodayBirthdays } from '@/lib/birthdays';
 import type { Wish } from '@/lib/types';
-import { format } from 'date-fns';
-import { ru } from 'date-fns/locale';
 
 interface WishBoardProps {
   formOpen?: boolean;
@@ -48,6 +47,7 @@ export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+  const pathname = usePathname();
 
   const board = useMemo(() => getBoardDate(today, mockUsers), [today]);
 
@@ -77,15 +77,34 @@ export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
 
   useEffect(() => {
     const container = containerRef.current;
-    const list = listRef.current;
-    if (!container || !list) return;
-    const measure = () => setIsOverflowing(list.scrollWidth > container.clientWidth + 1);
+    if (!container) return;
+
+    let rafId: number | null = null;
+    const measure = () => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        const list = listRef.current;
+        if (!list) return;
+        setIsOverflowing((prev) => {
+          const next = list.scrollWidth > container.clientWidth + 1;
+          return next === prev ? prev : next;
+        });
+      });
+    };
+
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(container);
-    observer.observe(list);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
   }, [boardWishes, prefersReducedMotion]);
+
+  useEffect(() => {
+    setEditingWish(null);
+  }, [pathname]);
 
   const isLooping = isOverflowing && !prefersReducedMotion;
 
@@ -94,6 +113,12 @@ export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
     setInternalShowForm(open);
     onFormOpenChange?.(open);
   };
+
+  useEffect(() => {
+    if (showForm && wishRecipients.length === 1) {
+      setTargetUserId(wishRecipients[0].id);
+    }
+  }, [showForm, wishRecipients]);
 
   if (!user) return null;
 
@@ -168,9 +193,6 @@ export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
             {target && (
               <p className="text-xs text-muted-foreground truncate">Кому: {target.fullName}</p>
             )}
-            <p className="text-[10px] text-muted-foreground">
-              {format(new Date(wish.createdAt), 'd MMM', { locale: ru })}
-            </p>
           </div>
         </CardContent>
       </Card>

@@ -118,7 +118,7 @@ export function Header() {
           )}
           <ThemeSwitcher />
           {user && (
-            <DropdownMenu>
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"

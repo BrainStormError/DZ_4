@@ -17,23 +17,14 @@ function isThemeKey(value: string | null): value is ThemeKey {
   return value === 'warm' || value === 'festival' || value === 'premium';
 }
 
-function readDomTheme(): ThemeKey {
-  if (typeof document === 'undefined') return DEFAULT_THEME;
-  const attr = document.documentElement.getAttribute('data-theme');
-  return isThemeKey(attr) ? attr : DEFAULT_THEME;
-}
-
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeKey>(readDomTheme);
+  const [theme, setThemeState] = useState<ThemeKey>(DEFAULT_THEME);
 
   useEffect(() => {
-    const stored = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
-    if (isThemeKey(stored)) {
-      setThemeState(stored);
-      document.documentElement.setAttribute('data-theme', stored);
-    } else {
-      document.documentElement.setAttribute('data-theme', DEFAULT_THEME);
-    }
+    const attr = document.documentElement.getAttribute('data-theme');
+    const resolved = isThemeKey(attr) ? attr : DEFAULT_THEME;
+    setThemeState(resolved);
+    document.documentElement.setAttribute('data-theme', resolved);
   }, []);
 
   const setTheme = useCallback((t: ThemeKey) => {

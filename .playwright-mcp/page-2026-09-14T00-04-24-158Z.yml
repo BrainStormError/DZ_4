@@ -1,0 +1,117 @@
+- generic [active] [ref=f2e1]:
+  - generic [ref=f2e2]:
+    - banner [ref=f2e3]:
+      - generic [ref=f2e4]:
+        - generic [ref=f2e5]:
+          - link "Корподарки" [ref=f2e6] [cursor=pointer]:
+            - /url: /
+          - navigation [ref=f2e13]:
+            - link "Главная" [ref=f2e14] [cursor=pointer]:
+              - /url: /
+            - link "Календарь ДР" [ref=f2e18] [cursor=pointer]:
+              - /url: /calendar
+            - link "FAQ" [ref=f2e21] [cursor=pointer]:
+              - /url: /faq
+            - link "Админ" [ref=f2e25] [cursor=pointer]:
+              - /url: /admin
+        - generic [ref=f2e28]:
+          - button "Сменить тему" [ref=f2e33] [cursor=pointer]:
+            - generic [ref=f2e40]: Тёплый праздник
+          - 'button "Меню пользователя: Александр Петров" [ref=f2e41] [cursor=pointer]':
+            - img "Александр Петров" [ref=f2e43]
+            - generic [ref=f2e44]: Александр
+    - main [ref=f2e45]:
+      - generic [ref=f2e46]:
+        - generic [ref=f2e47]:
+          - heading "Частые вопросы" [level=1] [ref=f2e48]
+          - paragraph [ref=f2e52]: Ответы на популярные вопросы о сборе средств на подарки
+        - generic [ref=f2e53]:
+          - tablist [ref=f2e54]:
+            - tab "Вопросы и ответы" [ref=f2e55] [cursor=pointer]
+            - tab "Сообщения" [selected] [ref=f2e164] [cursor=pointer]
+          - tabpanel "Сообщения" [ref=f2e165]:
+            - generic [ref=f2e59]:
+              - generic [ref=f2e61]:
+                - heading "Сообщения" [level=3] [ref=f2e62]
+                - paragraph [ref=f2e66]: Обращения сотрудников и ответы в их ветки.
+              - generic [ref=f2e67]:
+                - generic [ref=f2e68]:
+                  - heading "Все обращения" [level=3] [ref=f2e69]
+                  - paragraph [ref=f2e72]: "Обращения сотрудников и ответы в их ветки. Активных веток: 2"
+                - generic [ref=f2e74]:
+                  - generic [ref=f2e75]:
+                    - button [ref=f2e76] [cursor=pointer]:
+                      - img "Анна Смирнова" [ref=f2e78]
+                      - generic [ref=f2e79]:
+                        - paragraph [ref=f2e80]: Анна Смирнова
+                        - paragraph [ref=f2e81]: Здравствуйте, Анна! Да, конечно — любая сумма приветствуется, участие добровольное.
+                    - button [ref=f2e177] [cursor=pointer]:
+                      - img "Дмитрий Волков" [ref=f2e84]
+                      - generic [ref=f2e85]:
+                        - paragraph [ref=f2e86]: Дмитрий Волков
+                        - paragraph [ref=f2e87]: Добрый день! Ближайший сбор — в день рождения коллеги. Спасибо!
+                    - button [ref=f2e89] [cursor=pointer]:
+                      - img "Екатерина Лебедева" [ref=f2e91]
+                      - generic [ref=f2e92]:
+                        - paragraph [ref=f2e93]: Екатерина Лебедева
+                        - paragraph [ref=f2e94]: Нет сообщений
+                    - button [ref=f2e95] [cursor=pointer]:
+                      - img "Михаил Орлов" [ref=f2e97]
+                      - generic [ref=f2e98]:
+                        - paragraph [ref=f2e99]: Михаил Орлов
+                        - paragraph [ref=f2e100]: Нет сообщений
+                    - button [ref=f2e101] [cursor=pointer]:
+                      - img "Ольга Кузнецова" [ref=f2e103]
+                      - generic [ref=f2e104]:
+                        - paragraph [ref=f2e105]: Ольга Кузнецова
+                        - paragraph [ref=f2e106]: Нет сообщений
+                    - button [ref=f2e107] [cursor=pointer]:
+                      - img "Сергей Морозов" [ref=f2e109]
+                      - generic [ref=f2e110]:
+                        - paragraph [ref=f2e111]: Сергей Морозов
+                        - paragraph [ref=f2e112]: Нет сообщений
+                    - button [ref=f2e113] [cursor=pointer]:
+                      - img "Мария Зайцева" [ref=f2e115]
+                      - generic [ref=f2e116]:
+                        - paragraph [ref=f2e117]: Мария Зайцева
+                        - paragraph [ref=f2e118]: Нет сообщений
+                    - button [ref=f2e119] [cursor=pointer]:
+                      - img "Павел Соколов" [ref=f2e121]
+                      - generic [ref=f2e122]:
+                        - paragraph [ref=f2e123]: Павел Соколов
+                        - paragraph [ref=f2e124]: Нет сообщений
+                    - button [ref=f2e125] [cursor=pointer]:
+                      - img "Ирина Новикова" [ref=f2e127]
+                      - generic [ref=f2e128]:
+                        - paragraph [ref=f2e129]: Ирина Новикова
+                        - paragraph [ref=f2e130]: Нет сообщений
+                    - button [ref=f2e131] [cursor=pointer]:
+                      - img "Наталья Васильева" [ref=f2e133]
+                      - generic [ref=f2e134]:
+                        - paragraph [ref=f2e135]: Наталья Васильева
+                        - paragraph [ref=f2e136]: Нет сообщений
+                    - button [ref=f2e137] [cursor=pointer]:
+                      - img "Роман Михайлов" [ref=f2e139]
+                      - generic [ref=f2e140]:
+                        - paragraph [ref=f2e141]: Роман Михайлов
+                        - paragraph [ref=f2e142]: Нет сообщений
+                  - generic [ref=f2e143]:
+                    - generic [ref=f2e144]:
+                      - generic [ref=f2e167]:
+                        - img "Дмитрий Волков" [ref=f2e169]
+                        - generic [ref=f2e170]:
+                          - generic [ref=f2e171]: Когда ближайший сбор? Хочу успеть поздравить коллегу.
+                          - generic [ref=f2e172]: 11 сент., 16:00
+                      - generic [ref=f2e178]:
+                        - img "Александр Петров" [ref=f2e180]
+                        - generic [ref=f2e181]:
+                          - generic [ref=f2e182]: Добрый день! Ближайший сбор — в день рождения коллеги. Спасибо!
+                          - generic [ref=f2e183]: 14 сент., 03:04
+                    - generic [ref=f2e151]:
+                      - textbox "Ответить сотруднику..." [ref=f2e152]
+                      - button [disabled]
+    - contentinfo [ref=f2e153]:
+      - generic [ref=f2e156]:
+        - generic [ref=f2e161]: Корподарки
+        - generic [ref=f2e162]: — сбор на подарки коллегам
+  - alert [ref=f2e163]
