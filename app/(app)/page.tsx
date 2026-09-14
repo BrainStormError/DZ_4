@@ -51,7 +51,7 @@ export default function HomePage() {
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-3xl bg-card card-shadow mb-8">
+      <section className="relative overflow-hidden rounded-3xl bg-card mb-8">
         <div className="hero-overlay absolute inset-0" />
         <div className="relative px-6 py-12 sm:px-10 sm:py-16 lg:px-16 lg:py-20">
           <div className="flex flex-col items-start gap-4 max-w-2xl">
@@ -95,7 +95,7 @@ export default function HomePage() {
 
       {/* Team value */}
       <section className="mb-10">
-        <Card className="card-shadow">
+        <Card>
           <CardContent className="p-5 flex items-start gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 shrink-0">
               <Users className="h-5 w-5 text-primary" />
@@ -131,7 +131,7 @@ export default function HomePage() {
             ))}
           </div>
         ) : (
-          <Card className="card-shadow">
+          <Card>
             <CardContent className="p-8 text-center">
               <p className="text-4xl mb-3">🎈</p>
               <p className="text-sm text-muted-foreground">

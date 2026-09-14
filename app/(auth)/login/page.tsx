@@ -41,7 +41,7 @@ export default function LoginPage() {
       </div>
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center gap-3 mb-8">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground card-shadow">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
             <Gift className="h-8 w-8" />
           </div>
           <h1 className="font-heading text-3xl font-bold text-center">Корподарки</h1>
@@ -49,7 +49,7 @@ export default function LoginPage() {
             Поздравляйте коллег с днём рождения вместе
           </p>
         </div>
-        <Card className="card-shadow">
+        <Card>
           <CardHeader>
             <CardTitle className="text-xl">Вход в систему</CardTitle>
             <CardDescription>

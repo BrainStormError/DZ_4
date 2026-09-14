@@ -175,7 +175,7 @@ export function AdminTable() {
         </div>
       </div>
 
-      <Card className="card-shadow">
+      <Card>
         <CardContent className="p-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-sm font-medium flex items-center gap-2">
@@ -233,7 +233,7 @@ export function AdminTable() {
         </TabsList>
 
         <TabsContent value="history">
-        <Card className="card-shadow">
+        <Card>
           <CardHeader>
             <CardTitle className="text-lg">Журнал изменений сумм</CardTitle>
           </CardHeader>
@@ -288,7 +288,7 @@ export function AdminTable() {
         </TabsContent>
 
         <TabsContent value="table">
-        <Card className="card-shadow overflow-hidden">
+        <Card className="overflow-hidden">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <Table>

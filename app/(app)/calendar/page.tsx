@@ -111,7 +111,7 @@ export default function CalendarPage() {
       </div>
 
       {/* Calendar grid */}
-      <Card className="card-shadow mb-8">
+      <Card className="mb-8">
         <CardContent className="p-4">
           <div key={`${year}-${month}`} className="grid grid-cols-7 gap-1">
             {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map((d) => (
@@ -184,7 +184,7 @@ export default function CalendarPage() {
       )}
 
       {birthdaysInMonth.length === 0 && (
-        <Card className="card-shadow">
+        <Card>
           <CardContent className="p-8 text-center">
             <CalendarDays className="h-10 w-10 mx-auto mb-3 text-muted-foreground opacity-30" />
             <p className="text-sm text-muted-foreground">

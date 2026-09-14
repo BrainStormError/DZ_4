@@ -99,7 +99,7 @@ function FAQContent() {
 
         <TabsContent value="faq">
           <div className="flex flex-col gap-4">
-            <Card className="card-shadow">
+            <Card>
               <CardContent className="p-4">
                 <Accordion type="single" collapsible className="w-full">
                   {FAQ_ITEMS.map((item) => (
@@ -120,7 +120,7 @@ function FAQContent() {
 
         <TabsContent value="chat">
           <div className="flex flex-col gap-4">
-            <Card className="card-shadow">
+            <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Mail className="h-5 w-5 text-primary" />
