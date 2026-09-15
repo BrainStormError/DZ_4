@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import type { User } from './types';
 import { checkCorpEmail } from './corp-email';
 
@@ -43,8 +43,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (typeof window !== 'undefined') localStorage.removeItem(STORAGE_KEY);
   }, []);
 
+  const value = useMemo<AuthState>(
+    () => ({ user, ready, login, logout }),
+    [user, ready, login, logout]
+  );
+
   return (
-    <AuthContext.Provider value={{ user, ready, login, logout }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

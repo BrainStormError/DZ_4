@@ -1,0 +1,48 @@
+- generic [ref=f7e1]:
+  - generic [ref=f7e2]:
+    - banner [ref=f7e3]:
+      - generic [ref=f7e4]:
+        - generic [ref=f7e5]:
+          - link "Корподарки" [ref=f7e6] [cursor=pointer]:
+            - /url: /
+          - navigation [ref=f7e13]:
+            - link "Главная" [ref=f7e14] [cursor=pointer]:
+              - /url: /
+            - link "Календарь ДР" [ref=f7e18] [cursor=pointer]:
+              - /url: /calendar
+            - link "FAQ" [ref=f7e21] [cursor=pointer]:
+              - /url: /faq
+        - generic [ref=f7e25]:
+          - button "Сменить тему" [ref=f7e26] [cursor=pointer]:
+            - generic [ref=f7e33]: Тёплый праздник
+          - 'button "Меню пользователя: Анна Смирнова" [ref=f7e34] [cursor=pointer]':
+            - img "Анна Смирнова" [ref=f7e36]
+            - generic [ref=f7e37]: Анна
+    - main [ref=f7e38]:
+      - generic [ref=f7e39]:
+        - generic [ref=f7e40]:
+          - heading "Частые вопросы" [level=1] [ref=f7e41]
+          - paragraph [ref=f7e45]: Ответы на популярные вопросы о сборе средств на подарки
+        - generic [ref=f7e46]:
+          - tablist [ref=f7e47]:
+            - tab "Вопросы и ответы" [selected] [ref=f7e48] [cursor=pointer]
+            - tab "Написать админу" [ref=f7e49] [cursor=pointer]
+          - tabpanel "Вопросы и ответы" [ref=f7e50]:
+            - generic [ref=f7e54]:
+              - heading [level=3] [ref=f7e56]:
+                - button "Обязательно ли участвовать в сборе?" [ref=f7e57] [cursor=pointer]
+              - heading [level=3] [ref=f7e61]:
+                - button "Кто видит суммы сборов?" [ref=f7e62] [cursor=pointer]
+              - heading [level=3] [ref=f7e66]:
+                - button "Может ли администратор изменить сумму сбора?" [ref=f7e67] [cursor=pointer]
+              - heading [level=3] [ref=f7e71]:
+                - button "Как автор отображается на доске пожеланий?" [ref=f7e72] [cursor=pointer]
+              - heading [level=3] [ref=f7e76]:
+                - button "Как войти в систему?" [ref=f7e77] [cursor=pointer]
+              - heading [level=3] [ref=f7e81]:
+                - button "Что если именинник отказался от подарка?" [ref=f7e82] [cursor=pointer]
+    - contentinfo [ref=f7e85]:
+      - generic [ref=f7e88]:
+        - generic [ref=f7e93]: Корподарки
+        - generic [ref=f7e94]: — сбор на подарки коллегам
+  - alert [ref=f7e95]

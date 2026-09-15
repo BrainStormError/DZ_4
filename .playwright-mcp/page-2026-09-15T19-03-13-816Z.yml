@@ -1,0 +1,20 @@
+- generic [active] [ref=f1e1]:
+  - generic [ref=f1e2]:
+    - button "Сменить тему" [ref=f1e4] [cursor=pointer]:
+      - generic [ref=f1e11]: Тёплый праздник
+    - generic [ref=f1e12]:
+      - generic [ref=f1e13]:
+        - heading "Корподарки" [level=1] [ref=f1e19]
+        - paragraph [ref=f1e20]: Поздравляйте коллег с днём рождения вместе
+      - generic [ref=f1e21]:
+        - generic [ref=f1e22]:
+          - heading "Вход в систему" [level=3] [ref=f1e23]
+          - paragraph [ref=f1e24]: Войдите с помощью корпоративной почты @company.com
+        - generic [ref=f1e26]:
+          - generic [ref=f1e27]:
+            - generic [ref=f1e28]: Корпоративная почта
+            - textbox "Корпоративная почта" [ref=f1e33]:
+              - /placeholder: name@company.com
+          - button "Войти" [ref=f1e34] [cursor=pointer]
+          - paragraph [ref=f1e35]: "Это демо-режим. Попробуйте: anna.smirnova@company.com или alexander.petrov@company.com (админ)"
+  - alert [ref=f1e36]

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { useData } from '@/lib/data-context';
+import { useChats } from '@/lib/data-context';
 import { countUnreadMessages } from '@/lib/data-store';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { Button } from '@/components/ui/button';
@@ -27,7 +27,7 @@ const navItems = [
 
 export function Header() {
   const { user, logout } = useAuth();
-  const { chats } = useData();
+  const { chats } = useChats();
   const pathname = usePathname();
 
   const isAdmin = user?.role === 'admin';

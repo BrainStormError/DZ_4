@@ -22,11 +22,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Gift, Mail, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Gift, Mail, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import type { User } from '@/lib/types';
 import { useAuth } from '@/lib/auth-context';
-import { useData } from '@/lib/data-context';
+import { useDonations, useWishes } from '@/lib/data-context';
 import { useAppDate } from '@/lib/date-context';
+import { useAsyncAction } from '@/lib/hooks';
 import { checkCorpEmail } from '@/lib/corp-email';
 import { mockUsers } from '@/lib/mock-data';
 import { getCongratulatableUsers } from '@/lib/birthdays';
@@ -43,7 +45,8 @@ type Step = 'recipient' | 'email' | 'amount' | 'message' | 'confirm' | 'success'
 
 export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogProps) {
   const { user } = useAuth();
-  const { addDonation, addWish, history } = useData();
+  const { addDonation, history } = useDonations();
+  const { addWish } = useWishes();
   const { today, isPreview } = useAppDate();
   const [step, setStep] = useState<Step>('recipient');
   const [recipient, setRecipient] = useState<User | null>(null);
@@ -66,6 +69,26 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
         mockUsers.filter((u) => isGiftDeclined(u.id, history)).map((u) => u.id)
       ),
     [history]
+  );
+
+  const donateAction = useAsyncAction(
+    async (args: {
+      recipientId: string;
+      amount: number;
+      authorEmail: string;
+      wishText?: string;
+    }) => {
+      await Promise.resolve(addDonation(args.recipientId, args.amount));
+      if (args.wishText) {
+        await Promise.resolve(
+          addWish({
+            authorEmail: args.authorEmail,
+            targetUserId: args.recipientId,
+            text: args.wishText,
+          })
+        );
+      }
+    }
   );
 
   useEffect(() => {
@@ -124,18 +147,21 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
     setStep('confirm');
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (isPreview) return;
     if (!recipient || !user || parsedAmount === null) return;
-    addDonation(recipient.id, parsedAmount);
-    if (hasWish) {
-      addWish({
+    try {
+      await donateAction.mutate({
+        recipientId: recipient.id,
+        amount: parsedAmount,
         authorEmail: user.email,
-        targetUserId: recipient.id,
-        text: wishText.trim(),
+        wishText: hasWish ? wishText.trim() : undefined,
       });
+      toast.success(hasWish ? 'Поздравление отправлено' : 'Средства добавлены к сбору');
+      setStep('success');
+    } catch {
+      // error is rendered via Alert
     }
-    setStep('success');
   };
 
   const handleClose = () => {
@@ -335,6 +361,23 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
                   </AlertDescription>
                 </Alert>
               )}
+              {donateAction.error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    <p>{donateAction.error.message}</p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="mt-2"
+                      onClick={handleConfirm}
+                    >
+                      Повторить
+                    </Button>
+                  </AlertDescription>
+                </Alert>
+              )}
             </div>
             <DialogFooter>
               <Button
@@ -343,8 +386,12 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
               >
                 Назад
               </Button>
-              <Button onClick={handleConfirm} disabled={!canConfirm}>
-                <Gift className="h-4 w-4 mr-1" />
+              <Button onClick={handleConfirm} disabled={!canConfirm || donateAction.isLoading}>
+                {donateAction.isLoading ? (
+                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                ) : (
+                  <Gift className="h-4 w-4 mr-1" />
+                )}
                 {hasWish ? 'Поздравить' : 'Отправить средства'}
               </Button>
             </DialogFooter>

@@ -1,0 +1,113 @@
+- generic [ref=f11e1]:
+  - generic [ref=f11e2]:
+    - banner [ref=f11e3]:
+      - generic [ref=f11e4]:
+        - generic [ref=f11e5]:
+          - link "Корподарки" [ref=f11e6] [cursor=pointer]:
+            - /url: /
+          - navigation [ref=f11e13]:
+            - link "Главная" [ref=f11e14] [cursor=pointer]:
+              - /url: /
+            - link "Календарь ДР" [ref=f11e18] [cursor=pointer]:
+              - /url: /calendar
+            - link "FAQ" [ref=f11e21] [cursor=pointer]:
+              - /url: /faq
+            - link "Админ" [ref=f11e25] [cursor=pointer]:
+              - /url: /admin
+        - generic [ref=f11e28]:
+          - 'link "Непрочитанных сообщений: 1" [ref=f11e29] [cursor=pointer]':
+            - /url: /faq?tab=messages
+            - generic [ref=f11e32]: "1"
+          - button "Сменить тему" [ref=f11e33] [cursor=pointer]:
+            - generic [ref=f11e40]: Тёплый праздник
+          - 'button "Меню пользователя: Александр Петров" [ref=f11e41] [cursor=pointer]':
+            - img "Александр Петров" [ref=f11e43]
+            - generic [ref=f11e44]: Александр
+    - main [ref=f11e45]:
+      - generic [ref=f11e46]:
+        - generic [ref=f11e47]:
+          - heading "Частые вопросы" [level=1] [ref=f11e48]
+          - paragraph [ref=f11e52]: Ответы на популярные вопросы о сборе средств на подарки
+        - generic [ref=f11e53]:
+          - tablist [ref=f11e54]:
+            - tab "Вопросы и ответы" [ref=f11e55] [cursor=pointer]
+            - tab "Сообщения 1" [selected] [ref=f11e56] [cursor=pointer]:
+              - text: Сообщения
+              - generic [ref=f11e57]: "1"
+          - tabpanel "Сообщения 1" [ref=f11e58]:
+            - generic [ref=f11e59]:
+              - generic [ref=f11e61]:
+                - heading "Сообщения" [level=3] [ref=f11e62]
+                - paragraph [ref=f11e66]: Обращения сотрудников и ответы в их ветки.
+              - generic [ref=f11e67]:
+                - generic [ref=f11e68]:
+                  - heading "Все обращения" [level=3] [ref=f11e69]
+                  - paragraph [ref=f11e72]: "Обращения сотрудников и ответы в их ветки. Активных веток: 2"
+                - generic [ref=f11e74]:
+                  - generic [ref=f11e75]:
+                    - button [ref=f11e76] [cursor=pointer]:
+                      - img "Анна Смирнова" [ref=f11e78]
+                      - generic [ref=f11e79]:
+                        - paragraph [ref=f11e80]: Анна Смирнова
+                        - paragraph [ref=f11e81]: Здравствуйте, Анна! Да, конечно — любая сумма приветствуется, участие добровольное.
+                    - 'button "Дмитрий Волков Дмитрий Волков Когда ближайший сбор? Хочу успеть поздравить коллегу. Непрочитанных сообщений: 1" [ref=f11e82] [cursor=pointer]':
+                      - img "Дмитрий Волков" [ref=f11e84]
+                      - generic [ref=f11e85]:
+                        - paragraph [ref=f11e86]: Дмитрий Волков
+                        - paragraph [ref=f11e87]: Когда ближайший сбор? Хочу успеть поздравить коллегу.
+                      - 'generic "Непрочитанных сообщений: 1" [ref=f11e88]': "1"
+                    - button [ref=f11e89] [cursor=pointer]:
+                      - img "Екатерина Лебедева" [ref=f11e91]
+                      - generic [ref=f11e92]:
+                        - paragraph [ref=f11e93]: Екатерина Лебедева
+                        - paragraph [ref=f11e94]: Нет сообщений
+                    - button [ref=f11e95] [cursor=pointer]:
+                      - img "Михаил Орлов" [ref=f11e97]
+                      - generic [ref=f11e98]:
+                        - paragraph [ref=f11e99]: Михаил Орлов
+                        - paragraph [ref=f11e100]: Нет сообщений
+                    - button [ref=f11e101] [cursor=pointer]:
+                      - img "Ольга Кузнецова" [ref=f11e103]
+                      - generic [ref=f11e104]:
+                        - paragraph [ref=f11e105]: Ольга Кузнецова
+                        - paragraph [ref=f11e106]: Нет сообщений
+                    - button [ref=f11e107] [cursor=pointer]:
+                      - img "Сергей Морозов" [ref=f11e109]
+                      - generic [ref=f11e110]:
+                        - paragraph [ref=f11e111]: Сергей Морозов
+                        - paragraph [ref=f11e112]: Нет сообщений
+                    - button [ref=f11e113] [cursor=pointer]:
+                      - img "Мария Зайцева" [ref=f11e115]
+                      - generic [ref=f11e116]:
+                        - paragraph [ref=f11e117]: Мария Зайцева
+                        - paragraph [ref=f11e118]: Нет сообщений
+                    - button [ref=f11e119] [cursor=pointer]:
+                      - img "Павел Соколов" [ref=f11e121]
+                      - generic [ref=f11e122]:
+                        - paragraph [ref=f11e123]: Павел Соколов
+                        - paragraph [ref=f11e124]: Нет сообщений
+                    - button [ref=f11e125] [cursor=pointer]:
+                      - img "Ирина Новикова" [ref=f11e127]
+                      - generic [ref=f11e128]:
+                        - paragraph [ref=f11e129]: Ирина Новикова
+                        - paragraph [ref=f11e130]: Нет сообщений
+                    - button [ref=f11e131] [cursor=pointer]:
+                      - img "Наталья Васильева" [ref=f11e133]
+                      - generic [ref=f11e134]:
+                        - paragraph [ref=f11e135]: Наталья Васильева
+                        - paragraph [ref=f11e136]: Нет сообщений
+                    - button [ref=f11e137] [cursor=pointer]:
+                      - img "Роман Михайлов" [ref=f11e139]
+                      - generic [ref=f11e140]:
+                        - paragraph [ref=f11e141]: Роман Михайлов
+                        - paragraph [ref=f11e142]: Нет сообщений
+                  - generic [ref=f11e143]:
+                    - paragraph [ref=f11e149]: Выберите обращение сотрудника
+                    - generic [ref=f11e151]:
+                      - textbox "Ответить сотруднику..." [disabled] [ref=f11e152]
+                      - button [disabled]
+    - contentinfo [ref=f11e153]:
+      - generic [ref=f11e156]:
+        - generic [ref=f11e161]: Корподарки
+        - generic [ref=f11e162]: — сбор на подарки коллегам
+  - alert [ref=f11e163]

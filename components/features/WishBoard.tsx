@@ -21,10 +21,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { MessageSquareHeart, Send, Pencil } from 'lucide-react';
+import { MessageSquareHeart, Send, Pencil, Loader2, AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/lib/auth-context';
-import { useData } from '@/lib/data-context';
+import { useWishes } from '@/lib/data-context';
 import { useAppDate } from '@/lib/date-context';
+import { useAsyncAction } from '@/lib/hooks';
 import { mockUsers } from '@/lib/mock-data';
 import { getBoardDate, getPersonColors, getTodayBirthdays } from '@/lib/birthdays';
 import type { Wish } from '@/lib/types';
@@ -36,7 +39,7 @@ interface WishBoardProps {
 
 export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
   const { user } = useAuth();
-  const { wishes, addWish, updateWish } = useData();
+  const { wishes, addWish, updateWish } = useWishes();
   const { today, isPreview } = useAppDate();
   const [internalShowForm, setInternalShowForm] = useState(false);
   const [text, setText] = useState('');
@@ -63,6 +66,20 @@ export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
   );
   const canCongratulate = todayBirthdayUsers.length > 0;
 
+  const addWishAction = useAsyncAction(
+    async (args: Omit<Wish, 'id' | 'createdAt'>) => Promise.resolve(addWish(args)),
+    {
+      onSuccess: () => toast.success('Пожелание добавлено'),
+    }
+  );
+
+  const updateWishAction = useAsyncAction(
+    async (args: { id: string; text: string }) => Promise.resolve(updateWish(args.id, args.text)),
+    {
+      onSuccess: () => toast.success('Пожелание обновлено'),
+    }
+  );
+
   useEffect(() => {
     setEditingWish(null);
   }, [pathname]);
@@ -87,18 +104,26 @@ export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
   const getUserById = (id: string) => mockUsers.find((u) => u.id === id);
   const emailToNick = (email: string) => email.split('@')[0];
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const submitWish = async () => {
     if (isPreview) return;
     if (!text.trim() || !targetUserId) return;
-    addWish({
-      authorEmail: user.email,
-      targetUserId,
-      text: text.trim(),
-    });
-    setText('');
-    setTargetUserId('');
-    setShowForm(false);
+    try {
+      await addWishAction.mutate({
+        authorEmail: user.email,
+        targetUserId,
+        text: text.trim(),
+      });
+      setText('');
+      setTargetUserId('');
+      setShowForm(false);
+    } catch {
+      // error is rendered via Alert
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    submitWish();
   };
 
   const handleEditOpen = (wish: Wish) => {
@@ -106,13 +131,21 @@ export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
     setEditText(wish.text);
   };
 
-  const handleEditSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const submitEdit = async () => {
     if (isPreview) return;
     if (!editingWish || !editText.trim()) return;
-    updateWish(editingWish.id, editText.trim());
-    setEditingWish(null);
-    setEditText('');
+    try {
+      await updateWishAction.mutate({ id: editingWish.id, text: editText.trim() });
+      setEditingWish(null);
+      setEditText('');
+    } catch {
+      // error is rendered via Alert
+    }
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    submitEdit();
   };
 
   const renderCard = (wish: Wish) => {
@@ -227,12 +260,33 @@ export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
                   required
                 />
               </div>
+              {addWishAction.error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    <p>{addWishAction.error.message}</p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="mt-2"
+                      onClick={submitWish}
+                    >
+                      Повторить
+                    </Button>
+                  </AlertDescription>
+                </Alert>
+              )}
               <Button
                 type="submit"
-                disabled={!text.trim() || !targetUserId || isPreview}
+                disabled={!text.trim() || !targetUserId || isPreview || addWishAction.isLoading}
                 className="self-start"
               >
-                <Send className="h-4 w-4 mr-1" />
+                {addWishAction.isLoading ? (
+                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4 mr-1" />
+                )}
                 Отправить
               </Button>
             </form>
@@ -287,11 +341,34 @@ export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
                 autoFocus
               />
             </div>
+            {updateWishAction.error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  <p>{updateWishAction.error.message}</p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                    onClick={submitEdit}
+                  >
+                    Повторить
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            )}
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setEditingWish(null)}>
                 Отмена
               </Button>
-              <Button type="submit" disabled={!editText.trim() || isPreview}>
+              <Button
+                type="submit"
+                disabled={!editText.trim() || isPreview || updateWishAction.isLoading}
+              >
+                {updateWishAction.isLoading ? (
+                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                ) : null}
                 Сохранить
               </Button>
             </DialogFooter>

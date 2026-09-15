@@ -1,0 +1,86 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - link "Корподарки" [ref=e6] [cursor=pointer]:
+            - /url: /
+          - navigation [ref=e13]:
+            - link "Главная" [ref=e14] [cursor=pointer]:
+              - /url: /
+            - link "Календарь ДР" [ref=e18] [cursor=pointer]:
+              - /url: /calendar
+            - link "FAQ" [ref=e21] [cursor=pointer]:
+              - /url: /faq
+        - generic [ref=e25]:
+          - button "Сменить тему" [ref=e26] [cursor=pointer]:
+            - generic [ref=e33]: Тёплый праздник
+          - 'button "Меню пользователя: Анна Смирнова" [ref=e34] [cursor=pointer]':
+            - img "Анна Смирнова" [ref=e36]
+            - generic [ref=e37]: Анна
+    - main [ref=e38]:
+      - generic [ref=e39]:
+        - generic [ref=e43]:
+          - heading "Корпоративные подарки ко дню рождения" [level=1] [ref=e44]: Корпоративные подаркико дню рождения
+          - paragraph [ref=e45]: Мы собираем средства на подарки коллегам к их дню рождения. Любой сотрудник может присоединиться — это добровольно.
+          - generic [ref=e46]:
+            - button "Поздравить / отправить средства" [ref=e47] [cursor=pointer]
+            - button "Оставить пожелание" [disabled]
+          - paragraph [ref=e52]: Сегодня именинников нет — пожелание доступно только в день рождения, а поздравить заранее можно денежным взносом.
+        - generic [ref=e62]:
+          - heading "Команда — это важно" [level=3] [ref=e63]
+          - paragraph [ref=e64]: Каждый подарок — знак внимания от коллег.
+        - generic [ref=e65]:
+          - heading "🎂 Именинники сегодня" [level=2] [ref=e67]:
+            - generic [ref=e68]: 🎂
+            - text: Именинники сегодня
+          - generic [ref=e70]:
+            - paragraph [ref=e71]: 🎈
+            - paragraph [ref=e72]: Сегодня именинников нет. Загляните в календарь, чтобы не пропустить ближайший день рождения!
+        - generic [ref=e73]:
+          - heading "Скоро день рождения" [level=2] [ref=e74]
+          - generic [ref=e75]:
+            - generic [ref=e78]:
+              - img "Екатерина Лебедева" [ref=e81]
+              - generic [ref=e82]:
+                - heading "Екатерина Лебедева" [level=3] [ref=e84]
+                - generic [ref=e85]:
+                  - generic [ref=e89]: 25 сентября
+                  - generic [ref=e90]: ·
+                  - generic [ref=e91]: Дизайн
+            - generic [ref=e94]:
+              - img "Михаил Орлов" [ref=e97]
+              - generic [ref=e98]:
+                - heading "Михаил Орлов" [level=3] [ref=e100]
+                - generic [ref=e101]:
+                  - generic [ref=e105]: 2 октября
+                  - generic [ref=e106]: ·
+                  - generic [ref=e107]: Разработка
+            - generic [ref=e110]:
+              - img "Ольга Кузнецова" [ref=e113]
+              - generic [ref=e114]:
+                - heading "Ольга Кузнецова" [level=3] [ref=e116]
+                - generic [ref=e117]:
+                  - generic [ref=e121]: 15 октября
+                  - generic [ref=e122]: ·
+                  - generic [ref=e123]: HR
+        - generic [ref=e125]:
+          - generic [ref=e127]:
+            - heading "Доска пожеланий" [level=2] [ref=e128]
+            - paragraph [ref=e132]: Поздравления появляются в день рождения получателя
+          - paragraph [ref=e133]: "Поздравления: Дмитрий Волков"
+          - generic "Лента поздравлений" [ref=e134]:
+            - list [ref=e135]:
+              - listitem [ref=e136]:
+                - generic [ref=e138]:
+                  - paragraph [ref=e140]: Дмитрий, с днём рождения! Код без багов и побольше кофе! ☕
+                  - generic [ref=e141]:
+                    - paragraph [ref=e142]:
+                      - text: "От: Ольга Кузнецова"
+                      - generic [ref=e143]: (olga.kuznetsova)
+                    - paragraph [ref=e144]: "Кому: Дмитрий Волков"
+    - contentinfo [ref=e145]:
+      - generic [ref=e148]:
+        - generic [ref=e153]: Корподарки
+        - generic [ref=e154]: — сбор на подарки коллегам
+  - alert [ref=e155]

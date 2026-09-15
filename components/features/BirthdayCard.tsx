@@ -1,9 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Cake, Gift } from 'lucide-react';
+import { Cake, Gift, Loader2 } from 'lucide-react';
 import type { User } from '@/lib/types';
 import { parseIsoLocal } from '@/lib/birthdays';
 import { format } from 'date-fns';
@@ -19,6 +20,15 @@ interface BirthdayCardProps {
 }
 
 export function BirthdayCard({ user, isToday, year, accentColor, onDonate, compact }: BirthdayCardProps) {
+  const [isDonating, setIsDonating] = useState(false);
+
+  const handleDonateClick = () => {
+    if (!onDonate) return;
+    setIsDonating(true);
+    onDonate(user);
+    setIsDonating(false);
+  };
+
   const initials = user.fullName
     .split(' ')
     .map((n) => n[0])
@@ -72,10 +82,15 @@ export function BirthdayCard({ user, isToday, year, accentColor, onDonate, compa
         </div>
         {!compact && onDonate && (
           <button
-            onClick={() => onDonate(user)}
-            className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-primary/10 px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+            onClick={handleDonateClick}
+            disabled={isDonating}
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-primary/10 px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground disabled:pointer-events-none disabled:opacity-50"
           >
-            <Gift className="h-4 w-4" />
+            {isDonating ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Gift className="h-4 w-4" />
+            )}
             Поздравить
           </button>
         )}

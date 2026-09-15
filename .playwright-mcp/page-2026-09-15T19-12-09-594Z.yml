@@ -1,0 +1,58 @@
+- generic [ref=f9e1]:
+  - generic [ref=f9e2]:
+    - banner [ref=f9e3]:
+      - generic [ref=f9e4]:
+        - generic [ref=f9e5]:
+          - link "Корподарки" [ref=f9e6] [cursor=pointer]:
+            - /url: /
+          - navigation [ref=f9e13]:
+            - link "Главная" [ref=f9e14] [cursor=pointer]:
+              - /url: /
+            - link "Календарь ДР" [ref=f9e18] [cursor=pointer]:
+              - /url: /calendar
+            - link "FAQ" [ref=f9e21] [cursor=pointer]:
+              - /url: /faq
+        - generic [ref=f9e25]:
+          - button "Сменить тему" [ref=f9e26] [cursor=pointer]:
+            - generic [ref=f9e33]: Тёплый праздник
+          - 'button "Меню пользователя: Анна Смирнова" [ref=f9e34] [cursor=pointer]':
+            - img "Анна Смирнова" [ref=f9e36]
+            - generic [ref=f9e37]: Анна
+    - main [ref=f9e38]:
+      - generic [ref=f9e39]:
+        - generic [ref=f9e40]:
+          - heading "Частые вопросы" [level=1] [ref=f9e41]
+          - paragraph [ref=f9e45]: Ответы на популярные вопросы о сборе средств на подарки
+        - generic [ref=f9e46]:
+          - tablist [ref=f9e47]:
+            - tab "Вопросы и ответы" [ref=f9e48] [cursor=pointer]
+            - tab "Написать админу" [selected] [ref=f9e49] [cursor=pointer]
+          - tabpanel "Написать админу" [ref=f9e50]:
+            - generic [ref=f9e51]:
+              - generic [ref=f9e53]:
+                - heading "Написать администратору" [level=3] [ref=f9e54]
+                - paragraph [ref=f9e58]: Ваша личная ветка переписки. Видите только свои сообщения.
+              - generic [ref=f9e59]:
+                - generic [ref=f9e60]:
+                  - heading "Чат с администратором" [level=3] [ref=f9e61]
+                  - paragraph [ref=f9e64]: Ваша личная ветка переписки с администратором
+                - generic [ref=f9e67]:
+                  - generic [ref=f9e68]:
+                    - generic [ref=f9e69]:
+                      - img "Анна Смирнова" [ref=f9e71]
+                      - generic [ref=f9e72]:
+                        - generic [ref=f9e73]: Здравствуйте! А можно ли подарить больше указанной суммы?
+                        - generic [ref=f9e74]: 9 сент., 11:00
+                    - generic [ref=f9e75]:
+                      - img "Александр Петров" [ref=f9e77]
+                      - generic [ref=f9e78]:
+                        - generic [ref=f9e79]: Здравствуйте, Анна! Да, конечно — любая сумма приветствуется, участие добровольное.
+                        - generic [ref=f9e80]: 9 сент., 12:30
+                  - generic [ref=f9e82]:
+                    - textbox "Напишите сообщение..." [ref=f9e83]
+                    - button [disabled]
+    - contentinfo [ref=f9e84]:
+      - generic [ref=f9e87]:
+        - generic [ref=f9e92]: Корподарки
+        - generic [ref=f9e93]: — сбор на подарки коллегам
+  - alert [ref=f9e94]

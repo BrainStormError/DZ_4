@@ -5,9 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MessageCircle, Send, Inbox } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { MessageCircle, Send, Inbox, Loader2, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
-import { useData } from '@/lib/data-context';
+import { useChats } from '@/lib/data-context';
+import { useAsyncAction } from '@/lib/hooks';
 import { countUnreadInThread } from '@/lib/data-store';
 import { mockUsers } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
@@ -16,10 +18,23 @@ import { ru } from 'date-fns/locale';
 
 export function ChatThread() {
   const { user } = useAuth();
-  const { getChatThread, getAllThreads, addChatMessage, markThreadRead } = useData();
+  const { getChatThread, getAllThreads, addChatMessage, markThreadRead } = useChats();
   const [text, setText] = useState('');
   const [selectedEmail, setSelectedEmail] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const sendAction = useAsyncAction(
+    async (args: { activeEmail: string; text: string }) =>
+      Promise.resolve(
+        addChatMessage(args.activeEmail, args.text, {
+          email: user?.email ?? '',
+          isAdmin: user?.role === 'admin',
+        })
+      ),
+    {
+      onSuccess: () => setText(''),
+    }
+  );
 
   const isAdmin = user?.role === 'admin';
   const employeeUsers = useMemo(() => mockUsers.filter((u) => u.role === 'employee'), []);
@@ -37,14 +52,18 @@ export function ChatThread() {
 
   if (!user) return null;
 
-  const handleSend = (e: React.FormEvent) => {
-    e.preventDefault();
+  const retrySend = async () => {
     if (!activeEmail || !text.trim()) return;
-    addChatMessage(activeEmail, text.trim(), {
-      email: user.email,
-      isAdmin: user.role === 'admin',
-    });
-    setText('');
+    try {
+      await sendAction.mutate({ activeEmail, text: text.trim() });
+    } catch {
+      // error rendered via Alert
+    }
+  };
+
+  const handleSend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await retrySend();
   };
 
   const renderMessages = () => {
@@ -166,6 +185,23 @@ export function ChatThread() {
               {renderMessages()}
             </div>
             <div className="border-t border-border p-3">
+              {sendAction.error && (
+                <Alert variant="destructive" className="mb-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    <p>{sendAction.error.message}</p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="mt-2"
+                      onClick={retrySend}
+                    >
+                      Повторить
+                    </Button>
+                  </AlertDescription>
+                </Alert>
+              )}
               <form onSubmit={handleSend} className="flex gap-2">
                 <Textarea
                   placeholder={isAdmin ? 'Ответить сотруднику...' : 'Напишите сообщение...'}
@@ -178,10 +214,14 @@ export function ChatThread() {
                 <Button
                   type="submit"
                   size="icon"
-                  disabled={!activeEmail || !text.trim()}
+                  disabled={!activeEmail || !text.trim() || sendAction.isLoading}
                   className="shrink-0"
                 >
-                  <Send className="h-4 w-4" />
+                  {sendAction.isLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
                 </Button>
               </form>
             </div>

@@ -1,0 +1,86 @@
+- generic [active] [ref=f26e1]:
+  - generic [ref=f26e2]:
+    - banner [ref=f26e3]:
+      - generic [ref=f26e4]:
+        - generic [ref=f26e5]:
+          - link "Корподарки" [ref=f26e6] [cursor=pointer]:
+            - /url: /
+          - navigation [ref=f26e13]:
+            - link "Главная" [ref=f26e14] [cursor=pointer]:
+              - /url: /
+            - link "Календарь ДР" [ref=f26e18] [cursor=pointer]:
+              - /url: /calendar
+            - link "FAQ" [ref=f26e21] [cursor=pointer]:
+              - /url: /faq
+        - generic [ref=f26e25]:
+          - button "Сменить тему" [ref=f26e26] [cursor=pointer]:
+            - generic [ref=f26e33]: Тёплый праздник
+          - 'button "Меню пользователя: Анна Смирнова" [ref=f26e34] [cursor=pointer]':
+            - img "Анна Смирнова" [ref=f26e36]
+            - generic [ref=f26e37]: Анна
+    - main [ref=f26e38]:
+      - generic [ref=f26e39]:
+        - generic [ref=f26e43]:
+          - heading "Корпоративные подарки ко дню рождения" [level=1] [ref=f26e44]: Корпоративные подаркико дню рождения
+          - paragraph [ref=f26e45]: Мы собираем средства на подарки коллегам к их дню рождения. Любой сотрудник может присоединиться — это добровольно.
+          - generic [ref=f26e46]:
+            - button "Поздравить / отправить средства" [ref=f26e47] [cursor=pointer]
+            - button "Оставить пожелание" [disabled]
+          - paragraph [ref=f26e52]: Сегодня именинников нет — пожелание доступно только в день рождения, а поздравить заранее можно денежным взносом.
+        - generic [ref=f26e62]:
+          - heading "Команда — это важно" [level=3] [ref=f26e63]
+          - paragraph [ref=f26e64]: Каждый подарок — знак внимания от коллег.
+        - generic [ref=f26e65]:
+          - heading "🎂 Именинники сегодня" [level=2] [ref=f26e67]:
+            - generic [ref=f26e68]: 🎂
+            - text: Именинники сегодня
+          - generic [ref=f26e70]:
+            - paragraph [ref=f26e71]: 🎈
+            - paragraph [ref=f26e72]: Сегодня именинников нет. Загляните в календарь, чтобы не пропустить ближайший день рождения!
+        - generic [ref=f26e73]:
+          - heading "Скоро день рождения" [level=2] [ref=f26e74]
+          - generic [ref=f26e75]:
+            - generic [ref=f26e78]:
+              - img "Екатерина Лебедева" [ref=f26e81]
+              - generic [ref=f26e82]:
+                - heading "Екатерина Лебедева" [level=3] [ref=f26e84]
+                - generic [ref=f26e85]:
+                  - generic [ref=f26e89]: 25 сентября
+                  - generic [ref=f26e90]: ·
+                  - generic [ref=f26e91]: Дизайн
+            - generic [ref=f26e94]:
+              - img "Михаил Орлов" [ref=f26e97]
+              - generic [ref=f26e98]:
+                - heading "Михаил Орлов" [level=3] [ref=f26e100]
+                - generic [ref=f26e101]:
+                  - generic [ref=f26e105]: 2 октября
+                  - generic [ref=f26e106]: ·
+                  - generic [ref=f26e107]: Разработка
+            - generic [ref=f26e110]:
+              - img "Ольга Кузнецова" [ref=f26e113]
+              - generic [ref=f26e114]:
+                - heading "Ольга Кузнецова" [level=3] [ref=f26e116]
+                - generic [ref=f26e117]:
+                  - generic [ref=f26e121]: 15 октября
+                  - generic [ref=f26e122]: ·
+                  - generic [ref=f26e123]: HR
+        - generic [ref=f26e125]:
+          - generic [ref=f26e127]:
+            - heading "Доска пожеланий" [level=2] [ref=f26e128]
+            - paragraph [ref=f26e132]: Поздравления появляются в день рождения получателя
+          - paragraph [ref=f26e133]: "Поздравления: Дмитрий Волков"
+          - generic "Лента поздравлений" [ref=f26e134]:
+            - list [ref=f26e135]:
+              - listitem [ref=f26e136]:
+                - generic [ref=f26e138]:
+                  - paragraph [ref=f26e140]: Дмитрий, с днём рождения! Код без багов и побольше кофе! ☕
+                  - generic [ref=f26e141]:
+                    - paragraph [ref=f26e142]:
+                      - text: "От: Ольга Кузнецова"
+                      - generic [ref=f26e143]: (olga.kuznetsova)
+                    - paragraph [ref=f26e144]: "Кому: Дмитрий Волков"
+    - contentinfo [ref=f26e145]:
+      - generic [ref=f26e148]:
+        - generic [ref=f26e153]: Корподарки
+        - generic [ref=f26e154]: — сбор на подарки коллегам
+  - alert [ref=f26e155]

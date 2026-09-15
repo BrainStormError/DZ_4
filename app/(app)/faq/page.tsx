@@ -1,7 +1,7 @@
 'use client';
 
-import { Suspense } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   Accordion,
   AccordionContent,
@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ChatThread } from '@/components/features/ChatThread';
 import { HelpCircle, Mail } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
-import { useData } from '@/lib/data-context';
+import { useChats } from '@/lib/data-context';
 import { countUnreadMessages } from '@/lib/data-store';
 
 const FAQ_ITEMS = [
@@ -51,25 +51,33 @@ const FAQ_ITEMS = [
 
 function FAQContent() {
   const { user } = useAuth();
-  const { chats } = useData();
+  const { chats } = useChats();
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
 
-  const tab = searchParams.get('tab') === 'messages' ? 'chat' : 'faq';
+  const urlTab = searchParams.get('tab') === 'messages' ? 'chat' : 'faq';
+  const [tab, setTab] = useState(urlTab);
+
+  useEffect(() => {
+    setTab(urlTab);
+  }, [urlTab]);
 
   const isAdmin = user?.role === 'admin';
   const unreadCount = isAdmin ? countUnreadMessages(chats) : 0;
 
   const handleTabChange = (value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
+    setTab(value);
+    const params = new URLSearchParams(window.location.search);
     if (value === 'chat') {
       params.set('tab', 'messages');
     } else {
       params.delete('tab');
     }
     const query = params.toString();
-    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    window.history.replaceState(
+      null,
+      '',
+      query ? `${window.location.pathname}?${query}` : window.location.pathname
+    );
   };
 
   return (

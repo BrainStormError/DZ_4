@@ -93,7 +93,6 @@ project/
 │   ├── features/           # бизнес-компоненты (BirthdayCard, DonateDialog, AdminTable, ChatThread, WishBoard)
 │   ├── layout/             # Header, Footer, AuthGate, ThemeSwitcher
 │   └── ui/                 # переиспользуемые UI-компоненты (shadcn/ui)
-├── hooks/                  # кастомные хуки
 ├── lib/                    # контексты, хранилище, mock-данные, типы, утилиты
 ├── openspec/               # спецификации проекта
 ├── components.json         # конфигурация shadcn/ui

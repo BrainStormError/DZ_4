@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Nunito, Bricolage_Grotesque, Manrope, Fraunces, Inter } from 'next/font/google';
+import { Toaster } from 'sonner';
 import { AuthProvider } from '@/lib/auth-context';
 import { ThemeProvider } from '@/lib/theme-context';
 import { DataProvider } from '@/lib/data-context';
@@ -10,30 +11,35 @@ const nunito = Nunito({
   subsets: ['latin', 'cyrillic'],
   variable: '--font-nunito',
   display: 'swap',
+  preload: true,
 });
 
 const bricolage = Bricolage_Grotesque({
   subsets: ['latin'],
   variable: '--font-bricolage',
   display: 'swap',
+  preload: false,
 });
 
 const manrope = Manrope({
   subsets: ['latin', 'cyrillic'],
   variable: '--font-manrope',
   display: 'swap',
+  preload: false,
 });
 
 const fraunces = Fraunces({
   subsets: ['latin'],
   variable: '--font-fraunces',
   display: 'swap',
+  preload: false,
 });
 
 const inter = Inter({
   subsets: ['latin', 'cyrillic'],
   variable: '--font-inter',
   display: 'swap',
+  preload: false,
 });
 
 const fontVariables = [
@@ -65,6 +71,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </DateProvider>
           </AuthProvider>
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );

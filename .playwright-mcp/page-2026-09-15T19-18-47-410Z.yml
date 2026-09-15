@@ -1,0 +1,222 @@
+- generic [ref=f13e1]:
+  - generic [ref=f13e2]:
+    - banner [ref=f13e3]:
+      - generic [ref=f13e4]:
+        - generic [ref=f13e5]:
+          - link "Корподарки" [ref=f13e6] [cursor=pointer]:
+            - /url: /
+          - navigation [ref=f13e13]:
+            - link "Главная" [ref=f13e14] [cursor=pointer]:
+              - /url: /
+            - link "Календарь ДР" [ref=f13e18] [cursor=pointer]:
+              - /url: /calendar
+            - link "FAQ" [ref=f13e21] [cursor=pointer]:
+              - /url: /faq
+            - link "Админ" [ref=f13e25] [cursor=pointer]:
+              - /url: /admin
+        - generic [ref=f13e28]:
+          - 'link "Непрочитанных сообщений: 1" [ref=f13e29] [cursor=pointer]':
+            - /url: /faq?tab=messages
+            - generic [ref=f13e32]: "1"
+          - button "Сменить тему" [ref=f13e33] [cursor=pointer]:
+            - generic [ref=f13e40]: Тёплый праздник
+          - 'button "Меню пользователя: Александр Петров" [ref=f13e41] [cursor=pointer]':
+            - img "Александр Петров" [ref=f13e43]
+            - generic [ref=f13e44]: Александр
+    - main [ref=f13e45]:
+      - generic [ref=f13e47]:
+        - generic [ref=f13e49]:
+          - heading "Админ-панель" [level=1] [ref=f13e50]
+          - paragraph [ref=f13e53]: Управление суммами сборов. Изменение доступно только при указании причины.
+        - generic [ref=f13e55]:
+          - generic [ref=f13e56]:
+            - paragraph [ref=f13e57]: Предпросмотр даты
+            - paragraph [ref=f13e62]: Посмотрите доску и блоки именинников на выбранный день. Реальные данные не изменяются.
+          - button "Выбрать дату" [ref=f13e64] [cursor=pointer]
+        - generic [ref=f13e67]:
+          - tablist [ref=f13e68]:
+            - tab "Таблица сборов" [selected] [ref=f13e69] [cursor=pointer]
+            - tab "Журнал изменений" [ref=f13e70] [cursor=pointer]
+          - tabpanel "Таблица сборов" [ref=f13e71]:
+            - table [ref=f13e76]:
+              - rowgroup [ref=f13e77]:
+                - row [ref=f13e78]:
+                  - columnheader "Сотрудник" [ref=f13e79]
+                  - columnheader "Отдел" [ref=f13e80]
+                  - columnheader "Дата рождения" [ref=f13e81]
+                  - columnheader "Сумма сбора" [ref=f13e82]
+                  - columnheader "Подарок" [ref=f13e83]
+                  - columnheader "Действие" [ref=f13e84]
+              - rowgroup [ref=f13e85]:
+                - row [ref=f13e86]:
+                  - cell [ref=f13e87]:
+                    - generic [ref=f13e88]:
+                      - img "Анна Смирнова" [ref=f13e90]
+                      - generic [ref=f13e91]:
+                        - paragraph [ref=f13e92]: Анна Смирнова
+                        - paragraph [ref=f13e93]: anna.smirnova@company.com
+                  - cell "Маркетинг" [ref=f13e94]
+                  - cell "13 сентября 1990" [ref=f13e95]
+                  - cell "12 500 ₽" [ref=f13e96]
+                  - cell [ref=f13e97]:
+                    - button "Не выслано" [ref=f13e98] [cursor=pointer]
+                  - cell [ref=f13e99]:
+                    - button "Изменить" [ref=f13e100] [cursor=pointer]
+                - row [ref=f13e104]:
+                  - cell [ref=f13e105]:
+                    - generic [ref=f13e106]:
+                      - img "Дмитрий Волков" [ref=f13e108]
+                      - generic [ref=f13e109]:
+                        - paragraph [ref=f13e110]: Дмитрий Волков
+                        - paragraph [ref=f13e111]: dmitry.volkov@company.com
+                  - cell "Разработка" [ref=f13e112]
+                  - cell "14 сентября 1988" [ref=f13e113]
+                  - cell "8 300 ₽" [ref=f13e114]
+                  - cell [ref=f13e115]:
+                    - button "Не выслано" [ref=f13e116] [cursor=pointer]
+                  - cell [ref=f13e117]:
+                    - button "Изменить" [ref=f13e118] [cursor=pointer]
+                - row [ref=f13e122]:
+                  - cell [ref=f13e123]:
+                    - generic [ref=f13e124]:
+                      - img "Екатерина Лебедева" [ref=f13e126]
+                      - generic [ref=f13e127]:
+                        - paragraph [ref=f13e128]: Екатерина Лебедева
+                        - paragraph [ref=f13e129]: ekaterina.lebedeva@company.com
+                  - cell "Дизайн" [ref=f13e130]
+                  - cell "25 сентября 1992" [ref=f13e131]
+                  - cell "0 ₽" [ref=f13e132]
+                  - cell "Отказ" [ref=f13e133]
+                  - cell "Изменить" [ref=f13e135]:
+                    - button "Изменить" [disabled]
+                - row [ref=f13e136]:
+                  - cell [ref=f13e137]:
+                    - generic [ref=f13e138]:
+                      - img "Михаил Орлов" [ref=f13e140]
+                      - generic [ref=f13e141]:
+                        - paragraph [ref=f13e142]: Михаил Орлов
+                        - paragraph [ref=f13e143]: mikhail.orlov@company.com
+                  - cell "Разработка" [ref=f13e144]
+                  - cell "2 октября 1985" [ref=f13e145]
+                  - cell "4 200 ₽" [ref=f13e146]
+                  - cell [ref=f13e147]:
+                    - button "Не выслано" [ref=f13e148] [cursor=pointer]
+                  - cell [ref=f13e149]:
+                    - button "Изменить" [ref=f13e150] [cursor=pointer]
+                - row [ref=f13e154]:
+                  - cell [ref=f13e155]:
+                    - generic [ref=f13e156]:
+                      - img "Ольга Кузнецова" [ref=f13e158]
+                      - generic [ref=f13e159]:
+                        - paragraph [ref=f13e160]: Ольга Кузнецова
+                        - paragraph [ref=f13e161]: olga.kuznetsova@company.com
+                  - cell "HR" [ref=f13e162]
+                  - cell "15 октября 1995" [ref=f13e163]
+                  - cell "9 800 ₽" [ref=f13e164]
+                  - cell [ref=f13e165]:
+                    - button "Не выслано" [ref=f13e166] [cursor=pointer]
+                  - cell [ref=f13e167]:
+                    - button "Изменить" [ref=f13e168] [cursor=pointer]
+                - row [ref=f13e172]:
+                  - cell [ref=f13e173]:
+                    - generic [ref=f13e174]:
+                      - img "Сергей Морозов" [ref=f13e176]
+                      - generic [ref=f13e177]:
+                        - paragraph [ref=f13e178]: Сергей Морозов
+                        - paragraph [ref=f13e179]: sergey.morozov@company.com
+                  - cell "Разработка" [ref=f13e180]
+                  - cell "5 ноября 1987" [ref=f13e181]
+                  - cell "6 700 ₽" [ref=f13e182]
+                  - cell [ref=f13e183]:
+                    - button "Не выслано" [ref=f13e184] [cursor=pointer]
+                  - cell [ref=f13e185]:
+                    - button "Изменить" [ref=f13e186] [cursor=pointer]
+                - row [ref=f13e190]:
+                  - cell [ref=f13e191]:
+                    - generic [ref=f13e192]:
+                      - img "Мария Зайцева" [ref=f13e194]
+                      - generic [ref=f13e195]:
+                        - paragraph [ref=f13e196]: Мария Зайцева
+                        - paragraph [ref=f13e197]: maria.zaytseva@company.com
+                  - cell "Финансы" [ref=f13e198]
+                  - cell "20 ноября 1993" [ref=f13e199]
+                  - cell "11 200 ₽" [ref=f13e200]
+                  - cell [ref=f13e201]:
+                    - button "Не выслано" [ref=f13e202] [cursor=pointer]
+                  - cell [ref=f13e203]:
+                    - button "Изменить" [ref=f13e204] [cursor=pointer]
+                - row [ref=f13e208]:
+                  - cell [ref=f13e209]:
+                    - generic [ref=f13e210]:
+                      - img "Павел Соколов" [ref=f13e212]
+                      - generic [ref=f13e213]:
+                        - paragraph [ref=f13e214]: Павел Соколов
+                        - paragraph [ref=f13e215]: pavel.sokolov@company.com
+                  - cell "Разработка" [ref=f13e216]
+                  - cell "1 декабря 1989" [ref=f13e217]
+                  - cell "5 400 ₽" [ref=f13e218]
+                  - cell [ref=f13e219]:
+                    - button "Не выслано" [ref=f13e220] [cursor=pointer]
+                  - cell [ref=f13e221]:
+                    - button "Изменить" [ref=f13e222] [cursor=pointer]
+                - row [ref=f13e226]:
+                  - cell [ref=f13e227]:
+                    - generic [ref=f13e228]:
+                      - img "Ирина Новикова" [ref=f13e230]
+                      - generic [ref=f13e231]:
+                        - paragraph [ref=f13e232]: Ирина Новикова
+                        - paragraph [ref=f13e233]: irina.novikova@company.com
+                  - cell "Маркетинг" [ref=f13e234]
+                  - cell "18 декабря 1991" [ref=f13e235]
+                  - cell "7 900 ₽" [ref=f13e236]
+                  - cell [ref=f13e237]:
+                    - button "Не выслано" [ref=f13e238] [cursor=pointer]
+                  - cell [ref=f13e239]:
+                    - button "Изменить" [ref=f13e240] [cursor=pointer]
+                - row [ref=f13e244]:
+                  - cell [ref=f13e245]:
+                    - generic [ref=f13e246]:
+                      - img "Александр Петров" [ref=f13e248]
+                      - generic [ref=f13e249]:
+                        - paragraph [ref=f13e250]: Александр Петров
+                        - paragraph [ref=f13e251]: alexander.petrov@company.com
+                  - cell "Управление" [ref=f13e252]
+                  - cell "7 января 1986" [ref=f13e253]
+                  - cell "0 ₽" [ref=f13e254]
+                  - cell [ref=f13e255]:
+                    - button "Не выслано" [ref=f13e256] [cursor=pointer]
+                  - cell [ref=f13e257]:
+                    - button "Изменить" [ref=f13e258] [cursor=pointer]
+                - row [ref=f13e262]:
+                  - cell [ref=f13e263]:
+                    - generic [ref=f13e264]:
+                      - img "Наталья Васильева" [ref=f13e266]
+                      - generic [ref=f13e267]:
+                        - paragraph [ref=f13e268]: Наталья Васильева
+                        - paragraph [ref=f13e269]: natalia.vasileva@company.com
+                  - cell "Дизайн" [ref=f13e270]
+                  - cell "14 февраля 1994" [ref=f13e271]
+                  - cell "13 400 ₽" [ref=f13e272]
+                  - cell [ref=f13e273]:
+                    - button "Не выслано" [ref=f13e274] [cursor=pointer]
+                  - cell [ref=f13e275]:
+                    - button "Изменить" [ref=f13e276] [cursor=pointer]
+                - row [ref=f13e280]:
+                  - cell [ref=f13e281]:
+                    - generic [ref=f13e282]:
+                      - img "Роман Михайлов" [ref=f13e284]
+                      - generic [ref=f13e285]:
+                        - paragraph [ref=f13e286]: Роман Михайлов
+                        - paragraph [ref=f13e287]: roman.mikhailov@company.com
+                  - cell "Разработка" [ref=f13e288]
+                  - cell "22 марта 1988" [ref=f13e289]
+                  - cell "6 100 ₽" [ref=f13e290]
+                  - cell [ref=f13e291]:
+                    - button "Не выслано" [ref=f13e292] [cursor=pointer]
+                  - cell [ref=f13e293]:
+                    - button "Изменить" [ref=f13e294] [cursor=pointer]
+    - contentinfo [ref=f13e298]:
+      - generic [ref=f13e301]:
+        - generic [ref=f13e306]: Корподарки
+        - generic [ref=f13e307]: — сбор на подарки коллегам
+  - alert [ref=f13e308]

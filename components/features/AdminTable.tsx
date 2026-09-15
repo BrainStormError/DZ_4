@@ -36,11 +36,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Shield, Edit, AlertTriangle, CalendarClock, CalendarDays, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
+import { Shield, Edit, AlertTriangle, CalendarClock, CalendarDays, ChevronLeft, ChevronRight, RotateCcw, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { DayPicker } from 'react-day-picker';
 import { useAuth } from '@/lib/auth-context';
-import { useData } from '@/lib/data-context';
+import { useDonations } from '@/lib/data-context';
 import { useAppDate } from '@/lib/date-context';
+import { useAsyncAction } from '@/lib/hooks';
 import { mockUsers } from '@/lib/mock-data';
 import { isGiftDeclined, reasonLabel } from '@/lib/data-store';
 import { parseIsoLocal } from '@/lib/birthdays';
@@ -74,7 +76,7 @@ const DAY_PICKER_CLASSNAMES = {
 
 export function AdminTable() {
   const { user, ready } = useAuth();
-  const { donations, history, setGiftSent, updateDonation } = useData();
+  const { donations, history, setGiftSent, updateDonation } = useDonations();
   const { today, isPreview, previewDate, setPreviewDate, resetDate } = useAppDate();
   const [editTarget, setEditTarget] = useState<User | null>(null);
   const [editAmount, setEditAmount] = useState('');
@@ -82,7 +84,28 @@ export function AdminTable() {
   const [editComment, setEditComment] = useState('');
   const [previewOpen, setPreviewOpen] = useState(false);
   const [view, setView] = useState<'table' | 'history'>('table');
+  const [giftPendingId, setGiftPendingId] = useState<string | null>(null);
   const pathname = usePathname();
+
+  const giftAction = useAsyncAction(
+    async (args: { userId: string; sent: boolean }) =>
+      Promise.resolve(setGiftSent(args.userId, args.sent)),
+    {
+      onSuccess: () => toast.success('Статус обновлён'),
+      onError: (e) => toast.error(e.message),
+    }
+  );
+
+  const updateAction = useAsyncAction(
+    async (entry: Omit<DonationHistoryEntry, 'id' | 'createdAt'>) =>
+      Promise.resolve(updateDonation(entry)),
+    {
+      onSuccess: () => {
+        toast.success('Сумма обновлена');
+        setEditTarget(null);
+      },
+    }
+  );
 
   useEffect(() => {
     setEditTarget(null);
@@ -144,21 +167,36 @@ export function AdminTable() {
     setEditComment('');
   };
 
-  const handleSave = () => {
+  const handleToggleGift = async (userId: string, sent: boolean) => {
+    if (isPreview) return;
+    setGiftPendingId(userId);
+    try {
+      await giftAction.mutate({ userId, sent });
+    } catch {
+      // error toast handled via onError
+    } finally {
+      setGiftPendingId(null);
+    }
+  };
+
+  const handleSave = async () => {
     if (isPreview) return;
     if (!editTarget || !canSave) return;
     const newAmount = parseNonNegativeInt(editAmount);
     if (newAmount === null) return;
     const current = getDonation(editTarget.id).totalAmount;
-    updateDonation({
-      userId: editTarget.id,
-      adminEmail: user.email,
-      previousAmount: current,
-      newAmount,
-      reason: editReason,
-      comment: editComment.trim(),
-    });
-    setEditTarget(null);
+    try {
+      await updateAction.mutate({
+        userId: editTarget.id,
+        adminEmail: user.email,
+        previousAmount: current,
+        newAmount,
+        reason: editReason,
+        comment: editComment.trim(),
+      });
+    } catch {
+      // error rendered via Alert
+    }
   };
 
   return (
@@ -339,9 +377,12 @@ export function AdminTable() {
                               variant={donation.giftSent ? 'default' : 'outline'}
                               size="sm"
                               aria-pressed={donation.giftSent}
-                              onClick={() => setGiftSent(u.id, !donation.giftSent)}
-                              disabled={isPreview}
+                              onClick={() => handleToggleGift(u.id, !donation.giftSent)}
+                              disabled={isPreview || giftPendingId !== null}
                             >
+                              {giftPendingId === u.id ? (
+                                <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
+                              ) : null}
                               {donation.giftSent ? 'Выслано' : 'Не выслано'}
                             </Button>
                           )}
@@ -440,12 +481,32 @@ export function AdminTable() {
                 <AlertDescription>{saveHint}</AlertDescription>
               </Alert>
             )}
+            {updateAction.error && (
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  <p>{updateAction.error.message}</p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                    onClick={handleSave}
+                  >
+                    Повторить
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditTarget(null)}>
               Отмена
             </Button>
-            <Button onClick={handleSave} disabled={!canSave || isPreview}>
+            <Button onClick={handleSave} disabled={!canSave || isPreview || updateAction.isLoading}>
+              {updateAction.isLoading ? (
+                <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+              ) : null}
               Сохранить
             </Button>
           </DialogFooter>
