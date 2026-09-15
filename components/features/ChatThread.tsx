@@ -119,7 +119,7 @@ export function ChatThread() {
   };
 
   return (
-    <Card className="flex flex-col max-h-[600px] md:h-[600px]">
+    <Card className="flex flex-col h-[70dvh] md:h-[600px]">
       <CardHeader className="border-b border-border">
         <CardTitle className="text-lg flex items-center gap-2">
           <MessageCircle className="h-5 w-5 text-primary" />
@@ -131,7 +131,7 @@ export function ChatThread() {
             : 'Ваша личная ветка переписки с администратором'}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 overflow-hidden p-0">
+      <CardContent className="flex-1 min-h-0 overflow-hidden p-0">
         <div className={cn('flex h-full min-h-0', isAdmin ? 'flex-col md:flex-row' : 'flex-col')}>
           {isAdmin && (
             <div className="md:w-56 shrink-0 min-h-0 border-b md:border-b-0 md:border-r border-border overflow-y-auto max-h-44 md:max-h-none">

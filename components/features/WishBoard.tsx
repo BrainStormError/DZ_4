@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -46,6 +46,8 @@ export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
   const [targetUserId, setTargetUserId] = useState('');
   const [editingWish, setEditingWish] = useState<Wish | null>(null);
   const [editText, setEditText] = useState('');
+  const wishesScrollRef = useRef<HTMLDivElement>(null);
+  const [hasWishesOverflow, setHasWishesOverflow] = useState(false);
   const pathname = usePathname();
 
   const board = useMemo(() => getBoardDate(today, mockUsers), [today]);
@@ -83,6 +85,30 @@ export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
   useEffect(() => {
     setEditingWish(null);
   }, [pathname]);
+
+  useEffect(() => {
+    const el = wishesScrollRef.current;
+    if (!el) {
+      setHasWishesOverflow(false);
+      return;
+    }
+
+    const update = () => {
+      const list = el.firstElementChild as HTMLElement | null;
+      const last = list?.lastElementChild as HTMLElement | null;
+      setHasWishesOverflow(
+        !!last && last.getBoundingClientRect().right > el.getBoundingClientRect().right + 1
+      );
+    };
+
+    update();
+    el.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    return () => {
+      el.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
+  }, [boardWishes.length]);
 
   const showForm = formOpen ?? internalShowForm;
   const setShowForm = (open: boolean) => {
@@ -301,14 +327,27 @@ export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
       )}
 
       {boardWishes.length > 0 ? (
-        <div className="overflow-x-auto pb-2" tabIndex={0} aria-label="Лента поздравлений">
-          <ul className="flex w-max gap-4 pr-4">
-            {boardWishes.map((wish) => (
-              <li key={wish.id} className="w-[280px] sm:w-[320px] shrink-0">
-                {renderCard(wish)}
-              </li>
-            ))}
-          </ul>
+        <div className="relative">
+          <div
+            ref={wishesScrollRef}
+            className="overflow-x-auto pb-2 snap-x snap-mandatory"
+            tabIndex={0}
+            aria-label="Лента поздравлений"
+          >
+            <ul className="flex w-max gap-4 pr-4">
+              {boardWishes.map((wish) => (
+                <li key={wish.id} className="w-[280px] sm:w-[320px] shrink-0 snap-start">
+                  {renderCard(wish)}
+                </li>
+              ))}
+            </ul>
+          </div>
+          {hasWishesOverflow && (
+            <div
+              className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-background to-transparent"
+              aria-hidden="true"
+            />
+          )}
         </div>
       ) : (
         <div className="text-center py-12 text-muted-foreground">

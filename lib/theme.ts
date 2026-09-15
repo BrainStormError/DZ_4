@@ -6,7 +6,6 @@ export interface ThemeMeta {
   description: string;
   emoji: string;
   palette: { name: string; hex: string }[];
-  fonts: { heading: string; body: string };
 }
 
 export const THEMES: Record<ThemeKey, ThemeMeta> = {
@@ -23,7 +22,6 @@ export const THEMES: Record<ThemeKey, ThemeMeta> = {
       { name: 'Розовый акцент', hex: '#F4A6B5' },
       { name: 'Мятный', hex: '#A8D5BA' },
     ],
-    fonts: { heading: 'Nunito', body: 'Nunito' },
   },
   festival: {
     key: 'festival',
@@ -38,7 +36,6 @@ export const THEMES: Record<ThemeKey, ThemeMeta> = {
       { name: 'Тёмный фон', hex: '#1A0B2E' },
       { name: 'Белый текст', hex: '#FFFFFF' },
     ],
-    fonts: { heading: 'Bricolage Grotesque', body: 'Manrope' },
   },
   premium: {
     key: 'premium',
@@ -53,7 +50,6 @@ export const THEMES: Record<ThemeKey, ThemeMeta> = {
       { name: 'Серый', hex: '#8A8A8A' },
       { name: 'Золото-блёстки', hex: '#C9A961' },
     ],
-    fonts: { heading: 'Fraunces', body: 'Inter' },
   },
 };
 

@@ -6,7 +6,7 @@ import { PreviewBanner } from '@/components/layout/PreviewBanner';
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <AuthGate>
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-[100dvh] flex flex-col">
         <Header />
         <PreviewBanner />
         <main className="flex-1">{children}</main>

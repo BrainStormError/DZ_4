@@ -36,7 +36,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Shield, Edit, AlertTriangle, CalendarClock, CalendarDays, ChevronLeft, ChevronRight, RotateCcw, Loader2 } from 'lucide-react';
+import { Shield, Edit, AlertTriangle, CalendarClock, CalendarDays, ChevronLeft, ChevronRight, RotateCcw, Loader2, Gift } from 'lucide-react';
 import { toast } from 'sonner';
 import { DayPicker } from 'react-day-picker';
 import { useAuth } from '@/lib/auth-context';
@@ -328,82 +328,88 @@ export function AdminTable() {
         <TabsContent value="table">
         <Card className="overflow-hidden">
           <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Сотрудник</TableHead>
-                    <TableHead>Отдел</TableHead>
-                    <TableHead>Дата рождения</TableHead>
-                    <TableHead className="text-right">Сумма сбора</TableHead>
-                    <TableHead className="text-center">Подарок</TableHead>
-                    <TableHead className="text-right">Действие</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockUsers.map((u) => {
-                    const donation = getDonation(u.id);
-                    const declined = isGiftDeclined(u.id, history);
-                    return (
-                      <TableRow key={u.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Avatar className="h-8 w-8">
-                              <AvatarImage src={u.avatarUrl} alt={u.fullName} />
-                              <AvatarFallback className="text-xs">
-                                {u.fullName.split(' ').map((n) => n[0]).join('')}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="min-w-0">
-                              <p className="text-sm font-medium truncate">{u.fullName}</p>
-                              <p className="text-xs text-muted-foreground truncate">{u.email}</p>
-                            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Сотрудник</TableHead>
+                  <TableHead className="hidden md:table-cell">Отдел</TableHead>
+                  <TableHead className="hidden md:table-cell">Дата рождения</TableHead>
+                  <TableHead className="text-right">Сумма сбора</TableHead>
+                  <TableHead className="text-center">Подарок</TableHead>
+                  <TableHead className="text-right">Действие</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {mockUsers.map((u) => {
+                  const donation = getDonation(u.id);
+                  const declined = isGiftDeclined(u.id, history);
+                  return (
+                    <TableRow key={u.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src={u.avatarUrl} alt={u.fullName} />
+                            <AvatarFallback className="text-xs">
+                              {u.fullName.split(' ').map((n) => n[0]).join('')}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium truncate">{u.fullName}</p>
+                            <p className="hidden text-xs text-muted-foreground truncate sm:block">
+                              {u.email}
+                            </p>
                           </div>
-                        </TableCell>
-                        <TableCell className="text-sm">{u.department}</TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          {format(parseIsoLocal(u.birthDate), 'd MMMM yyyy', { locale: ru })}
-                        </TableCell>
-                        <TableCell className="text-right font-semibold tabular-nums">
-                          {donation.totalAmount.toLocaleString('ru-RU')} ₽
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {declined ? (
-                            <Badge variant="secondary" aria-disabled="true">
-                              Отказ
-                            </Badge>
-                          ) : (
-                            <Button
-                              variant={donation.giftSent ? 'default' : 'outline'}
-                              size="sm"
-                              aria-pressed={donation.giftSent}
-                              onClick={() => handleToggleGift(u.id, !donation.giftSent)}
-                              disabled={isPreview || giftPendingId !== null}
-                            >
-                              {giftPendingId === u.id ? (
-                                <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
-                              ) : null}
-                              {donation.giftSent ? 'Выслано' : 'Не выслано'}
-                            </Button>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-right">
+                        </div>
+                      </TableCell>
+                      <TableCell className="hidden text-sm md:table-cell">{u.department}</TableCell>
+                      <TableCell className="hidden text-sm text-muted-foreground md:table-cell">
+                        {format(parseIsoLocal(u.birthDate), 'd MMMM yyyy', { locale: ru })}
+                      </TableCell>
+                      <TableCell className="text-right font-semibold tabular-nums">
+                        {donation.totalAmount.toLocaleString('ru-RU')} ₽
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {declined ? (
+                          <Badge variant="secondary" aria-disabled="true">
+                            Отказ
+                          </Badge>
+                        ) : (
                           <Button
-                            variant="outline"
+                            variant={donation.giftSent ? 'default' : 'outline'}
                             size="sm"
-                            onClick={() => handleOpenEdit(u)}
-                            disabled={isPreview || declined}
+                            aria-pressed={donation.giftSent}
+                            aria-label={`Подарок: ${donation.giftSent ? 'выслано' : 'не выслано'}`}
+                            onClick={() => handleToggleGift(u.id, !donation.giftSent)}
+                            disabled={isPreview || giftPendingId !== null}
                           >
-                            <Edit className="h-3.5 w-3.5 mr-1" />
-                            Изменить
+                            {giftPendingId === u.id ? (
+                              <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
+                            ) : (
+                              <Gift className="h-3.5 w-3.5 sm:hidden" />
+                            )}
+                            <span className="hidden sm:inline">
+                              {donation.giftSent ? 'Выслано' : 'Не выслано'}
+                            </span>
                           </Button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          aria-label="Изменить"
+                          onClick={() => handleOpenEdit(u)}
+                          disabled={isPreview || declined}
+                        >
+                          <Edit className="h-3.5 w-3.5 mr-1" />
+                          <span className="hidden sm:inline">Изменить</span>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
         </TabsContent>

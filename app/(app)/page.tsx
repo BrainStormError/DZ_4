@@ -64,15 +64,20 @@ export default function HomePage() {
               Мы собираем средства на подарки коллегам к их дню рождения. Любой сотрудник может
               присоединиться — это добровольно.
             </p>
-            <div className="flex flex-wrap gap-3 mt-2">
-              <Button size="lg" onClick={() => handleDonate()} className="gap-2" disabled={isPreview}>
+            <div className="flex flex-col sm:flex-row gap-3 mt-2">
+              <Button
+                size="lg"
+                onClick={() => handleDonate()}
+                className="gap-2 w-full sm:w-auto whitespace-normal h-auto min-h-11 py-2.5 px-5 sm:px-8"
+                disabled={isPreview}
+              >
                 <Gift className="h-5 w-5" />
                 Поздравить / отправить средства
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="gap-2"
+                className="gap-2 w-full sm:w-auto whitespace-normal h-auto min-h-11 py-2.5 px-5 sm:px-8"
                 disabled={isPreview || !hasTodayBirthdays}
                 onClick={() => {
                   setWishFormOpen(true);
@@ -146,7 +151,7 @@ export default function HomePage() {
       {upcomingBirthdays.length > 0 && (
         <section className="mb-10">
           <h2 className="font-heading text-2xl font-bold mb-4">Скоро день рождения</h2>
-          <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {upcomingBirthdays.slice(0, 4).map((u) => (
               <BirthdayCard key={u.id} user={u} compact onDonate={handleDonate} />
             ))}
@@ -155,7 +160,7 @@ export default function HomePage() {
       )}
 
       {/* Wish board */}
-      <section className="mb-10" id="wish-board">
+      <section className="mb-10 scroll-mt-20" id="wish-board">
         <WishBoard formOpen={wishFormOpen} onFormOpenChange={setWishFormOpen} />
       </section>
 

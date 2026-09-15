@@ -35,7 +35,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8 relative">
+    <div className="min-h-[100dvh] flex flex-col items-center justify-center px-4 py-8 relative">
       <div className="absolute top-4 right-4">
         <ThemeSwitcher />
       </div>

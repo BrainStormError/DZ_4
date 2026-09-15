@@ -192,10 +192,12 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
                   <SelectContent>
                     {recipientOptions.map((u) => {
                       const declined = declinedUserIds.has(u.id);
+                      const label = `${u.fullName} — ${u.department} — ${u.email}${
+                        declined ? ' — отказался от подарка' : ''
+                      }`;
                       return (
-                        <SelectItem key={u.id} value={u.id} disabled={declined}>
-                          {u.fullName} — {u.department} — {u.email}
-                          {declined ? ' — отказался от подарка' : ''}
+                        <SelectItem key={u.id} value={u.id} disabled={declined} title={label}>
+                          {label}
                         </SelectItem>
                       );
                     })}

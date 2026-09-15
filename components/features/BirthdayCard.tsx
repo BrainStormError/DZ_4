@@ -44,7 +44,7 @@ export function BirthdayCard({ user, isToday, year, accentColor, onDonate, compa
   return (
     <Card
       style={isToday && accentColor ? { boxShadow: `0 0 0 2px ${accentColor}` } : undefined}
-      className={`overflow-hidden transition-transform hover:scale-[1.02] ${
+      className={`overflow-hidden transition-transform hoverable:hover:scale-[1.02] ${
         isToday && !accentColor ? 'ring-2 ring-primary' : ''
       }`}
     >

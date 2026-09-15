@@ -75,32 +75,46 @@ export default function CalendarPage() {
 
       {/* Month and year navigation */}
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <Button variant="outline" size="icon" onClick={goPrevYear} title="Предыдущий год">
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 w-8 shrink-0"
+            onClick={goPrevYear}
+            title="Предыдущий год"
+          >
             <ChevronsLeft className="h-4 w-4" />
           </Button>
           <Button
             variant="outline"
-            size="icon"
+            size="sm"
+            className="h-8 w-8 shrink-0"
             onClick={goPrevMonth}
             disabled={month === 0}
             title="Предыдущий месяц"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <h2 className="font-heading text-xl font-bold min-w-[160px] text-center">
+          <h2 className="font-heading text-lg sm:text-xl font-bold whitespace-nowrap text-center">
             {MONTHS[month]} {year}
           </h2>
           <Button
             variant="outline"
-            size="icon"
+            size="sm"
+            className="h-8 w-8 shrink-0"
             onClick={goNextMonth}
             disabled={month === 11}
             title="Следующий месяц"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="icon" onClick={goNextYear} title="Следующий год">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 w-8 shrink-0"
+            onClick={goNextYear}
+            title="Следующий год"
+          >
             <ChevronsRight className="h-4 w-4" />
           </Button>
         </div>
@@ -141,23 +155,32 @@ export default function CalendarPage() {
                     {day}
                   </span>
                   {hasBirthday && (
-                    <div className="mt-1 flex flex-col gap-0.5">
-                      {hasBirthday.slice(0, 2).map((u) => (
-                        <div
-                          key={u.id}
-                          className="truncate text-[10px] sm:text-xs text-foreground font-medium"
-                          title={u.fullName}
-                        >
-                          <span className="mr-0.5">🎂</span>
-                          {u.fullName.split(' ')[0]}
-                        </div>
-                      ))}
-                      {hasBirthday.length > 2 && (
-                        <span className="text-[10px] text-muted-foreground">
-                          +{hasBirthday.length - 2}
-                        </span>
-                      )}
-                    </div>
+                    <>
+                      <div
+                        className="mt-1 truncate text-[10px] text-foreground font-medium sm:hidden"
+                        title={hasBirthday.map((u) => u.fullName).join(', ')}
+                      >
+                        <span className="mr-0.5">🎂</span>
+                        {hasBirthday.length > 1 && `+${hasBirthday.length - 1}`}
+                      </div>
+                      <div className="mt-1 hidden flex-col gap-0.5 sm:flex">
+                        {hasBirthday.slice(0, 2).map((u) => (
+                          <div
+                            key={u.id}
+                            className="truncate text-[10px] sm:text-xs text-foreground font-medium"
+                            title={u.fullName}
+                          >
+                            <span className="mr-0.5">🎂</span>
+                            {u.fullName.split(' ')[0]}
+                          </div>
+                        ))}
+                        {hasBirthday.length > 2 && (
+                          <span className="text-[10px] text-muted-foreground">
+                            +{hasBirthday.length - 2}
+                          </span>
+                        )}
+                      </div>
+                    </>
                   )}
                 </div>
               );

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { useChats } from '@/lib/data-context';
@@ -29,9 +30,31 @@ export function Header() {
   const { user, logout } = useAuth();
   const { chats } = useChats();
   const pathname = usePathname();
+  const mobileNavRef = useRef<HTMLElement>(null);
+  const [hasNavOverflow, setHasNavOverflow] = useState(false);
 
   const isAdmin = user?.role === 'admin';
   const unreadCount = isAdmin ? countUnreadMessages(chats) : 0;
+
+  useEffect(() => {
+    const el = mobileNavRef.current;
+    if (!el) return;
+
+    const update = () => {
+      const last = el.lastElementChild as HTMLElement | null;
+      setHasNavOverflow(
+        !!last && last.getBoundingClientRect().right > el.getBoundingClientRect().right + 1
+      );
+    };
+
+    update();
+    el.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    return () => {
+      el.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
+  }, [isAdmin]);
 
   const initials = user
     ? user.fullName
@@ -151,12 +174,23 @@ export function Header() {
         </div>
       </div>
       {/* Mobile nav */}
-      <nav className="md:hidden flex items-center gap-1 px-4 pb-2 overflow-x-auto">
-        {renderNav(
-          'flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap',
-          'h-3.5 w-3.5'
+      <div className="relative md:hidden">
+        <nav
+          ref={mobileNavRef}
+          className="flex items-center gap-1 px-4 pb-2 overflow-x-auto snap-x snap-mandatory"
+        >
+          {renderNav(
+            'flex items-center gap-1.5 px-3 py-2.5 min-h-[44px] text-xs font-medium rounded-lg transition-colors whitespace-nowrap snap-start',
+            'h-3.5 w-3.5'
+          )}
+        </nav>
+        {hasNavOverflow && (
+          <div
+            className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-background to-transparent"
+            aria-hidden="true"
+          />
         )}
-      </nav>
+      </div>
     </header>
   );
 }
