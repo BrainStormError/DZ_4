@@ -151,7 +151,7 @@ export default function HomePage() {
       {upcomingBirthdays.length > 0 && (
         <section className="mb-10">
           <h2 className="font-heading text-2xl font-bold mb-4">Скоро день рождения</h2>
-          <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {upcomingBirthdays.slice(0, 4).map((u) => (
               <BirthdayCard key={u.id} user={u} compact onDonate={handleDonate} />
             ))}

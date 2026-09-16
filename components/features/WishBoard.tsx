@@ -29,7 +29,7 @@ import { useWishes } from '@/lib/data-context';
 import { useAppDate } from '@/lib/date-context';
 import { useAsyncAction } from '@/lib/hooks';
 import { mockUsers } from '@/lib/mock-data';
-import { getBoardDate, getPersonColors, getTodayBirthdays } from '@/lib/birthdays';
+import { getBoardWishes, getPersonColors, getTodayBirthdays } from '@/lib/birthdays';
 import type { Wish } from '@/lib/types';
 
 interface WishBoardProps {
@@ -50,18 +50,15 @@ export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
   const [hasWishesOverflow, setHasWishesOverflow] = useState(false);
   const pathname = usePathname();
 
-  const board = useMemo(() => getBoardDate(today, mockUsers), [today]);
-
-  const boardWishes = useMemo(() => {
-    const targetIds = new Set(board.users.map((u) => u.id));
-    return wishes
-      .filter((w) => targetIds.has(w.targetUserId))
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  }, [wishes, board.users]);
-
-  const colorByUserId = useMemo(() => getPersonColors(board.users), [board.users]);
-
   const todayBirthdayUsers = useMemo(() => getTodayBirthdays(today, mockUsers), [today]);
+
+  const boardWishes = useMemo(
+    () => getBoardWishes(today, mockUsers, wishes),
+    [today, wishes]
+  );
+
+  const colorByUserId = useMemo(() => getPersonColors(todayBirthdayUsers), [todayBirthdayUsers]);
+
   const wishRecipients = useMemo(
     () => todayBirthdayUsers.filter((u) => u.id !== user?.id),
     [todayBirthdayUsers, user?.id]
@@ -320,9 +317,9 @@ export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
         </Card>
       )}
 
-      {board.users.length > 0 && (
+      {todayBirthdayUsers.length > 0 && (
         <p className="text-sm text-muted-foreground">
-          Поздравления: {board.users.map((u) => u.fullName).join(', ')}
+          Поздравления: {todayBirthdayUsers.map((u) => u.fullName).join(', ')}
         </p>
       )}
 
@@ -334,9 +331,12 @@ export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
             tabIndex={0}
             aria-label="Лента поздравлений"
           >
-            <ul className="flex w-max gap-4 pr-4">
+            <ul className="flex w-max min-w-full justify-center gap-4 pr-4">
               {boardWishes.map((wish) => (
-                <li key={wish.id} className="w-[280px] sm:w-[320px] shrink-0 snap-start">
+                <li
+                  key={wish.id}
+                  className="w-[280px] sm:w-[320px] max-w-[520px] grow shrink-0 snap-start"
+                >
                   {renderCard(wish)}
                 </li>
               ))}
@@ -352,10 +352,10 @@ export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
       ) : (
         <div className="text-center py-12 text-muted-foreground">
           <MessageSquareHeart className="h-12 w-12 mx-auto mb-3 opacity-30" />
-          {board.users.length === 0 ? (
-            <p>Ближайших прошедших дней рождения нет. Загляните позже!</p>
+          {todayBirthdayUsers.length === 0 ? (
+            <p>Сегодня именинников нет — пожелания доступны в день рождения.</p>
           ) : (
-            <p>Пока нет пожеланий. Будьте первым!</p>
+            <p>Пока нет пожеланий. Оставьте первое поздравление!</p>
           )}
         </div>
       )}
