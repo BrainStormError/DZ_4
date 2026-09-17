@@ -39,6 +39,7 @@ import {
 import { Shield, Edit, AlertTriangle, CalendarClock, CalendarDays, ChevronLeft, ChevronRight, RotateCcw, Loader2, Gift } from 'lucide-react';
 import { toast } from 'sonner';
 import { DayPicker } from 'react-day-picker';
+import { AdminAccessDenied } from './AdminAccessDenied';
 import { useAuth } from '@/lib/auth-context';
 import { useDonations } from '@/lib/data-context';
 import { useAppDate } from '@/lib/date-context';
@@ -75,7 +76,7 @@ const DAY_PICKER_CLASSNAMES = {
 };
 
 export function AdminTable() {
-  const { user, ready } = useAuth();
+  const { user } = useAuth();
   const { donations, history, setGiftSent, updateDonation } = useDonations();
   const { today, isPreview, previewDate, setPreviewDate, resetDate } = useAppDate();
   const [editTarget, setEditTarget] = useState<User | null>(null);
@@ -111,23 +112,8 @@ export function AdminTable() {
     setEditTarget(null);
   }, [pathname]);
 
-  if (!ready) {
-    return (
-      <div className="flex flex-col gap-6" aria-busy="true">
-        <div className="h-8 w-56 rounded-md bg-muted" />
-        <div className="min-h-[70vh] rounded-lg border border-border bg-muted/30" />
-      </div>
-    );
-  }
-
   if (!user || user.role !== 'admin') {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <Shield className="h-12 w-12 text-muted-foreground mb-4" />
-        <p className="text-lg font-semibold">Доступ запрещён</p>
-        <p className="text-sm text-muted-foreground">Эта страница только для администраторов</p>
-      </div>
-    );
+    return <AdminAccessDenied />;
   }
 
   const getUserById = (id: string) => mockUsers.find((u) => u.id === id);

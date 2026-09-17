@@ -19,7 +19,6 @@ vi.mock('@/lib/auth-context', () => ({
   AuthProvider: ({ children }: { children: ReactNode }) => children,
   useAuth: () => ({
     user: authState.user,
-    ready: true,
     login: vi.fn(),
     logout: vi.fn(),
   }),

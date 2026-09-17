@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { useChats } from '@/lib/data-context';
 import { countUnreadMessages } from '@/lib/data-store';
@@ -30,11 +30,17 @@ export function Header() {
   const { user, logout } = useAuth();
   const { chats } = useChats();
   const pathname = usePathname();
+  const router = useRouter();
   const mobileNavRef = useRef<HTMLElement>(null);
   const [hasNavOverflow, setHasNavOverflow] = useState(false);
 
   const isAdmin = user?.role === 'admin';
   const unreadCount = isAdmin ? countUnreadMessages(chats) : 0;
+
+  const handleLogout = () => {
+    logout();
+    router.replace('/login');
+  };
 
   useEffect(() => {
     const el = mobileNavRef.current;
@@ -164,7 +170,7 @@ export function Header() {
                   <span className="text-xs font-normal text-muted-foreground">{user.email}</span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout} className="gap-2 text-destructive">
+                <DropdownMenuItem onClick={handleLogout} className="gap-2 text-destructive">
                   <LogOut className="h-4 w-4" />
                   Выйти
                 </DropdownMenuItem>

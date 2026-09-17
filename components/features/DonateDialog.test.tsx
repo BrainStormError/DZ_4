@@ -32,7 +32,6 @@ vi.mock('@/lib/auth-context', () => ({
       avatarUrl: '',
       role: 'employee',
     } as User,
-    ready: true,
     login: vi.fn(),
     logout: vi.fn(),
   }),

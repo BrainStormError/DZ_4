@@ -1,8 +1,11 @@
 import './globals.css';
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import { Manrope } from 'next/font/google';
 import { Toaster } from 'sonner';
 import { AuthProvider } from '@/lib/auth-context';
+import { AUTH_COOKIE_NAME } from '@/lib/auth-cookie';
+import { checkCorpEmail } from '@/lib/corp-email';
 import { ThemeProvider } from '@/lib/theme-context';
 import { DataProvider } from '@/lib/data-context';
 import { DateProvider } from '@/lib/date-context';
@@ -24,6 +27,10 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const email = cookies().get(AUTH_COOKIE_NAME)?.value;
+  const auth = email ? checkCorpEmail(email) : null;
+  const initialUser = auth?.ok && auth.user ? auth.user : null;
+
   return (
     <html lang="ru" className={fontVariables} suppressHydrationWarning>
       <head>
@@ -31,7 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <ThemeProvider>
-          <AuthProvider>
+          <AuthProvider initialUser={initialUser}>
             <DateProvider>
               <DataProvider>{children}</DataProvider>
             </DateProvider>

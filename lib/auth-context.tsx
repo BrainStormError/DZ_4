@@ -1,32 +1,32 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import type { User } from './types';
 import { checkCorpEmail } from './corp-email';
+import { clearAuthCookie, writeAuthCookie } from './auth-cookie';
 
 interface AuthState {
   user: User | null;
-  ready: boolean;
   login: (email: string) => { ok: boolean; error?: string };
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthState | undefined>(undefined);
 
-const STORAGE_KEY = 'corp-gift-auth-email';
+const LEGACY_STORAGE_KEY = 'corp-gift-auth-email';
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [ready, setReady] = useState(false);
+function dropLegacySession() {
+  if (typeof window !== 'undefined') localStorage.removeItem(LEGACY_STORAGE_KEY);
+}
 
-  useEffect(() => {
-    const stored = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
-    if (stored) {
-      const result = checkCorpEmail(stored);
-      if (result.ok && result.user) setUser(result.user);
-    }
-    setReady(true);
-  }, []);
+export function AuthProvider({
+  children,
+  initialUser = null,
+}: {
+  children: React.ReactNode;
+  initialUser?: User | null;
+}) {
+  const [user, setUser] = useState<User | null>(initialUser);
 
   const login = useCallback((email: string) => {
     const result = checkCorpEmail(email);
@@ -34,18 +34,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { ok: false, error: result.error };
     }
     setUser(result.user);
-    if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEY, result.user.email);
+    writeAuthCookie(result.user.email);
+    dropLegacySession();
     return { ok: true };
   }, []);
 
   const logout = useCallback(() => {
     setUser(null);
-    if (typeof window !== 'undefined') localStorage.removeItem(STORAGE_KEY);
+    clearAuthCookie();
+    dropLegacySession();
   }, []);
 
   const value = useMemo<AuthState>(
-    () => ({ user, ready, login, logout }),
-    [user, ready, login, logout]
+    () => ({ user, login, logout }),
+    [user, login, logout]
   );
 
   return (
