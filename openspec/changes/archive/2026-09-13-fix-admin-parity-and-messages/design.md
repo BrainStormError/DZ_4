@@ -1,78 +1,78 @@
 ## Context
 
-Приложение — клиентское демо на mock-данных: состояние живёт в React-контекстах (`ThemeProvider` → `AuthProvider` → `DataProvider`, см. `app/layout.tsx`) и сбрасывается при перезагрузке. Мотивация изменения — в `proposal.md`.
+The application is a client-side demo on mock data: state lives in React contexts (`ThemeProvider` → `AuthProvider` → `DataProvider`, see `app/layout.tsx`) and is reset on reload. The motivation for the change is in `proposal.md`.
 
-Текущее состояние, влияющее на подход:
+Current state affecting the approach:
 
-- `components/features/DonateDialog.tsx` ветвит шаги и тексты по `isAdmin`: администратор пропускает шаг `message`, а `addWish` вызывается только при `!isAdmin`.
-- `components/features/WishBoard.tsx` не имеет редактирования, а `useDataStore` (`lib/data-store.ts`) предоставляет только `addWish`.
-- `components/features/ChatThread.tsx` уже имеет режимы сотрудника и администратора, но `app/(app)/faq/page.tsx` жёстко называет вкладку «Написать админу», а `ChatMessage`/`ChatThread` (`lib/types.ts`) не хранят прочитанность.
-- `components/layout/Header.tsx` рендерит отдел пользователя как неинтерактивный `div` в стиле пункта меню, а `DataProvider` доступен шапке, так как оборачивает всё приложение в корневом layout.
-- Фразы про суммы и «тёплые слова» находятся в `components/layout/Footer.tsx` и `app/(app)/page.tsx`.
+- `components/features/DonateDialog.tsx` branches steps and texts by `isAdmin`: the administrator skips the `message` step, and `addWish` is called only when `!isAdmin`.
+- `components/features/WishBoard.tsx` has no editing, and `useDataStore` (`lib/data-store.ts`) provides only `addWish`.
+- `components/features/ChatThread.tsx` already has employee and administrator modes, but `app/(app)/faq/page.tsx` hard-codes the tab name as "Write to admin", and `ChatMessage`/`ChatThread` (`lib/types.ts`) do not store read status.
+- `components/layout/Header.tsx` renders the user's department as a non-interactive `div` styled like a menu item, and `DataProvider` is available to the header because it wraps the entire application in the root layout.
+- The phrases about amounts and "warm words" are located in `components/layout/Footer.tsx` and `app/(app)/page.tsx`.
 
 ## Goals / Non-Goals
 
 **Goals:**
 
-- Единый сценарий участия для администратора и сотрудника, включая шаг «Поздравление» и создание пожелания.
-- Возможность администратора редактировать текст любого пожелания.
-- Раздел переписки с названием «Сообщения» для администратора и индикацией непрочитанных сообщений на вкладке и в шапке.
-- Убрать ложный пункт меню и перечисленные фразы.
+- A single participation scenario for the administrator and the employee, including the "Congratulation" step and wish creation.
+- The ability for the administrator to edit the text of any wish.
+- A chat section named "Messages" for the administrator with unread message indication on the tab and in the header.
+- Remove the false menu item and the listed phrases.
 
 **Non-Goals:**
 
-- Персистентность, бэкенд, аутентификация и реальная защита доступа (роль проверяется в UI, как и в текущем демо).
-- Удаление пожеланий, пагинация и real-time-обновление переписки.
-- Изменение правил скрытия сумм от сотрудников и ответа FAQ «Кто видит суммы сборов?».
+- Persistence, backend, authentication, and real access protection (the role is checked in the UI, as in the current demo).
+- Wish deletion, pagination, and real-time chat updates.
+- Changing the rules for hiding amounts from employees and the FAQ answer "Who can see the collection amounts?".
 
 ## Decisions
 
-### Решение 1: единый сценарий в `DonateDialog`
+### Decision 1: a single scenario in `DonateDialog`
 
-Удаляются все проверки `isAdmin` в диалоге: шаги всегда идут `recipient → email → amount → message → confirm → success`, `addWish` вызывается для любой роли, тексты шагов и экрана результата становятся нейтральными (вариант сотрудника).
+All `isAdmin` checks in the dialog are removed: the steps always go `recipient → email → amount → message → confirm → success`, `addWish` is called for any role, and the step and result-screen texts become neutral (the employee variant).
 
-- Альтернатива — сохранить отдельный админ-поток: отклонена, так как противоречит требованию одинаковых форм.
+- Alternative — keep a separate admin flow: rejected because it contradicts the requirement of identical forms.
 
-### Решение 2: редактирование пожеланий
+### Decision 2: wish editing
 
-В `useDataStore` добавляется `updateWish(id, text)`, проксируемый через `DataContext`. На карточке пожелания отображается действие «Изменить» только при `user.role === 'admin'`; оно открывает диалог с `Textarea` и обновляет только текст — автор, получатель и `createdAt` не меняются.
+`updateWish(id, text)` is added to `useDataStore`, proxied through `DataContext`. On the wish card, the "Edit" action is displayed only when `user.role === 'admin'`; it opens a dialog with a `Textarea` and updates only the text — the author, recipient, and `createdAt` do not change.
 
-- Альтернатива — отдельная админ-таблица пожеланий: отклонена ради контекста правки на месте.
-- Альтернатива — inline-редактирование в карточке: отклонена, так как ломает сетку карточек.
+- Alternative — a separate admin wishes table: rejected in favor of the in-place editing context.
+- Alternative — inline editing in the card: rejected because it breaks the card grid.
 
-### Решение 3: модель непрочитанных
+### Decision 3: the unread model
 
-В `ChatMessage` добавляется необязательное поле `readByAdmin?: boolean`. Непрочитанные для администратора — сообщения с `isAdmin === false` и `readByAdmin !== true`. При открытии ветки администратором все её сообщения помечаются прочитанными через `markThreadRead(email)`. Область — только администратор (требование относится к его уведомлениям).
+An optional field `readByAdmin?: boolean` is added to `ChatMessage`. Unread for the administrator are messages with `isAdmin === false` and `readByAdmin !== true`. When the administrator opens a thread, all its messages are marked as read via `markThreadRead(email)`. Scope — administrator only (the requirement concerns their notifications).
 
-- Альтернатива — `lastReadAt` на ветке со сравнением времени: отклонена из-за хрупкости при равных или сдвинутых временных метках; явный флаг надёжнее.
+- Alternative — `lastReadAt` on the thread with time comparison: rejected due to fragility with equal or shifted timestamps; an explicit flag is more reliable.
 
-### Решение 4: индикация и переход из шапки
+### Decision 4: indication and navigation from the header
 
-На кнопке профиля в шапке отображается бейдж с числом непрочитанных сообщений, а также бейдж на вкладке «Сообщения». Клик ведёт на `/faq` с активной вкладкой сообщений: страница использует контролируемый `Tabs` и читает `?tab=messages` из `window.location.search` в `useEffect`.
+A badge with the number of unread messages is displayed on the profile button in the header, as well as a badge on the "Messages" tab. A click leads to `/faq` with the messages tab active: the page uses controlled `Tabs` and reads `?tab=messages` from `window.location.search` in `useEffect`.
 
-- Альтернатива — `useSearchParams`: требует Suspense-границы при статической сборке; отклонена ради простоты сборки.
-- Альтернатива — индикатор без перехода: отклонена, так как индикатор должен быть actionable.
+- Alternative — `useSearchParams`: requires a Suspense boundary during static build; rejected for simplicity of the build.
+- Alternative — an indicator without navigation: rejected because the indicator must be actionable.
 
-### Решение 5: раздел «Сообщения»
+### Decision 5: the "Messages" section
 
-Название вкладки и описание зависят от роли (`admin` → «Сообщения», иначе «Написать админу»); `ChatThread` получает вызов `markThreadRead` при выборе ветки. Логика списка обращений и ответа уже реализована и не переписывается.
+The tab name and description depend on the role (`admin` → "Messages", otherwise "Write to admin"); `ChatThread` gets a `markThreadRead` call when a thread is selected. The logic of the request list and reply is already implemented and is not rewritten.
 
-### Решение 6: меню профиля и копирайт
+### Decision 6: profile menu and copy
 
-Из меню профиля удаляется блок отдела. Из футера убирается утверждение о суммах (остаётся «Участие добровольное.»), из hero главной — предложение о видимости сумм, из карточки «Команда — это важно» — фраза «Тёплые слова важнее суммы.».
+The department block is removed from the profile menu. The statement about amounts is removed from the footer ("Participation is voluntary." remains), the sentence about amount visibility is removed from the home hero, and the phrase "Warm words matter more than the amount." is removed from the "The team matters" card.
 
 ## Risks / Trade-offs
 
-- [Редактирование пожеланий проверяется только в UI] → Согласуется с текущей mock-моделью; реальная защита вне объёма и отмечается как известное ограничение.
-- [Индикатор опирается на `DataProvider` в шапке] → Провайдер уже оборачивает всё приложение в корневом layout; дополнительных провайдеров не требуется.
-- [Отметка «прочитано» без real-time] → Для демо достаточно: при открытой ветке новые сообщения обрабатываются тем же правилом при следующем выборе/рендере.
-- [Удаление требования `ui-consistency` о суммах] → Каноническим местом остаётся футер с утверждением о добровольности; скрытие сумм регулируется способностью `donations`.
-- [Единый экран результата меняет ранее заявленное ролевое поведение] → Отражено `MODIFIED`/`REMOVED` дельтами `donations`.
+- [Wish editing is checked only in the UI] → Consistent with the current mock model; real protection is out of scope and is noted as a known limitation.
+- [The indicator relies on `DataProvider` in the header] → The provider already wraps the entire application in the root layout; no additional providers are required.
+- [The "read" mark without real-time] → Sufficient for the demo: with an open thread, new messages are handled by the same rule on the next selection/render.
+- [Removal of the `ui-consistency` requirement about amounts] → The footer with the voluntariness statement remains the canonical place; hiding amounts is governed by the `donations` capability.
+- [A single result screen changes the previously stated role-based behavior] → Reflected by `MODIFIED`/`REMOVED` deltas of `donations`.
 
 ## Migration Plan
 
-Изменение полностью клиентское и неперсистентное — миграций данных нет, откат через revert. Существующие mock-сообщения без `readByAdmin` трактуются как непрочитанные; для уже отвеченных веток `mockChats` флаг можно проставить сразу, чтобы счётчик не появлялся на старте.
+The change is entirely client-side and non-persistent — there are no data migrations; rollback is via revert. Existing mock messages without `readByAdmin` are treated as unread; for already answered `mockChats` threads, the flag can be set immediately so that the counter does not appear at startup.
 
 ## Open Questions
 
-Нет — решения, влияющие на спецификации, подход и состав задач, приняты выше.
+None — the decisions affecting the specifications, approach, and task set are made above.

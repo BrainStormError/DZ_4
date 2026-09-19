@@ -1,15 +1,15 @@
 ## ADDED Requirements
 
-### Requirement: Единый цвет именинника в карточке и ленте
+### Requirement: Single birthday person color in the card and the strip
 
-Карточка сотрудника в блоке «Именинники сегодня» и карточки его поздравлений в ленте ДОЛЖНЫ использовать один и тот же персональный цвет. Цвет ДОЛЖЕН назначаться сотруднику детерминированно, чтобы один и тот же именинник был узнаваем во всех блоках страницы.
+An employee's card in the "Birthday people today" block and the cards of their congratulations in the strip MUST use the same personal color. The color MUST be assigned to the employee deterministically, so that the same birthday person is recognizable in all blocks of the page.
 
-#### Scenario: Цвет карточки совпадает с цветом поздравлений
+#### Scenario: The card color matches the congratulation color
 
-- **WHEN** сотрудник отображается в блоке «Именинники сегодня» и его поздравления отображаются в ленте
-- **THEN** обводка карточки именинника совпадает по цвету с обводкой карточек его поздравлений
+- **WHEN** an employee is displayed in the "Birthday people today" block and their congratulations are displayed in the strip
+- **THEN** the outline of the birthday person's card matches in color the outline of their congratulation cards
 
-#### Scenario: Разные именинники различаются цветом
+#### Scenario: Different birthday people are distinguished by color
 
-- **WHEN** в ленте присутствуют поздравления для нескольких именинников
-- **THEN** каждый именинник получает собственный цвет, отличный от цвета другого именинника
+- **WHEN** the strip contains congratulations for several birthday people
+- **THEN** each birthday person receives their own color, different from the color of another birthday person

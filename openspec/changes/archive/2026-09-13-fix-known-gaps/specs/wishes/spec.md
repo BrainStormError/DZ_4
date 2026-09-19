@@ -1,56 +1,56 @@
 ## Purpose
 
-Предоставляет доску пожеланий, где автор отображается под корпоративным ником, и обеспечивает создание поздравлений коллегам.
+Provides a wish board where the author is displayed under a corporate nickname and enables creating congratulations for colleagues.
 
 ## ADDED Requirements
 
-### Requirement: Автор пожелания отображается под корпоративным ником
+### Requirement: The wish author is displayed under a corporate nickname
 
-Система ДОЛЖНА отображать автора пожелания под корпоративным ником — частью корпоративной почты до символа `@`, без раскрытия полного адреса. Пожелания ДОЛЖНЫ отображаться от новых к старым и ДОЛЖНЫ указывать получателя.
+The system MUST display the wish author under a corporate nickname — the part of the corporate email before the `@` symbol, without revealing the full address. Wishes MUST be displayed from new to old and MUST indicate the recipient.
 
-#### Scenario: Отображение автора под ником
+#### Scenario: Displaying the author under a nickname
 
-- **WHEN** пожелание оставлено от `dmitry.volkov@company.com`
-- **THEN** на доске автор показан как `dmitry.volkov`, а не как полный адрес
+- **WHEN** a wish is left by `dmitry.volkov@company.com`
+- **THEN** the author is shown on the board as `dmitry.volkov`, not as the full address
 
-#### Scenario: Пустая доска
+#### Scenario: Empty board
 
-- **WHEN** пожеланий нет
-- **THEN** система показывает пустое состояние с предложением оставить первое пожелание
+- **WHEN** there are no wishes
+- **THEN** the system shows an empty state suggesting to leave the first wish
 
-### Requirement: Создание пожелания из формы
+### Requirement: Creating a wish from the form
 
-Система ДОЛЖНА позволять авторизованному пользователю создать пожелание, выбрав получателя из числа сотрудников (кроме себя) и введя текст. Созданное пожелание ДОЛЖНО сразу появляться на доске и сохранять автора, получателя и время создания. Отправка ДОЛЖНА блокироваться, пока получатель не выбран или текст пуст.
+The system MUST allow an authenticated user to create a wish by selecting a recipient from among the employees (other than themselves) and entering text. The created wish MUST appear on the board immediately and preserve the author, recipient, and creation time. Sending MUST be blocked while the recipient is not selected or the text is empty.
 
-#### Scenario: Успешное создание пожелания
+#### Scenario: Successful wish creation
 
-- **WHEN** пользователь выбирает получателя и вводит непустой текст, затем отправляет форму
-- **THEN** пожелание появляется на доске с ником автора и указанием получателя
+- **WHEN** the user selects a recipient and enters non-empty text, then submits the form
+- **THEN** the wish appears on the board with the author's nickname and the recipient
 
-#### Scenario: Неполные данные
+#### Scenario: Incomplete data
 
-- **WHEN** получатель не выбран или текст пуст
-- **THEN** отправка недоступна
+- **WHEN** the recipient is not selected or the text is empty
+- **THEN** sending is unavailable
 
-### Requirement: Кнопка «Оставить пожелание» на главной странице
+### Requirement: The "Leave a wish" button on the home page
 
-Кнопка «Оставить пожелание» в hero-блоке главной страницы ДОЛЖНА открывать форму создания пожелания, а не быть неактивной.
+The "Leave a wish" button in the home page hero block MUST open the wish creation form rather than being inactive.
 
-#### Scenario: Открытие формы с главной страницы
+#### Scenario: Opening the form from the home page
 
-- **WHEN** пользователь нажимает «Оставить пожелание» в hero-блоке
-- **THEN** отображается форма создания пожелания
+- **WHEN** the user clicks "Leave a wish" in the hero block
+- **THEN** the wish creation form is displayed
 
-### Requirement: Поздравление сотрудника создаёт пожелание
+### Requirement: An employee's congratulation creates a wish
 
-Когда сотрудник поздравляет коллегу через форму участия и подтверждает отправку, система ДОЛЖНА создать пожелание от его имени на доске, поскольку интерфейс сообщает о передаче поздравления получателю. Создание пожелания ДОЛЖНО происходить без раскрытия суммы сбора сотруднику.
+When the employee congratulates a colleague through the participation form and confirms sending, the system MUST create a wish in their name on the board, since the interface reports that the congratulation was delivered to the recipient. Wish creation MUST occur without disclosing the collection amount to the employee.
 
-#### Scenario: Поздравление добавляет запись на доску
+#### Scenario: A congratulation adds an entry to the board
 
-- **WHEN** сотрудник завершает сценарий поздравления и подтверждает отправку
-- **THEN** на доске появляется пожелание от имени этого сотрудника для выбранного получателя
+- **WHEN** the employee completes the congratulation scenario and confirms sending
+- **THEN** a wish in the name of this employee appears on the board for the selected recipient
 
-#### Scenario: Сумма не раскрывается при поздравлении
+#### Scenario: The amount is not disclosed during congratulation
 
-- **WHEN** сотрудник подтверждает поздравление
-- **THEN** на экране успеха и на доске не отображается сумма сбора
+- **WHEN** the employee confirms the congratulation
+- **THEN** the collection amount is not displayed on the success screen or on the board

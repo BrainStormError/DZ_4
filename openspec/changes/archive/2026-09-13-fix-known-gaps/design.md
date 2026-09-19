@@ -1,72 +1,72 @@
 ## Context
 
-Приложение — клиентское демо на Next.js (App Router) без бэкенда. Состояние живёт в `lib/data-store.ts` (`useDataStore`, React state) и раздаётся через `lib/data-context.tsx`; вход — `lib/auth-context.tsx` на `localStorage`; данные — `lib/mock-data.ts` и сбрасываются при перезагрузке. Это задаёт границы: исправления выполняются в существующих компонентах и клиентских контекстах, без серверной авторизации и без внешних сервисов. Мотивация изменения — в `proposal.md`; требования — в дельта-спецификациях `specs/`.
+The application is a client-side demo on Next.js (App Router) without a backend. State lives in `lib/data-store.ts` (`useDataStore`, React state) and is distributed through `lib/data-context.tsx`; login is `lib/auth-context.tsx` on `localStorage`; data is in `lib/mock-data.ts` and is reset on reload. This sets the boundaries: fixes are made in existing components and client contexts, without server-side authorization and without external services. The motivation for the change is in `proposal.md`; the requirements are in the delta specifications under `specs/`.
 
 ## Goals / Non-Goals
 
 **Goals:**
-- Устранить шесть выявленных дефектов поведения в рамках текущей клиентской архитектуры.
-- Сохранить модель mock-данных и сброс состояния при перезагрузке как осознанное ограничение демо.
-- Сделать правило проверки корпоративной почты единым источником поведения для входа и участия в сборе.
+- Eliminate the six identified behavioral defects within the current client-side architecture.
+- Keep the mock data model and state reset on reload as a deliberate demo limitation.
+- Make the corporate email validation rule a single source of behavior for login and participation in the collection.
 
 **Non-Goals:**
-- Реальная интеграция корпоративной почты, SSO или платёжного сервиса.
-- Серверная БД, серверная авторизация и реальная защита сумм.
-- Изменение визуальной концепции и тем оформления.
-- Миграция или сохранение данных между сессиями.
+- Real integration of corporate email, SSO, or a payment service.
+- A server-side DB, server-side authorization, and real protection of amounts.
+- Changing the visual concept and themes.
+- Migration or persistence of data between sessions.
 
 ## Decisions
 
-### D1. Режимы переписки в одном компоненте
+### D1. Chat modes in a single component
 
-`ChatThread` получает два режима: сотрудник видит одну свою ветку, администратор — список всех веток и выбранную. Данные и операции (`getAllThreads`, получение/создание ветки) добавляются в `useDataStore` и `DataContext`.
-- Альтернатива: отдельный компонент `AdminChat` — отклонена из-за дублирования вёрстки сообщений и логики отправки.
+`ChatThread` gets two modes: the employee sees one thread of their own, the administrator sees a list of all threads and the selected one. Data and operations (`getAllThreads`, getting/creating a thread) are added to `useDataStore` and `DataContext`.
+- Alternative: a separate `AdminChat` component — rejected due to duplication of the message layout and send logic.
 
-### D2. Признак администратора вычисляется из роли
+### D2. The administrator flag is computed from the role
 
-При отправке сообщения `isAdmin` вычисляется из роли текущего пользователя (`user.role === 'admin'`), а `authorEmail` берётся из отправителя. Жёстко заданное `false` убирается.
-- Альтернатива: оставить параметр, но передавать корректное значение из компонента — отклонена, так как источник истины должен быть один и он есть в контексте авторизации.
+When sending a message, `isAdmin` is computed from the current user's role (`user.role === 'admin'`), and `authorEmail` is taken from the sender. The hard-coded `false` is removed.
+- Alternative: keep the parameter but pass the correct value from the component — rejected, because there must be a single source of truth and it exists in the authorization context.
 
-### D3. Единая функция проверки корпоративного адреса
+### D3. A single corporate address validation function
 
-Правило «заканчивается на `@company.com` И присутствует в справочнике» выносится в общий модуль `lib/` и используется и в `auth-context`, и в `DonateDialog`.
-- Альтернатива: продублировать проверку в форме доната — отклонена из-за расхождения, которое и привело к дефекту.
+The rule "ends with `@company.com` AND is present in the directory" is extracted into a shared `lib/` module and used both in `auth-context` and in `DonateDialog`.
+- Alternative: duplicate the validation in the donation form — rejected due to the discrepancy that led to the defect.
 
-### D4. Поздравление сотрудника создаёт пожелание
+### D4. An employee's congratulation creates a wish
 
-В сценарии участия сотрудника добавляется шаг с текстом поздравления; при подтверждении вызывается `addWish` из того же хранилища. Суммы при этом сотруднику не показываются (см. спеку `donations`).
-- Альтернатива: создавать пожелание с автоматическим текстом — отклонена, так как доска теряет смысл содержательного поздравления.
+A step with congratulation text is added to the employee participation scenario; on confirmation, `addWish` from the same store is called. Amounts are not shown to the employee (see the `donations` spec).
+- Alternative: create a wish with automatic text — rejected, because the board loses the meaning of a meaningful congratulation.
 
-### D5. Год календаря — состояние, а не константа
+### D5. The calendar year is state, not a constant
 
-`CURRENT_YEAR` заменяется на состояние выбранного года с переключением вперёд/назад; дни рождения пересчитываются относительно выбранного года, а отметка текущего дня показывается только для фактического текущего года.
-- Альтернатива: оставить один год — отклонена, так как требование допускает просмотр дней рождения в текущем году, а демо должно переживать смену года без правок кода.
+`CURRENT_YEAR` is replaced with the selected-year state with forward/backward switching; birthdays are recalculated relative to the selected year, and the current-day mark is shown only for the actual current year.
+- Alternative: keep a single year — rejected, because the requirement allows viewing birthdays in the current year, and the demo must survive a year change without code edits.
 
-### D6. Кнопка «Оставить пожелание» открывает форму доски
+### D6. The "Leave a wish" button opens the board form
 
-Состояние формы доски пожеланий поднимается или связывается так, чтобы кнопка в hero-блоке главной страницы открывала форму создания пожелания.
-- Альтернатива: убрать кнопку — отклонена, так как она заявлена в требованиях главной страницы.
+The wish board form state is lifted or wired so that the button in the home page hero block opens the wish creation form.
+- Alternative: remove the button — rejected, because it is declared in the home page requirements.
 
-### D7. Удаление мёртвого кода
+### D7. Removal of dead code
 
-`getRole()` в `lib/auth-context.tsx` удаляется как неиспользуемый.
+`getRole()` in `lib/auth-context.tsx` is removed as unused.
 
-### D8. Сотрудник указывает сумму своего участия
+### D8. The employee specifies their participation amount
 
-Помимо текста поздравления сотрудник вводит положительную сумму своего участия, которая через `addDonation` добавляется к сбору получателя. Итоговая собранная сумма сотруднику не показывается: отображается только собственный вклад и пояснение о скрытии. Сумма администратора и сумма сотрудника используют одну операцию `addDonation`.
-- Альтернатива: фиксировать сумму только администратором, а участие сотрудника выражать пожеланием — отклонена по решению заказчика.
+In addition to the congratulation text, the employee enters a positive amount for their participation, which is added to the recipient's collection via `addDonation`. The total collected amount is not shown to the employee: only their own contribution and an explanation about hiding are displayed. The administrator's amount and the employee's amount use the same `addDonation` operation.
+- Alternative: record the amount only by the administrator and express employee participation as a wish — rejected by the customer's decision.
 
 ## Risks / Trade-offs
 
-- Сокрытие сумм реализовано на клиенте, поэтому не является защитой: данные доступны в памяти браузера. Для учебного демо это приемлемо, но при переходе на реальный сервис потребуется серверная авторизация и хранение сумм вне клиента.
-- Совмещение двух режимов в `ChatThread` усложняет компонент — снижается изоляцией логики режимов и операций в хранилище.
-- Вызов `addWish` из формы участия создаёт второй путь создания пожеланий — снижается переиспользованием одной операции хранилища вместо дублирования.
-- Расширение состояния календаря и чата увеличивает клиентское состояние без персистентности — приемлемо для демо.
+- Amount hiding is implemented on the client, so it is not protection: the data is available in the browser memory. For an educational demo this is acceptable, but moving to a real service will require server-side authorization and storing amounts outside the client.
+- Combining two modes in `ChatThread` complicates the component — mitigated by isolating the mode logic and store operations.
+- Calling `addWish` from the participation form creates a second wish creation path — mitigated by reusing a single store operation instead of duplicating it.
+- Extending the calendar and chat state increases client-side state without persistence — acceptable for the demo.
 
 ## Migration Plan
 
-Не требуется. Изменение клиентское, данные эфемерны и сбрасываются при перезагрузке; обратная совместимость форматов данных не затрагивается.
+Not required. The change is client-side, the data is ephemeral and reset on reload; backward compatibility of data formats is not affected.
 
 ## Open Questions
 
-Открытых вопросов, влияющих на форму участия, нет. Способ фиксации суммы участия сотрудника согласован и зафиксирован в `D8`: сотрудник вводит собственную сумму, итоговая собранная сумма ему не раскрывается. Соответствующее требование добавлено в дельта-спеку `donations`.
+There are no open questions affecting the participation form. The method for recording the employee's participation amount has been agreed and fixed in `D8`: the employee enters their own amount, and the total collected amount is not disclosed to them. The corresponding requirement has been added to the `donations` delta spec.

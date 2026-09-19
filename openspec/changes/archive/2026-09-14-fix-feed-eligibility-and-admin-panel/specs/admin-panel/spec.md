@@ -1,42 +1,42 @@
 ## Purpose
 
-Даёт администратору таблицу сотрудников с датой рождения и статусом отправки подарка, чтобы контролировать, кому подарок уже выслан.
+Gives the administrator a table of employees with the birthday date and the gift sending status, so as to control who the gift has already been sent to.
 
 ## ADDED Requirements
 
-### Requirement: Дата рождения в таблице сотрудников
+### Requirement: Birthday date in the employee table
 
-Админ-панель ДОЛЖНА показывать в таблице сотрудников дату рождения каждого сотрудника. Дата ДОЛЖНА отображаться в читаемом виде и позволять администратору быстро оценить ближайшие дни рождения.
+The admin panel MUST show each employee's birthday date in the employee table. The date MUST be displayed in a readable form and allow the administrator to quickly assess upcoming birthdays.
 
-#### Scenario: Дата рождения отображается
+#### Scenario: Birthday date is displayed
 
-- **WHEN** администратор открывает админ-панель
-- **THEN** в таблице сотрудников для каждой строки отображается дата рождения этого сотрудника
+- **WHEN** the administrator opens the admin panel
+- **THEN** the birthday date of that employee is displayed for each row in the employee table
 
-### Requirement: Статус отправки подарка
+### Requirement: Gift sending status
 
-Админ-панель ДОЛЖНА показывать для каждого сотрудника статус отправки подарка «Выслано» или «Не выслано». Администратор ДОЛЖЕН иметь возможность изменить этот статус вручную, и изменение ДОЛЖНО сразу отражаться в таблице.
+The admin panel MUST show, for each employee, the gift sending status "Sent" or "Not sent". The administrator MUST be able to change this status manually, and the change MUST be immediately reflected in the table.
 
-#### Scenario: Статус по умолчанию
+#### Scenario: Default status
 
-- **WHEN** администратор открывает таблицу и для сотрудника подарок ещё не отмечен
-- **THEN** для этого сотрудника отображается статус «Не выслано»
+- **WHEN** the administrator opens the table and the gift has not yet been marked for an employee
+- **THEN** the status "Not sent" is displayed for that employee
 
-#### Scenario: Администратор отмечает подарок высланным
+#### Scenario: The administrator marks the gift as sent
 
-- **WHEN** администратор вручную меняет статус сотрудника на «Выслано»
-- **THEN** в таблице для этого сотрудника отображается «Выслано»
+- **WHEN** the administrator manually changes an employee's status to "Sent"
+- **THEN** "Sent" is displayed for that employee in the table
 
-#### Scenario: Администратор снимает статус
+#### Scenario: The administrator clears the status
 
-- **WHEN** администратор вручную возвращает статус сотрудника в «Не выслано»
-- **THEN** в таблице для этого сотрудника отображается «Не выслано»
+- **WHEN** the administrator manually returns an employee's status to "Not sent"
+- **THEN** "Not sent" is displayed for that employee in the table
 
-### Requirement: Статус подарка доступен только администратору
+### Requirement: Gift status is available only to an administrator
 
-Статус отправки подарка ДОЛЖЕН отображаться и изменяться только для роли `admin`. Пользователи с ролью `employee` НЕ ДОЛЖНЫ видеть статус подарка и элементы его изменения.
+The gift sending status MUST be displayed and changed only for the `admin` role. Users with the `employee` role MUST NOT see the gift status or the elements for changing it.
 
-#### Scenario: Сотрудник не видит статус подарка
+#### Scenario: An employee does not see the gift status
 
-- **WHEN** пользователь с ролью `employee` просматривает доступные ему страницы
-- **THEN** статус отправки подарка и элементы его изменения не отображаются
+- **WHEN** a user with the `employee` role views the pages available to them
+- **THEN** the gift sending status and the elements for changing it are not displayed

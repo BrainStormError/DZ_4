@@ -1,30 +1,30 @@
 ## MODIFIED Requirements
 
-### Requirement: Индикация непрочитанных сообщений
+### Requirement: Indication of unread messages
 
-Система ДОЛЖНА (MUST) отмечать администратору ветки, содержащие сообщения сотрудников, которые он ещё не прочитал. Непрочитанные ДОЛЖНЫ считаться по отдельным сообщениям, а не по числу веток. В списке обращений у каждой ветки ДОЛЖНА отображаться пометка с количеством непрочитанных сообщений этой ветки, чтобы администратор понимал, от кого именно пришло непрочитанное сообщение. Суммарное количество непрочитанных сообщений ДОЛЖНО отображаться на вкладке «Сообщения» и в шапке приложения. Отметка «прочитано» ДОЛЖНА сниматься, когда администратор открывает соответствующую ветку.
+The system (MUST) mark for the administrator the threads containing employee messages that they have not yet read. Unread (MUST) be counted by individual messages, not by the number of threads. In the request list, each thread (MUST) display a marker with the number of unread messages in that thread, so that the administrator understands exactly who the unread message came from. The total number of unread messages (MUST) be displayed on the "Messages" tab and in the application header. The "read" mark (MUST) be cleared when the administrator opens the corresponding thread.
 
-#### Scenario: Пометка на ветке с непрочитанным сообщением
+#### Scenario: A marker on a thread with an unread message
 
-- **WHEN** в ветке сотрудника есть сообщения, которые администратор ещё не прочитал
-- **THEN** в списке обращений у этой ветки отображается пометка с количеством непрочитанных сообщений
+- **WHEN** a thread of an employee contains messages that the administrator has not yet read
+- **THEN** a marker with the number of unread messages is displayed next to this thread in the request list
 
-#### Scenario: Бейдж на вкладке сообщений
+#### Scenario: A badge on the messages tab
 
-- **WHEN** у администратора есть непрочитанные сообщения
-- **THEN** на вкладке «Сообщения» отображается суммарное количество непрочитанных сообщений
+- **WHEN** the administrator has unread messages
+- **THEN** the total number of unread messages is displayed on the "Messages" tab
 
-#### Scenario: Индикатор в шапке
+#### Scenario: An indicator in the header
 
-- **WHEN** у администратора есть непрочитанные сообщения
-- **THEN** в шапке приложения отображается суммарное количество непрочитанных сообщений
+- **WHEN** the administrator has unread messages
+- **THEN** the total number of unread messages is displayed in the application header
 
-#### Scenario: Снятие отметки при открытии ветки
+#### Scenario: Clearing the mark when opening a thread
 
-- **WHEN** администратор открывает ветку с непрочитанными сообщениями
-- **THEN** пометка этой ветки и её вклад в общий счётчик снимаются
+- **WHEN** the administrator opens a thread with unread messages
+- **THEN** the marker of this thread and its contribution to the total counter are cleared
 
-#### Scenario: Нет непрочитанных сообщений
+#### Scenario: No unread messages
 
-- **WHEN** все сообщения сотрудников прочитаны
-- **THEN** ни пометок в списке обращений, ни счётчика на вкладке и в шапке не отображается
+- **WHEN** all employee messages are read
+- **THEN** neither markers in the request list nor a counter on the tab and in the header are displayed

@@ -1,24 +1,24 @@
 ## Purpose
 
-Гарантирует, что аватарки сотрудников отображаются и корректно деградируют при недоступности внешнего источника изображений, не ломая интерфейс и не засоряя консоль.
+Guarantees that employee avatars are displayed and degrade correctly when the external image source is unavailable, without breaking the interface and without cluttering the console.
 
 ## ADDED Requirements
 
-### Requirement: Отображение аватарки с фолбэком
+### Requirement: Avatar display with fallback
 
-Аватарка сотрудника ДОЛЖНА показывать изображение при успешной загрузке и инициалы при недоступности изображения. Сбой загрузки внешнего изображения НЕ ДОЛЖЕН приводить к отображению сломанного изображения или к необработанным ошибкам в консоли; интерфейс ДОЛЖЕН оставаться работоспособным.
+An employee's avatar MUST show the image on successful loading and initials when the image is unavailable. A failure to load an external image MUST NOT result in a broken image being displayed or unhandled errors in the console; the interface MUST remain functional.
 
-#### Scenario: Внешний источник недоступен
+#### Scenario: External source unavailable
 
-- **WHEN** запрос изображения аватарки завершается ошибкой сети
-- **THEN** отображается фолбэк с инициалами, а интерфейс не показывает сломанное изображение и не пишет необработанную ошибку в консоль
+- **WHEN** the avatar image request fails with a network error
+- **THEN** a fallback with initials is displayed, and the interface does not show a broken image and does not write an unhandled error to the console
 
-#### Scenario: Изображение загружено
+#### Scenario: Image loaded
 
-- **WHEN** изображение аватарки успешно загружается
-- **THEN** отображается фотография сотрудника
+- **WHEN** the avatar image loads successfully
+- **THEN** the employee's photo is displayed
 
-#### Scenario: Аватарка в списках и сетках
+#### Scenario: Avatar in lists and grids
 
-- **WHEN** аватарки отображаются в шапке, карточках именинников, доске пожеланий, чате и админ-таблице
-- **THEN** поведение изображения и фолбэка одинаково во всех этих местах
+- **WHEN** avatars are displayed in the header, birthday person cards, the wish board, the chat, and the admin table
+- **THEN** the behavior of the image and the fallback is the same in all these places

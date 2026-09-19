@@ -1,35 +1,35 @@
-## 1. Аудит и подготовка
+## 1. Audit and preparation
 
-- [x] 1.1 Зафиксировать исходное состояние: `npm run typecheck` и `npm run lint` завершаются без новых ошибок; сохранить список файлов `components/ui/*` для сравнения после удаления
-- [x] 1.2 Перепроверить фактический список недостижимых UI-модулей поиском импортов `@/components/ui/*`, `@/hooks/use-toast` по `app/`, `components/`, `lib/`, `hooks/`; подтвердить, что `toast`/`toggle` импортируются только внутри недостижимого «острова»
+- [x] 1.1 Record the initial state: `npm run typecheck` and `npm run lint` finish without new errors; save the list of `components/ui/*` files for comparison after deletion
+- [x] 1.2 Recheck the actual list of unreachable UI modules by searching for imports of `@/components/ui/*`, `@/hooks/use-toast` across `app/`, `components/`, `lib/`, `hooks/`; confirm that `toast`/`toggle` are imported only inside the unreachable "island"
 
-## 2. Дедупликация текстов о добровольности и скрытых суммах
+## 2. Deduplication of texts about voluntariness and hidden amounts
 
-- [x] 2.1 В `app/(app)/page.tsx` удалить hero-бейдж «Участие добровольное» и privacy-карточки «Добровольное участие» и «Суммы скрыты», заменив блок из трёх карточек одной компактной карточкой с сообщением «Команда — это важно»; проверить, что полное утверждение о добровольности и скрытии сумм на странице встречается не более одного раза (вне футера)
-- [x] 2.2 В `app/(app)/faq/page.tsx` удалить три quick-info карточки, повторяющие ответы Q1/Q2; проверить, что ответы в аккордеоне остались единственным источником формулировок
-- [x] 2.3 В `components/features/DonateDialog.tsx` убрать фразу о видимости суммы из блока шага `email` (сохранив указание на кнопку «Оставить пожелание»), убрать повтор о скрытии итога из описания шага `amount`; проверить, что пояснение о скрытии суммы остаётся ровно один раз — на шаге `confirm`, и не показывается администратору
-- [x] 2.4 Свести `app/(auth)/login/page.tsx` и `app/layout.tsx` к короткой брендовой формулировке, не повторяющей полное предложение футера; проверить, что метаданные остаются валидным описанием страницы
+- [x] 2.1 In `app/(app)/page.tsx`, remove the hero badge "Participation is voluntary" and the privacy cards "Voluntary participation" and "Amounts are hidden", replacing the block of three cards with one compact card with the message "The team matters"; verify that the full statement about voluntariness and hiding amounts appears no more than once on the page (outside the footer)
+- [x] 2.2 In `app/(app)/faq/page.tsx`, remove three quick-info cards repeating answers Q1/Q2; verify that the answers in the accordion remain the only source of wording
+- [x] 2.3 In `components/features/DonateDialog.tsx`, remove the phrase about amount visibility from the `email` step block (keeping the pointer to the "Leave a wish" button), and remove the repetition about hiding the total from the `amount` step description; verify that the explanation about hiding the amount remains exactly once — at the `confirm` step — and is not shown to an administrator
+- [x] 2.4 Reduce `app/(auth)/login/page.tsx` and `app/layout.tsx` to a short brand wording that does not repeat the full footer sentence; verify that the metadata remains a valid page description
 
-## 3. Единый первичный контроль пожелания
+## 3. Single primary wish control
 
-- [x] 3.1 В `components/features/WishBoard.tsx` скрывать внутренний тоггл, когда задан проп `formOpen`, сохранив внутренний тоггл в uncontrolled-режиме; проверить, что на главной форма пожелания открывается hero-кнопкой и не имеет второго независимого контрола
-- [x] 3.2 Проверить сценарий пожелания на главной: открытие формы, отправка, закрытие и повторное открытие работают через единственный первичный контроль без второго независимого состояния формы
+- [x] 3.1 In `components/features/WishBoard.tsx`, hide the internal toggle when the `formOpen` prop is set, keeping the internal toggle in uncontrolled mode; verify that on the home page the wish form is opened by the hero button and has no second independent control
+- [x] 3.2 Verify the wish scenario on the home page: opening the form, submitting, closing and reopening work through the single primary control without a second independent form state
 
-## 4. Единый источник подписей причин возврата
+## 4. Single source of refund reason labels
 
-- [x] 4.1 В `components/features/AdminTable.tsx` формировать подписи радиоопций только через `reasonLabel`; удалить дублирующие хардкод-названия причин, оставив лишь самостоятельные поясняющие подписи; проверить, что формулировка в выборе причины совпадает с формулировкой в журнале изменений
+- [x] 4.1 In `components/features/AdminTable.tsx`, generate radio option labels only via `reasonLabel`; remove duplicate hardcoded reason names, leaving only self-contained explanatory labels; verify that the wording in the reason selection matches the wording in the change log
 
-## 5. Шапка: дедупликация навигации и неинтерактивный пункт
+## 5. Header: navigation deduplication and the non-interactive item
 
-- [x] 5.1 В `components/layout/Header.tsx` вынести рендер `navItems` и admin-ссылки в единую функцию/подкомпонент с параметром класса и использовать её для desktop и mobile; проверить активную подсветку текущего раздела на обеих ширинах
-- [x] 5.2 В меню пользователя заменить пункт с отделом на неинтерактивную строку (или убрать); проверить, что в меню нет элементов, выглядящих кликабельными без действия
+- [x] 5.1 In `components/layout/Header.tsx`, extract the rendering of `navItems` and the admin link into a single function/subcomponent with a class parameter and use it for desktop and mobile; verify the active highlighting of the current section at both widths
+- [x] 5.2 In the user menu, replace the item with the department with a non-interactive line (or remove it); verify that the menu has no elements that look clickable without performing an action
 
-## 6. Удаление недостижимых UI-примитивов
+## 6. Removal of unreachable UI primitives
 
-- [x] 6.1 Удалить неиспользуемые файлы `components/ui/*` (alert-dialog, aspect-ratio, breadcrumb, calendar, carousel, chart, checkbox, collapsible, command, context-menu, drawer, form, hover-card, input-otp, menubar, navigation-menu, pagination, popover, progress, resizable, scroll-area, separator, sheet, skeleton, slider, sonner, switch, toaster, tooltip) и недостижимый «остров» уведомлений (`components/ui/toast.tsx`, `components/ui/toggle.tsx`, `components/ui/toggle-group.tsx`, `hooks/use-toast.ts`); проверить, что поиск импортов не находит ссылок на удалённые модули
-- [x] 6.2 Запустить `npm run typecheck` и `npm run lint` после удаления; проверить отсутствие ошибок и предупреждений о неразрешённых импортах
+- [x] 6.1 Delete the unused files `components/ui/*` (alert-dialog, aspect-ratio, breadcrumb, calendar, carousel, chart, checkbox, collapsible, command, context-menu, drawer, form, hover-card, input-otp, menubar, navigation-menu, pagination, popover, progress, resizable, scroll-area, separator, sheet, skeleton, slider, sonner, switch, toaster, tooltip) and the unreachable notification "island" (`components/ui/toast.tsx`, `components/ui/toggle.tsx`, `components/ui/toggle-group.tsx`, `hooks/use-toast.ts`); verify that the import search finds no references to the deleted modules
+- [x] 6.2 Run `npm run typecheck` and `npm run lint` after deletion; verify there are no errors or warnings about unresolved imports
 
-## 7. Интеграционная проверка
+## 7. Integration verification
 
-- [x] 7.1 Прогнать страницы `/`, `/calendar`, `/faq`, `/admin`, `/login` в браузере: сообщение о добровольности и скрытии сумм не дублируется, пожелание открывается одним контролом, меню без ложных команд, причины согласованы, нет ошибок в консоли
-- [x] 7.2 Проверить сборку (`npm run build` или доступный аналог) и убедиться, что удаление примитивов не сломало сборку
+- [x] 7.1 Run the pages `/`, `/calendar`, `/faq`, `/admin`, `/login` in the browser: the message about voluntariness and hiding amounts is not duplicated, the wish form opens with one control, the menu has no false commands, the reasons are consistent, and there are no console errors
+- [x] 7.2 Check the build (`npm run build` or an available equivalent) and make sure that deleting the primitives did not break the build

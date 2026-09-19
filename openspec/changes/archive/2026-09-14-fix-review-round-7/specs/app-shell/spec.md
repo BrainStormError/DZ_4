@@ -1,33 +1,33 @@
 ## Purpose
 
-Определяет поведение оболочки приложения — шапки, меню и навигации — так, чтобы переход между разделами не блокировал взаимодействие пользователя с приложением.
+Defines the behavior of the application shell — header, menus, and navigation — so that navigation between sections does not block the user's interaction with the application.
 
 ## ADDED Requirements
 
-### Requirement: Меню шапки не блокирует приложение при переходе
+### Requirement: The header menu does not block the application during navigation
 
-Открытые меню шапки (переключатель темы и меню пользователя) НЕ ДОЛЖНЫ оставлять страницу заблокированной после перехода между разделами. После любой навигации прокрутка страницы и взаимодействие с интерактивными элементами ДОЛЖНЫ (MUST) оставаться доступными без перезагрузки страницы.
+Open header menus (the theme switcher and the user menu) (MUST NOT) leave the page locked after navigation between sections. After any navigation, page scrolling and interaction with interactive elements (MUST) remain available without reloading the page.
 
-#### Scenario: Переход при открытом меню
+#### Scenario: Navigation with an open menu
 
-- **WHEN** пользователь открывает меню шапки и переходит на другую страницу, в том числе кнопками «назад» или «вперёд» браузера
-- **THEN** после перехода страница прокручивается, а элементы управления реагируют на клики без перезагрузки
+- **WHEN** the user opens a header menu and navigates to another page, including with the browser's "back" or "forward" buttons
+- **THEN** after the navigation the page scrolls and the controls respond to clicks without a reload
 
-#### Scenario: Блокировка не сохраняется
+#### Scenario: The lock is not preserved
 
-- **WHEN** переход между разделами происходит при открытом меню шапки
-- **THEN** признак блокировки прокрутки и указателя не остаётся на странице после завершения перехода
+- **WHEN** navigation between sections happens with an open header menu
+- **THEN** the scrolling and pointer lock flag does not remain on the page after the navigation completes
 
-### Requirement: Отзывчивость при быстром переключении разделов
+### Requirement: Responsiveness during fast switching of sections
 
-Быстрое переключение разделов верхней навигации ДОЛЖНО (MUST) оставлять приложение отзывчивым. Прокрутка и взаимодействие с элементами НЕ ДОЛЖНЫ блокироваться, а приложение НЕ ДОЛЖНО требовать перезагрузки для восстановления работы.
+Fast switching of the top navigation sections (MUST) keep the application responsive. Scrolling and interaction with elements (MUST NOT) be blocked, and the application (MUST NOT) require a reload to restore operation.
 
-#### Scenario: Быстрое переключение разделов
+#### Scenario: Fast switching of sections
 
-- **WHEN** пользователь быстро переключается между разделами верхней навигации
-- **THEN** приложение остаётся отзывчивым, страницы открываются, а прокрутка и клики не блокируются
+- **WHEN** the user quickly switches between the top navigation sections
+- **THEN** the application remains responsive, pages open, and scrolling and clicks are not blocked
 
-#### Scenario: Восстановление без перезагрузки
+#### Scenario: Recovery without a reload
 
-- **WHEN** пользователь продолжает работу после серии быстрых переходов
-- **THEN** взаимодействие остаётся доступным без перезагрузки страницы
+- **WHEN** the user continues working after a series of fast navigations
+- **THEN** interaction remains available without reloading the page

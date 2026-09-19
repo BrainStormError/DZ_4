@@ -1,100 +1,100 @@
 ## Context
 
-См. `proposal.md` — Why. Текущее состояние, влияющее на подход:
+See `proposal.md` — Why. The current state affecting the approach:
 
-- Отказ от подарка фиксируется только как запись в журнале (`DonationHistoryEntry` с причиной `refund_declined`), а модель сбора `Donation` хранит лишь `totalAmount` и `giftSent: boolean` (`lib/types.ts`). При этом админ-панель показывает две кнопки: переключатель подарка и «Изменить», доступные для любого сотрудника, включая уже отказавшегося.
-- Выбор получателя денежного поздравления строится из `getCongratulatableUsers` (`lib/birthdays.ts`) по дню рождения и не учитывает отказ.
-- Карточка пожелания показывает дату создания (`WishBoard.tsx`).
-- Меню шапки (`ThemeSwitcher` и меню пользователя в `Header.tsx`) — модальные `DropdownMenu` Radix по умолчанию: пока меню открыто, на `<body>` выставляются `pointer-events: none`, `overflow: hidden` и `data-scroll-locked`.
-- Вкладка переписки в FAQ инициализируется один раз из `window.location.search` в `useEffect([])`, поэтому клиентский переход между `/faq` и `/faq?tab=messages` не переключает вкладку.
+- A gift decline is recorded only as a log entry (`DonationHistoryEntry` with the reason `refund_declined`), while the collection model `Donation` stores only `totalAmount` and `giftSent: boolean` (`lib/types.ts`). At the same time, the admin panel shows two buttons: a gift toggle and "Edit", available for any employee, including one who has already declined.
+- The recipient selection for a money congratulation is built from `getCongratulatableUsers` (`lib/birthdays.ts`) by birthday and does not take a decline into account.
+- The wish card shows the creation date (`WishBoard.tsx`).
+- The header menus (`ThemeSwitcher` and the user menu in `Header.tsx`) are modal Radix `DropdownMenu` by default: while a menu is open, `pointer-events: none`, `overflow: hidden`, and `data-scroll-locked` are set on `<body>`.
+- The correspondence tab in the FAQ is initialized once from `window.location.search` in `useEffect([])`, so a client-side navigation between `/faq` and `/faq?tab=messages` does not switch the tab.
 
 ## Goals / Non-Goals
 
 **Goals:**
 
-- Отразить отказ от подарка как отдельное состояние с блокировкой управления суммой и статусом.
-- Запретить денежные поздравления отказавшимся, сохранив возможность текстового поздравления.
-- Убрать дату из карточки пожелания и автоматически подставлять единственного именинника.
-- Устранить залипающую блокировку страницы после перехода при открытом меню шапки.
-- Гарантировать открытие вкладки переписки по адресу `/faq?tab=messages`.
+- Reflect a gift decline as a separate state with locked amount and status management.
+- Prohibit money congratulations for those who declined, while preserving the ability to send a text congratulation.
+- Remove the date from the wish card and automatically fill in the only birthday person.
+- Eliminate the stuck page lock after navigation with an open header menu.
+- Guarantee that the correspondence tab opens at the address `/faq?tab=messages`.
 
 **Non-Goals:**
 
-- Персистентность, бэкенд, реальная авторизация; состояние остаётся клиентским и сбрасывается при перезагрузке.
-- Изменение правил скрытия сумм от сотрудников и правил показа пожеланий по дню рождения.
-- Изменение внешнего вида тем и остальных контролов шапки.
+- Persistence, backend, real authorization; the state remains client-side and resets on reload.
+- Changing the rules for hiding amounts from employees and the rules for showing wishes by birthday.
+- Changing the appearance of themes and the remaining header controls.
 
 ## Decisions
 
-### Решение 1: отказ выводится из журнала, а не из нового поля
+### Decision 1: the decline is derived from the log, not from a new field
 
-Признак отказа вычисляется как наличие записи журнала с причиной `refund_declined` для сотрудника (`history.some(...)`). Отдельного поля в `Donation` не добавляем.
+The decline flag is computed as the presence of a log entry with the reason `refund_declined` for the employee (`history.some(...)`). We do not add a separate field to `Donation`.
 
-- Почему: журнал уже хранит факт отказа и является единственным источником изменения суммы; вывод из него исключает рассинхронизацию двух представлений состояния.
-- Альтернатива — добавить `declined`/`giftStatus` в `Donation`: проще читать в UI, но создаёт второй источник истины и требует поддержки при каждом изменении суммы.
-- Следствие: helper `isGiftDeclined(userId, history)` в `lib/data-store.ts`; существующая запись `h1` для сотрудника `u3` автоматически делает его отказавшимся.
+- Why: the log already stores the fact of the decline and is the only source of the amount change; deriving from it eliminates desynchronization of the two representations of the state.
+- Alternative — add `declined`/`giftStatus` to `Donation`: simpler to read in the UI, but creates a second source of truth and requires maintenance on every amount change.
+- Consequence: a helper `isGiftDeclined(userId, history)` in `lib/data-store.ts`; the existing entry `h1` for the employee `u3` automatically makes them declined.
 
-### Решение 2: статус «Отказ» и блокировка управления в админ-панели
+### Decision 2: the "Declined" status and locked management in the admin panel
 
-В таблице сборов статус подарка становится трёхзначным на уровне отображения: «Не выслано», «Выслано», «Отказ». Для отказавшегося статус показывается неизменяемым бейджем, а кнопка «Изменить» и переключатель статуса недоступны. `setGiftSent` дополнительно защищается на уровне стора.
+In the collection table, the gift status becomes three-valued at the display level: "Not sent", "Sent", "Declined". For a declined person, the status is shown as a non-editable badge, and the "Edit" button and the status toggle are unavailable. `setGiftSent` is additionally protected at the store level.
 
-- Почему: скрывать/деактивировать нужно оба действия, иначе сумма и статус остаются изменяемыми в обход требования.
-- Альтернатива — оставлять кнопки активными и показывать ошибку при нажатии: отклонена, требование запрещает саму возможность, а не только результат.
+- Why: both actions need to be hidden/deactivated, otherwise the amount and status remain changeable in circumvention of the requirement.
+- Alternative — keep the buttons active and show an error on press: rejected, the requirement prohibits the very possibility, not only the result.
 
-### Решение 3: денежное поздравление недоступно отказавшимся
+### Decision 3: money congratulation is unavailable to those who declined
 
-В выборе получателя денежного поздравления (`DonateDialog`) отказавшийся остаётся в списке, но его `SelectItem` неактивен и содержит пометку «отказался от подарка». Текстовое поздравление через доску пожеланий для него по-прежнему доступно.
+In the recipient selection for a money congratulation (`DonateDialog`), a declined person remains in the list, but their `SelectItem` is inactive and contains the note "declined the gift". A text congratulation via the wish board remains available for them.
 
-- Почему: пользователь должен понимать, почему получатель недоступен для денег, и иметь альтернативу в виде текста.
-- Допущение (зафиксировано, так как вопрос не был уточнён явно): деактивация и пометка относятся только к списку денежного поздравления; выбор получателя в форме пожелания остаётся активным, чтобы текст был возможен.
-- Альтернатива — полностью исключать отказавшегося из денежного списка: отклонена, так как требование просит показать причину в списке.
-- Альтернатива — блокировать и текстовое поздравление: противоречит «только текстовые поздравления».
+- Why: the user must understand why the recipient is unavailable for money and have an alternative in the form of text.
+- Assumption (recorded, since the question was not explicitly clarified): the deactivation and note apply only to the money congratulation list; the recipient selection in the wish form remains active so that text is possible.
+- Alternative — completely exclude the declined person from the money list: rejected, since the requirement asks to show the reason in the list.
+- Alternative — also block the text congratulation: contradicts "text congratulations only".
 
-### Решение 4: карточка пожелания без даты
+### Decision 4: wish card without a date
 
-Из `renderCard` в `WishBoard.tsx` удаляется блок с `format(createdAt, ...)`. `createdAt` продолжает храниться и использоваться для сортировки ленты.
+From `renderCard` in `WishBoard.tsx`, the block with `format(createdAt, ...)` is removed. `createdAt` continues to be stored and used for sorting the strip.
 
-- Почему: дата не несёт ценности на доске; требование о дате без времени удаляется из спецификации.
-- Альтернатива — оставить дату без времени: уже реализовано и отклонено ревью.
+- Why: the date carries no value on the board; the requirement about the date without time is removed from the specification.
+- Alternative — keep the date without time: already implemented and rejected by the review.
 
-### Решение 5: автовыбор единственного именинника
+### Decision 5: auto-selection of the only birthday person
 
-При открытии формы пожелания, если `wishRecipients` содержит ровно одного сотрудника, он подставляется в `targetUserId`; при нескольких получателях выбор остаётся за пользователем.
+When the wish form is opened, if `wishRecipients` contains exactly one employee, they are filled into `targetUserId`; with several recipients, the choice remains with the user.
 
-- Почему: убирает лишний шаг при единственном получателе.
-- Альтернатива — автовыбор в том числе при нескольких получателях: отклонена, создаёт риск случайной отправки не тому адресату.
-- Краевой случай: если единственный именинник — сам пользователь, список получателей пуст, автовыбор не срабатывает.
+- Why: removes an extra step with a single recipient.
+- Alternative — auto-selection also with several recipients: rejected, creates a risk of accidentally sending to the wrong addressee.
+- Edge case: if the only birthday person is the user themselves, the recipient list is empty, and auto-selection does not trigger.
 
-### Решение 6: немодальные меню шапки
+### Decision 6: non-modal header menus
 
-`DropdownMenu` в `ThemeSwitcher.tsx` и в меню пользователя `Header.tsx` переводятся в `modal={false}`. Это убирает блокировку `<body>` (`pointer-events: none`, `overflow: hidden`, `data-scroll-locked`) и, следовательно, залипание при переходе.
+The `DropdownMenu` in `ThemeSwitcher.tsx` and in the user menu of `Header.tsx` are switched to `modal={false}`. This removes the `<body>` lock (`pointer-events: none`, `overflow: hidden`, `data-scroll-locked`) and, consequently, the sticking during navigation.
 
-- Почему: блокировка появляется именно из-за модального режима; отказ от модальности устраняет причину, а не симптом.
-- Альтернатива — оставить модальность и сбрасывать стили `<body>` после смены маршрута: лечит симптом и требует знать все точки перехода; допустимо как дополнительная страховка, но не как основное решение.
-- Альтернатива — управляемое закрытие меню по смене `usePathname`: снижает вероятность гонки, но не гарантирует восстановление, если слой уже размонтирован.
-- Влияние: меню шапки перестают перехватывать фокус и блокировать внешние клики — приемлемо для небольших меню в шапке; доступность по клавиатуре сохраняется.
+- Why: the lock appears precisely because of the modal mode; abandoning modality eliminates the cause rather than the symptom.
+- Alternative — keep modality and reset the `<body>` styles after a route change: treats the symptom and requires knowing all navigation points; acceptable as an additional safeguard, but not as the primary solution.
+- Alternative — controlled closing of the menu on `usePathname` change: reduces the chance of a race, but does not guarantee recovery if the layer has already unmounted.
+- Impact: the header menus stop trapping focus and blocking outside clicks — acceptable for small menus in the header; keyboard accessibility is preserved.
 
-### Решение 7: вкладка переписки управляется адресом
+### Decision 7: the correspondence tab is controlled by the address
 
-FAQ использует `useSearchParams()` для определения активной вкладки; переход на `/faq?tab=messages` делает вкладку переписки активной независимо от того, была ли страница уже открыта. Компонент, читающий `useSearchParams`, оборачивается в `<Suspense>`.
+The FAQ uses `useSearchParams()` to determine the active tab; navigating to `/faq?tab=messages` makes the correspondence tab active regardless of whether the page was already open. The component that reads `useSearchParams` is wrapped in `<Suspense>`.
 
-- Почему: адрес — источник истины для deep-link, а `useSearchParams` реактивно отслеживает изменения строки запроса при клиентской навигации.
-- Альтернатива — текущий `window.location.search` в `useEffect([])`: отклонена, не срабатывает при клиентском переходе с уже открытой страницы (это и есть дефект).
-- Альтернатива — `useEffect`, зависящий от `usePathname`: отклонена, путь `/faq` не меняется при смене строки запроса.
-- Следствие: сохраняется совместимость со статической сборкой за счёт Suspense-границы.
+- Why: the address is the source of truth for a deep link, and `useSearchParams` reactively tracks query-string changes during client-side navigation.
+- Alternative — the current `window.location.search` in `useEffect([])`: rejected, it does not trigger on a client-side navigation from an already open page (which is the defect).
+- Alternative — a `useEffect` depending on `usePathname`: rejected, the path `/faq` does not change when the query string changes.
+- Consequence: compatibility with the static build is preserved thanks to the Suspense boundary.
 
 ## Risks / Trade-offs
 
-- [Вывод отказа из журнала] → Журнал живёт только в памяти сессии; при сбросе данных отказ также сбрасывается. Для клиентского демо это согласуется с текущим поведением и вне объёма.
-- [Немодальные меню шапки] → Теряется перехват фокуса внутри меню; приемлемо, но нужно проверить доступность с клавиатуры (имена и активация из `accessibility`).
-- [`useSearchParams` и статическая сборка] → Без Suspense-границы сборка может падать; обязательно обернуть и прогнать `npm run build`.
-- [Деактивация получателя-отказника только в денежном списке] → Допущение оставлено явным; при ином ожидании потребуется правка `donations`-спеки и формы пожелания.
-- [Удаление требования о дате] → Видимое изменение карточки; намеренно, время создания сохраняется в данных.
+- [Deriving the decline from the log] → The log lives only in session memory; when the data is reset, the decline is also reset. For a client-side demo, this is consistent with the current behavior and out of scope.
+- [Non-modal header menus] → Focus trapping inside the menu is lost; acceptable, but keyboard accessibility needs to be checked (names and activation from `accessibility`).
+- [`useSearchParams` and the static build] → Without a Suspense boundary, the build may fail; it is mandatory to wrap it and run `npm run build`.
+- [Deactivation of a declined recipient only in the money list] → The assumption is left explicit; with a different expectation, the `donations` spec and the wish form will need to be edited.
+- [Removal of the date requirement] → A visible change to the card; intentional, the creation time is preserved in the data.
 
 ## Migration Plan
 
-Изменение полностью клиентское и неперсистентное — миграций данных нет, откат через revert. Существующая запись журнала `h1` (`refund_declined` для `u3`) сразу переводит сотрудника в состояние «Отказ», дополнительная настройка mock-данных не требуется.
+The change is entirely client-side and non-persistent — there are no data migrations, and rollback is via revert. The existing log entry `h1` (`refund_declined` for `u3`) immediately moves the employee into the "Declined" state, and no additional configuration of mock data is required.
 
 ## Open Questions
 
-- Нужно ли распространить защиту от залипания блокировки на модальные диалоги (участие, редактирование суммы), если пользователь уходит со страницы при открытом диалоге. Не влияет на спецификации и декомпозицию; можно решить при реализации.
+- Whether the protection against a sticking lock should be extended to modal dialogs (participation, amount editing) if the user leaves the page with a dialog open. It does not affect the specifications or the decomposition; it can be decided during implementation.

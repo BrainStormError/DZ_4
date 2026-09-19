@@ -1,15 +1,15 @@
 ## ADDED Requirements
 
-### Requirement: Дата без времени в карточке пожелания
+### Requirement: Date without time in the wish card
 
-Карточка пожелания на доске ДОЛЖНА (MUST) показывать дату создания без времени. Время создания ДОЛЖНО по-прежнему сохраняться вместе с автором и получателем, но НЕ ДОЛЖНО отображаться на карточке.
+The wish card on the board (MUST) show the creation date without time. The creation time (MUST) still be stored together with the author and recipient, but (MUST NOT) be displayed on the card.
 
-#### Scenario: Карточка показывает только дату
+#### Scenario: The card shows only the date
 
-- **WHEN** пользователь просматривает карточку пожелания на доске
-- **THEN** в карточке отображается дата создания без времени
+- **WHEN** the user views a wish card on the board
+- **THEN** the card displays the creation date without time
 
-#### Scenario: Время создания сохраняется
+#### Scenario: The creation time is stored
 
-- **WHEN** пожелание создаётся
-- **THEN** время создания сохраняется в данных пожелания наряду с автором и получателем
+- **WHEN** a wish is created
+- **THEN** the creation time is stored in the wish data along with the author and recipient

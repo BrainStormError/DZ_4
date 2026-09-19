@@ -1,80 +1,80 @@
 ## Purpose
 
-Позволяет сотруднику участвовать в добровольном сборе только после подтверждения корпоративной почты и гарантирует, что суммы сбора не раскрываются сотрудникам.
+Allows the employee to participate in the voluntary collection only after confirming their corporate email and guarantees that collection amounts are not disclosed to employees.
 
 ## ADDED Requirements
 
-### Requirement: Подтверждение корпоративной почты перед участием
+### Requirement: Corporate email confirmation before participation
 
-Система ДОЛЖНА требовать подтверждения корпоративной почты до отправки участия в сборе. Адрес ДОЛЖЕН заканчиваться на `@company.com` и присутствовать в корпоративном справочнике; правило проверки ДОЛЖНО совпадать с правилом входа. Пока адрес не подтверждён, переход к следующему шагу участия ДОЛЖЕН быть недоступен.
+The system MUST require corporate email confirmation before sending participation in the collection. The address MUST end with `@company.com` and be present in the corporate directory; the validation rule MUST match the login rule. Until the address is confirmed, proceeding to the next participation step MUST be unavailable.
 
-#### Scenario: Корректная корпоративная почта
+#### Scenario: Valid corporate email
 
-- **WHEN** пользователь вводит существующий адрес `@company.com`
-- **THEN** система подтверждает адрес и переходит к следующему шагу участия
+- **WHEN** the user enters an existing `@company.com` address
+- **THEN** the system confirms the address and proceeds to the next participation step
 
-#### Scenario: Адрес вне корпоративного домена
+#### Scenario: Address outside the corporate domain
 
-- **WHEN** пользователь вводит адрес без домена `@company.com`
-- **THEN** система показывает ошибку и не переходит к следующему шагу
+- **WHEN** the user enters an address without the `@company.com` domain
+- **THEN** the system shows an error and does not proceed to the next step
 
-#### Scenario: Неизвестный корпоративный адрес
+#### Scenario: Unknown corporate address
 
-- **WHEN** пользователь вводит адрес `unknown.user@company.com`, отсутствующий в справочнике
-- **THEN** система отклоняет адрес так же, как при входе, и не переходит к следующему шагу
+- **WHEN** the user enters the address `unknown.user@company.com`, which is absent from the directory
+- **THEN** the system rejects the address the same way as at login and does not proceed to the next step
 
-### Requirement: Собранные суммы скрыты от сотрудников
+### Requirement: Collected amounts are hidden from employees
 
-Система ДОЛЖНА скрывать от пользователей с ролью `employee` собранные суммы по получателям: ни по себе, ни по другим сотрудникам. Числовое значение собранной суммы НЕ ДОЛЖНО отображаться сотруднику ни на одном шаге участия и нигде на доступных ему страницах.
+The system MUST hide collected amounts by recipient from users with the `employee` role: neither for themselves nor for other employees. The numeric value of the collected amount MUST NOT be displayed to the employee on any participation step or anywhere on the pages available to them.
 
-#### Scenario: Сотрудник не видит собранные суммы
+#### Scenario: The employee does not see collected amounts
 
-- **WHEN** сотрудник просматривает доступные ему страницы и шаги участия
-- **THEN** нигде не отображается числовое значение собранной суммы
+- **WHEN** the employee views the pages and participation steps available to them
+- **THEN** the numeric value of the collected amount is not displayed anywhere
 
-#### Scenario: Скрытая сумма при подтверждении
+#### Scenario: Hidden amount at confirmation
 
-- **WHEN** сотрудник видит шаг подтверждения участия
-- **THEN** собранная сумма сбора не показывается, вместо неё отображается пояснение о скрытии
+- **WHEN** the employee sees the participation confirmation step
+- **THEN** the collected collection amount is not shown; instead, an explanation about hiding is displayed
 
-### Requirement: Участие сотрудника в сборе
+### Requirement: Employee participation in the collection
 
-Сотрудник ДОЛЖЕН иметь возможность указать положительную сумму своего участия при подтверждении корпоративной почты. Указанная сумма ДОЛЖНА добавляться к общему сбору выбранного получателя, при этом итоговая собранная сумма сотруднику НЕ ДОЛЖНА показываться: отображается только его собственный вклад и пояснение о скрытии.
+The employee MUST be able to specify a positive amount for their participation when confirming their corporate email. The specified amount MUST be added to the total collection of the selected recipient, while the total collected amount MUST NOT be shown to the employee: only their own contribution and an explanation about hiding are displayed.
 
-#### Scenario: Сотрудник указывает сумму участия
+#### Scenario: The employee specifies a participation amount
 
-- **WHEN** сотрудник вводит положительную сумму и подтверждает отправку
-- **THEN** сумма добавляется к общему сбору выбранного получателя
+- **WHEN** the employee enters a positive amount and confirms sending
+- **THEN** the amount is added to the total collection of the selected recipient
 
-#### Scenario: Итоговая сумма остаётся скрытой
+#### Scenario: The total amount remains hidden
 
-- **WHEN** сотрудник проходит шаги участия
-- **THEN** отображается только введённая им сумма, а итоговая собранная сумма не показывается
+- **WHEN** the employee goes through the participation steps
+- **THEN** only the amount they entered is displayed, and the total collected amount is not shown
 
-### Requirement: Учёт участия администратором
+### Requirement: Recording participation by the administrator
 
-Администратор ДОЛЖЕН иметь возможность указать сумму участия, и указанная сумма ДОЛЖНА добавляться к общему сбору выбранного сотрудника. Введённая сумма ДОЛЖНА быть положительной.
+The administrator MUST be able to specify a participation amount, and the specified amount MUST be added to the total collection of the selected employee. The entered amount MUST be positive.
 
-#### Scenario: Добавление суммы администратором
+#### Scenario: Adding an amount by the administrator
 
-- **WHEN** администратор вводит положительную сумму и подтверждает отправку
-- **THEN** сумма добавляется к общему сбору выбранного получателя
+- **WHEN** the administrator enters a positive amount and confirms sending
+- **THEN** the amount is added to the total collection of the selected recipient
 
-#### Scenario: Некорректная сумма
+#### Scenario: Invalid amount
 
-- **WHEN** администратор вводит нулевую, отрицательную или пустую сумму
-- **THEN** продолжение сценария недоступно
+- **WHEN** the administrator enters a zero, negative, or empty amount
+- **THEN** continuing the scenario is unavailable
 
-### Requirement: Понятный результат участия
+### Requirement: A clear participation result
 
-После подтверждения система ДОЛЖНА показывать результат участия, соответствующий роли: сотруднику — подтверждение отправленного поздравления, администратору — подтверждение добавления суммы к сбору. Закрытие результата ДОЛЖНО завершать сценарий участия.
+After confirmation, the system MUST show a participation result matching the role: for the employee, confirmation of the sent congratulation; for the administrator, confirmation of the amount being added to the collection. Closing the result MUST end the participation scenario.
 
-#### Scenario: Результат для сотрудника
+#### Scenario: Result for the employee
 
-- **WHEN** сотрудник завершает участие
-- **THEN** система показывает подтверждение отправки поздравления получателю
+- **WHEN** the employee completes participation
+- **THEN** the system shows confirmation that the congratulation was sent to the recipient
 
-#### Scenario: Результат для администратора
+#### Scenario: Result for the administrator
 
-- **WHEN** администратор завершает участие
-- **THEN** система показывает подтверждение добавления суммы к сбору получателя
+- **WHEN** the administrator completes participation
+- **THEN** the system shows confirmation that the amount was added to the recipient's collection

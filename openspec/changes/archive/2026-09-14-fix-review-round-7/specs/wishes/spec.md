@@ -1,43 +1,43 @@
 ## MODIFIED Requirements
 
-### Requirement: Создание пожелания из формы
+### Requirement: Creating a wish from the form
 
-Система ДОЛЖНА (MUST) позволять авторизованному пользователю создать пожелание, выбрав получателя только из числа сегодняшних именинников (кроме себя) и введя текст. Форма ДОЛЖНА явно показывать отправителя (текущего пользователя) и понятно обозначать выбор получателя. Если сегодня именинник ровно один, форма ДОЛЖНА автоматически подставлять его в выбор получателя при открытии. Созданное пожелание ДОЛЖНО сохранять автора, получателя и время создания. Отправка ДОЛЖНА блокироваться, пока получатель не выбран или текст пуст.
+The system (MUST) allow an authenticated user to create a wish by selecting a recipient only from among today's birthday persons (except themselves) and entering text. The form (MUST) explicitly show the sender (the current user) and clearly indicate the recipient selection. If there is exactly one birthday person today, the form (MUST) automatically fill them into the recipient selection when opened. The created wish (MUST) store the author, recipient, and creation time. Sending (MUST) be blocked while the recipient is not selected or the text is empty.
 
-#### Scenario: Успешное создание пожелания
+#### Scenario: Successful creation of a wish
 
-- **WHEN** пользователь выбирает получателя из сегодняшних именинников и вводит непустой текст, затем отправляет форму
-- **THEN** пожелание сохраняется с автором, получателем и временем создания и отображается по правилу показа дня рождения
+- **WHEN** the user selects a recipient from today's birthday persons and enters non-empty text, then submits the form
+- **THEN** the wish is saved with the author, recipient, and creation time and is displayed according to the birthday display rule
 
-#### Scenario: Неполные данные
+#### Scenario: Incomplete data
 
-- **WHEN** получатель не выбран или текст пуст
-- **THEN** отправка недоступна
+- **WHEN** no recipient is selected or the text is empty
+- **THEN** sending is unavailable
 
-#### Scenario: Форма показывает отправителя и получателя
+#### Scenario: The form shows the sender and the recipient
 
-- **WHEN** пользователь открывает форму пожелания
-- **THEN** форма показывает текущего пользователя как отправителя и содержит понятный выбор получателя
+- **WHEN** the user opens the wish form
+- **THEN** the form shows the current user as the sender and contains a clear recipient selection
 
-#### Scenario: Список получателей ограничен сегодняшними именинниками
+#### Scenario: The recipient list is limited to today's birthday persons
 
-- **WHEN** пользователь открывает выбор получателя в форме пожелания
-- **THEN** в списке доступны только сотрудники, чей день рождения совпадает с текущей датой, а сам пользователь в списке отсутствует
+- **WHEN** the user opens the recipient selection in the wish form
+- **THEN** only employees whose birthday matches the current date are available in the list, and the user themselves is absent from the list
 
-#### Scenario: Автовыбор единственного именинника
+#### Scenario: Auto-selection of the only birthday person
 
-- **WHEN** сегодня именинник ровно один и пользователь открывает форму пожелания
-- **THEN** этот именинник уже выбран получателем, и пользователю остаётся ввести только текст
+- **WHEN** there is exactly one birthday person today and the user opens the wish form
+- **THEN** this birthday person is already selected as the recipient, and the user only has to enter the text
 
-#### Scenario: Несколько именинников — выбор за пользователем
+#### Scenario: Several birthday persons — the choice is up to the user
 
-- **WHEN** сегодня несколько именинников и пользователь открывает форму пожелания
-- **THEN** получатель не выбран автоматически, и выбор остаётся за пользователем
+- **WHEN** there are several birthday persons today and the user opens the wish form
+- **THEN** the recipient is not selected automatically, and the choice remains with the user
 
 ## REMOVED Requirements
 
-### Requirement: Дата без времени в карточке пожелания
+### Requirement: Date without time in the wish card
 
-**Reason**: Дата создания не несёт ценности на доске поздравлений и удаляется по итогам ревью.
+**Reason**: The creation date carries no value on the congratulations board and is removed based on the review results.
 
-**Migration**: Карточка пожелания больше не отображает дату создания. Время создания продолжает храниться в данных пожелания вместе с автором и получателем и может использоваться внутри приложения.
+**Migration**: The wish card no longer displays the creation date. The creation time continues to be stored in the wish data together with the author and recipient and can be used within the application.

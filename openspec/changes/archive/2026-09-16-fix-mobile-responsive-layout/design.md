@@ -1,141 +1,141 @@
 ## Context
 
-См. `proposal.md` — Why. Текущее состояние и ограничения, определяющие подход:
+See `proposal.md` — Why. The current state and constraints that determine the approach:
 
-- Проект: Next.js 13.5 (App Router), React 18, Tailwind CSS **3.3.3**, Radix UI, `cn` через `tailwind-merge`. Tailwind 3.3 не содержит именованных утилит `dvh` (`min-h-dvh` появилась в 3.4), поэтому динамическая высота задаётся произвольным значением `min-h-[100dvh]`.
-- Hero (`app/(app)/page.tsx:67-85`): контейнер кнопок `flex flex-wrap gap-3`; базовый класс `Button` содержит `whitespace-nowrap` (`components/ui/button.tsx:8`), а `size="lg"` даёт `h-11 px-8`. На 320px доступная внутренняя ширина hero ≈ 240px, поэтому кнопка шириной ≈320px вылезает за `overflow-hidden` секции и обрезается.
-- Календарь (`app/(app)/calendar/page.tsx:77-111`): группа из 4 кнопок `size="icon"` (40px) + `h2` с `min-w-[160px]` без переноса; на 320px `scrollWidth` больше ширины контейнера.
-- Диалоги (`components/ui/dialog.tsx:41`): `w-full max-w-lg` без боковых отступов, без ограничения высоты и без внутренней прокрутки; Radix-примитивы наложения (`popover.tsx`, `select.tsx`) без `collisionPadding`.
-- Чат (`components/features/ChatThread.tsx:122,134`): `Card` с `max-h-[600px] md:h-[600px]`, `CardContent` с `flex-1 overflow-hidden` без `min-h-0`, из-за чего `flex-1` не сжимается и `overflow-y-auto` истории не активируется.
-- Таблица админа (`components/features/AdminTable.tsx:329-408`): внешний `div.overflow-x-auto` вокруг `Table`, который сам оборачивает таблицу в `overflow-auto` (двойная прокрутка); 6 колонок не помещаются на 640px. `AdminTable.test.tsx` ищет текст `Сумма сбора` через `getByText` и кнопки `Изменить` через `getAllByRole`, поэтому дублирование разметки (таблица + карточный список) сломает тесты.
-- Хедер (`components/layout/Header.tsx:154-158`): мобильная навигация — `px-1.5`/`py-1.5`/`text-xs` (≈28px высоты) в `overflow-x-auto` без подсказки о прокрутке.
-- Высота/эффекты: `min-h-screen` в `app/(app)/layout.tsx:9` и `app/(auth)/login/page.tsx:38`; `hover:scale-[1.02]` в `components/features/BirthdayCard.tsx:47` без ограничения по `hover: hover`.
-- Лента (`components/features/WishBoard.tsx:304-312`): `overflow-x-auto` список фиксированных карточек без `scroll-snap` и визуальной подсказки; требование `wishes` сохраняет ручную прокрутку без автопрокрутки.
-- Тесты: `vitest`, `@testing-library/react`, `happy-dom`; CSS-медиа в тестовой среде не применяется, поэтому скрытие по брейкпоинтам безопасно для существующих запросов.
+- Project: Next.js 13.5 (App Router), React 18, Tailwind CSS **3.3.3**, Radix UI, `cn` via `tailwind-merge`. Tailwind 3.3 does not contain named `dvh` utilities (`min-h-dvh` appeared in 3.4), so the dynamic height is set with the arbitrary value `min-h-[100dvh]`.
+- Hero (`app/(app)/page.tsx:67-85`): button container `flex flex-wrap gap-3`; the base `Button` class contains `whitespace-nowrap` (`components/ui/button.tsx:8`), and `size="lg"` gives `h-11 px-8`. At 320px the available inner width of the hero is ≈240px, so a button ≈320px wide overflows the section's `overflow-hidden` and gets clipped.
+- Calendar (`app/(app)/calendar/page.tsx:77-111`): a group of 4 `size="icon"` buttons (40px) + `h2` with `min-w-[160px]` without wrapping; at 320px `scrollWidth` is greater than the container width.
+- Dialogs (`components/ui/dialog.tsx:41`): `w-full max-w-lg` without side margins, without a height limit and without internal scrolling; Radix overlay primitives (`popover.tsx`, `select.tsx`) without `collisionPadding`.
+- Chat (`components/features/ChatThread.tsx:122,134`): `Card` with `max-h-[600px] md:h-[600px]`, `CardContent` with `flex-1 overflow-hidden` without `min-h-0`, which is why `flex-1` does not shrink and the history's `overflow-y-auto` does not activate.
+- Admin table (`components/features/AdminTable.tsx:329-408`): the outer `div.overflow-x-auto` around `Table`, which itself wraps the table in `overflow-auto` (double scrolling); 6 columns do not fit at 640px. `AdminTable.test.tsx` looks for the text `Сумма сбора` via `getByText` and the `Изменить` buttons via `getAllByRole`, so duplicating the markup (table + card list) will break the tests.
+- Header (`components/layout/Header.tsx:154-158`): mobile navigation — `px-1.5`/`py-1.5`/`text-xs` (≈28px high) in `overflow-x-auto` without a scroll hint.
+- Height/effects: `min-h-screen` in `app/(app)/layout.tsx:9` and `app/(auth)/login/page.tsx:38`; `hover:scale-[1.02]` in `components/features/BirthdayCard.tsx:47` without a `hover: hover` restriction.
+- Strip (`components/features/WishBoard.tsx:304-312`): `overflow-x-auto` list of fixed cards without `scroll-snap` and without a visual hint; the `wishes` requirement preserves manual scrolling without auto-scroll.
+- Tests: `vitest`, `@testing-library/react`, `happy-dom`; CSS media queries are not applied in the test environment, so hiding by breakpoints is safe for existing queries.
 
 ## Goals / Non-Goals
 
 **Goals:**
 
-- Устранить горизонтальное переполнение страницы и обрезку контента на 320–360px первопричинно, в конкретных компонентах, с защитным инвариантом на корне.
-- Сделать диалоги и наложение-элементы пригодными на узком и низком экране.
-- Починить внутреннюю прокрутку чата и доступность формы отправки при длинной истории.
-- Сделать таблицу админа и навигацию/ленту пригодными на мобильных без дублирования разметки и без изменения поведения, закреплённого тестами и спеками.
+- Eliminate horizontal page overflow and content clipping at 320–360px at the root cause, in specific components, with a defensive invariant at the root.
+- Make dialogs and overlay elements usable on a narrow and short screen.
+- Fix the chat's internal scrolling and the accessibility of the submit form with a long history.
+- Make the admin table and navigation/strip usable on mobile without duplicating markup and without changing behavior fixed by tests and specs.
 
 **Non-Goals:**
 
-- Редизайн страниц, изменение данных, бизнес-логики, правил показа и ролей.
-- Переход на Tailwind 4, замена Radix-примитивов или кастомных контекстов.
-- Карточный список админ-таблицы с дублирующей разметкой (см. Решение 6).
-- Автопрокрутка ленты пожеланий (запрещена требованием `wishes`).
+- Redesigning pages, changing data, business logic, display rules, and roles.
+- Migrating to Tailwind 4, replacing Radix primitives or custom contexts.
+- A card list for the admin table with duplicating markup (see Decision 6).
+- Auto-scroll of the wish strip (prohibited by the `wishes` requirement).
 
 ## Decisions
 
-### Решение 1: первопричинные правки компонентов + защитный инвариант на корне
+### Decision 1: root-cause component fixes + a defensive invariant at the root
 
-Сначала исправляются конкретные переполнения (hero, календарь, таблица, диалоги), затем добавляется защитный `overflow-x-hidden` для `body` в `app/globals.css`.
+First the specific overflows are fixed (hero, calendar, table, dialogs), then a defensive `overflow-x-hidden` for `body` is added in `app/globals.css`.
 
-- Почему: защита на корне полезна как страховка от будущих регрессий, но одна она маскировала бы баги и обрезала легитимные локальные прокрутки.
-- Альтернатива — только `overflow-x-hidden` на `body`: отвергнута, скрывает симптомы, а не причины.
-- Альтернатива — только точечные правки: тоже работоспособна, но оставляет широкий класс регрессий; комбинация надёжнее.
+- Why: protection at the root is useful as insurance against future regressions, but on its own it would mask bugs and clip legitimate local scrolling.
+- Alternative — only `overflow-x-hidden` on `body`: rejected, it hides symptoms rather than causes.
+- Alternative — only targeted fixes: also workable, but leaves a broad class of regressions; the combination is more reliable.
 
-### Решение 2: hero — перенос в столбик и многострочный лейбл
+### Decision 2: hero — column wrapping and a multiline label
 
-Контейнер кнопок получает `flex-col sm:flex-row`, кнопки — `w-full sm:w-auto px-5 sm:px-8 whitespace-normal h-auto min-h-11 py-2.5`; перенос включается только на узком экране, на `sm+` сохраняется текущий вид.
+The button container gets `flex-col sm:flex-row`, the buttons get `w-full sm:w-auto px-5 sm:px-8 whitespace-normal h-auto min-h-11 py-2.5`; wrapping is enabled only on a narrow screen, on `sm+` the current appearance is preserved.
 
-- Почему: на 320px внутренняя ширина hero ≈240px, и даже полноширинная кнопка с `px-8` и одной строкой ≈295px не помещается; перенос строки — минимальное изменение без потери смысла лейбла.
-- Альтернатива — сократить текст кнопки до «Поздравить»: отвергнута, лейбл несёт смысл «деньгами или поздравлением» и упоминается в текстах FAQ.
-- Альтернатива — уменьшить `size` кнопок: не решает 240px-ограничение и ухудшает доступность тап-таргета.
-- Следствие: `cn`/`tailwind-merge` уже перекрывает `whitespace-nowrap` и `px-8` из варианта, поэтому правка локальна.
+- Why: at 320px the inner width of the hero is ≈240px, and even a full-width button with `px-8` and a single line of ≈295px does not fit; wrapping the line is the minimal change without losing the meaning of the label.
+- Alternative — shorten the button text to "Congratulate": rejected, the label carries the meaning "with money or a congratulation" and is mentioned in the FAQ texts.
+- Alternative — reduce the button `size`: does not solve the 240px constraint and worsens tap-target accessibility.
+- Consequence: `cn`/`tailwind-merge` already overrides `whitespace-nowrap` and `px-8` from the variant, so the fix is local.
 
-### Решение 3: календарь — перенос группы и компактные стрелки
+### Decision 3: calendar — wrapping the group and compact arrows
 
-Группа навигации получает `flex-wrap items-center justify-center gap-2`, стрелки — `size="sm" className="h-8 w-8 shrink-0"`, у `h2` убирается `min-w-[160px]` и уменьшается размер текста на узком экране (`text-lg sm:text-xl` с `whitespace-nowrap`).
+The navigation group gets `flex-wrap items-center justify-center gap-2`, the arrows get `size="sm" className="h-8 w-8 shrink-0"`, `min-w-[160px]` is removed from `h2` and the text size is reduced on a narrow screen (`text-lg sm:text-xl` with `whitespace-nowrap`).
 
-- Почему: 4 кнопки по 32px + заголовок ≈120px + отступы укладываются в 288px страничного контейнера 320px; перенос оставляет запас.
-- Альтернатива — разделить навигацию на две строки (месяц / год): меняет привычную раскладку и избыточна.
-- Следствие: кнопки остаются 32×32px; минимальный тап-таргет 44px относится к мобильной навигации хедера (см. Решение 9), для компактных стрелок календаря допускается 32px как вторичный контрол с `title`/`aria-label`.
+- Why: 4 buttons of 32px each + a heading ≈120px + paddings fit into the 288px page container of 320px; wrapping leaves a margin.
+- Alternative — split the navigation into two rows (month / year): changes the familiar layout and is excessive.
+- Consequence: the buttons remain 32×32px; the minimum tap target of 44px applies to the header's mobile navigation (see Decision 9); for the compact calendar arrows 32px is allowed as a secondary control with `title`/`aria-label`.
 
-### Решение 4: календарные ячейки — компактная отметка ниже `sm`
+### Decision 4: calendar cells — a compact marker below `sm`
 
-Ниже `sm` в ячейке вместо имени рендерится компактная отметка (эмодзи/точка) с `title` полного перечня именинников; имена остаются на `sm+`. `min-h` ячейки сохраняется.
+Below `sm`, a compact marker (emoji/dot) with a `title` of the full list of birthday people is rendered in the cell instead of the name; the names remain at `sm+`. The cell's `min-h` is preserved.
 
-- Почему: при ширине ячейки ≈33px текст «🎂Анна» физически не читается; отметка сохраняет сигнал «есть день рождения», а полное имя доступно из списка именинников месяца ниже и из `title`.
-- Альтернатива — горизонтальный скролл сетки календаря: отвергнута, создаёт вложенную прокрутку и ломает обзор месяца.
-- Альтернатива — увеличить `min-w` ячейки: приводит к переполнению, которое и устраняется.
+- Why: with a cell width of ≈33px the text "🎂Anna" is physically unreadable; the marker preserves the signal "there is a birthday", and the full name is available from the list of birthday people for the month below and from the `title`.
+- Alternative — horizontal scrolling of the calendar grid: rejected, it creates nested scrolling and breaks the overview of the month.
+- Alternative — increase the cell's `min-w`: leads to the overflow that is being eliminated.
 
-### Решение 5: диалоги — ограничение на уровне примитива
+### Decision 5: dialogs — a constraint at the level of the primitive
 
-В `components/ui/dialog.tsx` базовый `DialogContent` получает `w-[calc(100%-1.5rem)] max-w-lg max-h-[90dvh] overflow-y-auto overscroll-contain`. `PopoverContent`/`SelectContent` получают `collisionPadding={8}`; у popover в `AdminTable` дополнительно `collisionPadding`, у `SelectContent` — `max-w-[calc(100vw-2rem)]`.
+In `components/ui/dialog.tsx` the base `DialogContent` gets `w-[calc(100%-1.5rem)] max-w-lg max-h-[90dvh] overflow-y-auto overscroll-contain`. `PopoverContent`/`SelectContent` get `collisionPadding={8}`; the popover in `AdminTable` additionally gets `collisionPadding`, and `SelectContent` gets `max-w-[calc(100vw-2rem)]`.
 
-- Почему: правка в примитиве чинит все диалоги (участие, изменение суммы, изменение пожелания) одним изменением и не требует повторять классы в каждом хосте.
-- Альтернатива — править `className` в каждом использовании: дублирование и риск пропустить диалог.
-- Альтернатива — `max-h-[90vh]`: `vh` не учитывает динамическую адресную строку; `dvh` в произвольном значении доступен в 3.3.
-- Следствие: `overflow-y-auto` на контейнере диалога не конфликтует с `DayPicker` внутри `Popover`, так как поповер рендерится в портале.
+- Why: a fix in the primitive repairs all dialogs (participation, amount change, wish change) with a single change and does not require repeating the classes in every host.
+- Alternative — edit `className` in each usage: duplication and the risk of missing a dialog.
+- Alternative — `max-h-[90vh]`: `vh` does not account for the dynamic address bar; `dvh` as an arbitrary value is available in 3.3.
+- Consequence: `overflow-y-auto` on the dialog container does not conflict with `DayPicker` inside `Popover`, since the popover is rendered in a portal.
 
-### Решение 6: админ-таблица — скрытие колонок, один контейнер, компактные контролы
+### Decision 6: admin table — hiding columns, a single container, compact controls
 
-Таблица остаётся единственным источником разметки. Внешняя обёртка `div.overflow-x-auto` удаляется (её уже даёт `Table`). Колонки «Отдел» и «Дата рождения» получают `hidden md:table-cell`, e-mail в ячейке сотрудника — `hidden sm:block`. Ниже `sm` подписи кнопок «Подарок» и «Изменить» скрываются (`hidden sm:inline`), для доступного имени добавляется `aria-label`; отступы ячеек становятся `px-2 sm:px-4`.
+The table remains the only source of markup. The outer `div.overflow-x-auto` wrapper is removed (it is already provided by `Table`). The "Department" and "Birthday date" columns get `hidden md:table-cell`, the e-mail in the employee cell gets `hidden sm:block`. Below `sm` the labels of the "Gift" and "Edit" buttons are hidden (`hidden sm:inline`), and an `aria-label` is added for the accessible name; the cell paddings become `px-2 sm:px-4`.
 
-- Почему: `AdminTable.test.tsx` использует `getByText('Сумма сбора')` и `getAllByRole('button', { name: 'Изменить' })`; карточный список добавил бы дубликаты в DOM и сломал уникальность запросов. Скрытие по CSS не убирает узлы из DOM и в happy-dom/тестах не влияет на запросы.
-- Альтернатива — карточный список `<md`: отклонена из-за дублирования разметки, двойного сопровождения и конфликта с тестами.
-- Следствие: на мобильном теряются отдел и дата рождения в таблице, но ключевые данные (имя, e-mail, сумма, статусы, действие) сохранены; полный набор доступен на `md+`.
+- Why: `AdminTable.test.tsx` uses `getByText('Сумма сбора')` and `getAllByRole('button', { name: 'Изменить' })`; a card list would add duplicates to the DOM and break the uniqueness of the queries. Hiding via CSS does not remove nodes from the DOM and does not affect queries in happy-dom/tests.
+- Alternative — a card list `<md`: rejected due to duplicating markup, double maintenance, and conflict with the tests.
+- Consequence: on mobile, the department and birthday date are lost in the table, but the key data (name, e-mail, amount, statuses, action) is preserved; the full set is available at `md+`.
 
-### Решение 7: чат — определённая высота и `min-h-0` по цепочке
+### Decision 7: chat — a definite height and `min-h-0` along the chain
 
-Корень карточки получает `h-[70dvh] md:h-[600px]`, `CardContent` — `min-h-0`; цепочка `min-h-0` сохраняется у внутреннего ряда и колонок, история остаётся `flex-1 overflow-y-auto`.
+The card root gets `h-[70dvh] md:h-[600px]`, `CardContent` gets `min-h-0`; the `min-h-0` chain is preserved on the inner row and columns, and the history remains `flex-1 overflow-y-auto`.
 
-- Почему: причина дефекта — отсутствие `min-h-0`, из-за чего `flex-1` не сжимается ниже содержимого, и `overflow-y-auto` не включается; без `min-h-0` любое ограничение высоты не сработает.
-- Альтернатива — только `min-h-0` без изменения высоты: на мобильном карточка может оказаться выше вьюпорта, форма уедет за экран.
-- Альтернатива — только `h-[70dvh]`: не снимает причину несжимаемости, прокрутка не включится.
-- Следствие: на мобильном карточка занимает 70% динамической высоты экрана, что оставляет видимой шапку и не требует прокрутки страницы к форме.
+- Why: the cause of the defect is the absence of `min-h-0`, which is why `flex-1` does not shrink below the content and `overflow-y-auto` does not activate; without `min-h-0` any height constraint will not work.
+- Alternative — only `min-h-0` without changing the height: on mobile the card may end up taller than the viewport, and the form will move off screen.
+- Alternative — only `h-[70dvh]`: does not remove the cause of the incompressibility, scrolling will not activate.
+- Consequence: on mobile the card occupies 70% of the dynamic screen height, which leaves the header visible and does not require scrolling the page to the form.
 
-### Решение 8: выбор получателя — ограничение ширины и усечение подписи
+### Decision 8: recipient selection — width limit and label truncation
 
-`SelectContent` получает `max-w-[calc(100vw-2rem)]` и `collisionPadding={8}`; `SelectItem`/`ItemText` — `min-w-0` и `truncate`; полный текст опции остаётся доступным через `title`. В `DonateDialog` длинная подпись сохраняется, но визуально усекается.
+`SelectContent` gets `max-w-[calc(100vw-2rem)]` and `collisionPadding={8}`; `SelectItem`/`ItemText` get `min-w-0` and `truncate`; the full text of the option remains available via `title`. In `DonateDialog` the long label is preserved but visually truncated.
 
-- Почему: `truncate` даёт предсказуемое усечение вместо обрезки без ellipsis, а ограничение ширины не даёт списку выйти за вьюпорт.
-- Альтернатива — короткий лейбл только на мобильных (только имя): риск потери различимости одноимённых получателей; почта и отдел нужны требованию `donations`.
-- Следствие: на 320px опция показывает начало подписи и ellipsis, полное значение — из `title` и с шагов подтверждения.
+- Why: `truncate` gives predictable truncation instead of clipping without an ellipsis, and the width limit prevents the list from going outside the viewport.
+- Alternative — a short label only on mobile (name only): the risk of losing the distinguishability of recipients with the same name; the e-mail and department are needed by the `donations` requirement.
+- Consequence: at 320px the option shows the beginning of the label and an ellipsis, the full value comes from the `title` and from the confirmation steps.
 
-### Решение 9: мобильная навигация — тап-таргет и подсказка прокрутки
+### Decision 9: mobile navigation — tap target and scroll hint
 
-Ссылки мобильной навигации получают `min-h-[44px] py-2.5`, контейнер — `snap-x snap-mandatory` и элементы `snap-start`; подсказка о продолжении реализуется градиентом-маской у правого края, видимым только при переполнении.
+Mobile navigation links get `min-h-[44px] py-2.5`, the container gets `snap-x snap-mandatory` and the items get `snap-start`; the continuation hint is implemented as a gradient mask at the right edge, visible only on overflow.
 
-- Почему: 44px — общепринятый минимум тач-таргета; `scroll-snap` делает прокрутку предсказуемой, а градиент сигнализирует о продолжении, которое сейчас незаметно.
-- Альтернатива — перенос пунктов во вторую строку: увеличивает высоту шапки и отъедает место у контента.
-- Альтернатива — «бургер»-меню: большее изменение продуктового поведения, выходит за рамки этого изменения.
-- Следствие: градиент не должен перехватывать клики (`pointer-events-none`) и не появляется, когда все пункты помещаются.
+- Why: 44px is the generally accepted minimum touch target; `scroll-snap` makes scrolling predictable, and the gradient signals a continuation that is currently unnoticeable.
+- Alternative — wrap the items onto a second row: increases the header height and takes space away from the content.
+- Alternative — a "burger" menu: a larger change to product behavior, outside the scope of this change.
+- Consequence: the gradient must not intercept clicks (`pointer-events-none`) and does not appear when all items fit.
 
-### Решение 10: динамическая высота, якорь и hover
+### Decision 10: dynamic height, anchor, and hover
 
-`min-h-screen` заменяется на `min-h-[100dvh]` в `app/(app)/layout.tsx` и `app/(auth)/login/page.tsx`; секции `#wish-board` добавляется `scroll-mt-20`; `hover:scale-[1.02]` заменяется на вариант `hoverable:hover:scale-[1.02]`, где `hoverable` — кастомный вариант `@media (hover: hover)` в `tailwind.config.ts`.
+`min-h-screen` is replaced with `min-h-[100dvh]` in `app/(app)/layout.tsx` and `app/(auth)/login/page.tsx`; `scroll-mt-20` is added to the `#wish-board` section; `hover:scale-[1.02]` is replaced with the `hoverable:hover:scale-[1.02]` variant, where `hoverable` is a custom `@media (hover: hover)` variant in `tailwind.config.ts`.
 
-- Почему: `dvh` убирает скачок высоты при показе адресной строки; `scroll-mt-20` компенсирует sticky-шапку `h-16` с запасом; ограничение hover-эффектов media-условием убирает залипание на тач-устройствах.
-- Альтернатива — убрать `hover:scale` совсем: теряется affordance на десктопе, требование `responsive-layout` допускает эффект при наличии наведения.
-- Альтернатива — `motion-safe`: относится к анимациям, а не к наличию указателя; не решает залипание.
-- Следствие: `hoverable` добавляется плагином Tailwind через `addVariant('hoverable', '@media (hover: hover)')`; класс `hoverable:hover:scale-[1.02]` не применяется на сенсорных экранах.
+- Why: `dvh` removes the height jump when the address bar is shown; `scroll-mt-20` compensates for the sticky `h-16` header with a margin; restricting hover effects with a media condition removes sticking on touch devices.
+- Alternative — remove `hover:scale` entirely: the affordance on desktop is lost, the `responsive-layout` requirement allows the effect when hover is present.
+- Alternative — `motion-safe`: relates to animations, not to the presence of a pointer; does not solve the sticking.
+- Consequence: `hoverable` is added via the Tailwind plugin through `addVariant('hoverable', '@media (hover: hover)')`; the class `hoverable:hover:scale-[1.02]` is not applied on touch screens.
 
-### Решение 11: лента пожеланий — подсказка и пошаговое выравнивание
+### Decision 11: wish strip — hint and stepwise alignment
 
-Лента получает `snap-x snap-mandatory`, карточки — `snap-start`; у контейнера добавляется градиент-подсказка о горизонтальной прокрутке, видимая только при переполнении. `overflow-x-auto`, фиксированная ширина карточек и ручная прокрутка сохраняются, автопрокрутка не добавляется.
+The strip gets `snap-x snap-mandatory`, the cards get `snap-start`; a gradient hint about horizontal scrolling, visible only on overflow, is added to the container. `overflow-x-auto`, the fixed card width, and manual scrolling are preserved; auto-scroll is not added.
 
-- Почему: требование `wishes` прямо запрещает автопрокрутку и требует ручную прокрутку; `scroll-snap` улучшает ручную прокрутку, не нарушая доступность с клавиатуры.
-- Альтернатива — стрелки прокрутки: избыточны для ленты карточек и дублируют жесты.
-- Альтернатива — индикатор-полоса прогресса: даёт информацию о позиции, но не сигнализирует о возможности прокрутки на первом экране; градиент дешевле и понятнее.
-- Следствие: подсказка реализуется CSS-градиентом на обёртке с `pointer-events-none`; в тестовой среде без CSS она не влияет на запросы.
+- Why: the `wishes` requirement explicitly prohibits auto-scroll and requires manual scrolling; `scroll-snap` improves manual scrolling without breaking keyboard accessibility.
+- Alternative — scroll arrows: excessive for a strip of cards and duplicate gestures.
+- Alternative — a progress-bar indicator: provides information about the position but does not signal the possibility of scrolling on the first screen; the gradient is cheaper and clearer.
+- Consequence: the hint is implemented as a CSS gradient on the wrapper with `pointer-events-none`; in the test environment without CSS it does not affect queries.
 
 ## Risks / Trade-offs
 
-- [Скрытие колонок таблицы на мобильном снижает объём данных] → Отдел и дата рождения скрываются только ниже `md`, ключевые поля и действия сохранены; альтернативный полный доступ — на планшете и десктопе.
-- [Скрытие текста кнопок через `hidden sm:inline` и доступное имя] → Кнопкам добавляется `aria-label`, чтобы на мобильном у них оставалось осмысленное имя при `display:none` подписи.
-- [Карточка чата с `h-[70dvh]` на мобильном] → Оставляет место шапке и позволяет форме быть видимой; на `md+` высота фиксирована 600px, как раньше, что сохраняет требование `support-chat` о видимости поля ответа.
-- [`overflow-y-auto` на `DialogContent` может прокручивать весь диалог] → Это ожидаемо и требуется спекой; заголовок и футер прокручиваются вместе с содержимым, кнопки остаются достижимыми за счёт `max-h` и `dvh`.
-- [Длинные подписи получателей усекаются] → Полное значение доступно через `title` и на шаге подтверждения, где отображается выбранный получатель.
-- [Градиент-подсказка на границе экрана может перекрывать контент] → `pointer-events-none` и небольшая ширина в несколько пикселей; при отсутствии переполнения подсказка не рендерится.
-- [Tailwind 3.3 без именованных `dvh`-утилит] → Используются произвольные значения (`min-h-[100dvh]`, `max-h-[90dvh]`, `h-[70dvh]`), которые проходят через JIT.
-- [Кастомный вариант `hoverable` в конфиге Tailwind] → Меняет конфиг, но не влияет на существующие классы; альтернатива — точечные медиа-запросы в `globals.css`, менее выразительна.
+- [Hiding table columns on mobile reduces the amount of data] → The department and birthday date are hidden only below `md`, the key fields and actions are preserved; the alternative full access is on tablet and desktop.
+- [Hiding button text via `hidden sm:inline` and the accessible name] → An `aria-label` is added to the buttons so that on mobile they retain a meaningful name when the label is `display:none`.
+- [The chat card with `h-[70dvh]` on mobile] → Leaves room for the header and allows the form to be visible; at `md+` the height is fixed at 600px, as before, which preserves the `support-chat` requirement about the visibility of the reply field.
+- [`overflow-y-auto` on `DialogContent` may scroll the entire dialog] → This is expected and required by the spec; the header and footer scroll together with the content, the buttons remain reachable thanks to `max-h` and `dvh`.
+- [Long recipient labels are truncated] → The full value is available via `title` and at the confirmation step, where the selected recipient is displayed.
+- [The gradient hint at the screen edge may overlay content] → `pointer-events-none` and a small width of a few pixels; when there is no overflow the hint is not rendered.
+- [Tailwind 3.3 without named `dvh` utilities] → Arbitrary values are used (`min-h-[100dvh]`, `max-h-[90dvh]`, `h-[70dvh]`), which pass through JIT.
+- [Custom `hoverable` variant in the Tailwind config] → Changes the config but does not affect existing classes; the alternative — targeted media queries in `globals.css` — is less expressive.
 
 ## Migration Plan
 
-Изменение полностью клиентское, данные и API не затрагиваются — миграций нет, откат через revert. Правки в UI-примитивах (`dialog`, `popover`, `select`, `table`) и `tailwind.config.ts` влияют на все места использования, поэтому их следует вносить одним коммитом вместе с вызовами, а после — прогнать `npm run lint`, `npm run typecheck`, `npm test` и ручную проверку на 320/360/640px.
+The change is entirely client-side, data and API are not affected — there are no migrations, rollback is via revert. Fixes in the UI primitives (`dialog`, `popover`, `select`, `table`) and `tailwind.config.ts` affect all usage sites, so they should be made in a single commit together with the call sites, and afterwards run `npm run lint`, `npm run typecheck`, `npm test`, and a manual check at 320/360/640px.

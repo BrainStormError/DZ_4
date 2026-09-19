@@ -1,15 +1,15 @@
 ## ADDED Requirements
 
-### Requirement: Перенос подписи футера на узком экране
+### Requirement: Footer caption wrapping on a narrow screen
 
-Подпись футера с брендом и описанием ДОЛЖНА (MUST) читаться на ширинах от 320px: описание НЕ ДОЛЖНО начинать строку с тире, а иконка и бренд НЕ ДОЛЖНЫ рассинхронизироваться по вертикали с многострочным описанием. Когда вся подпись не помещается в одну строку, бренд и описание ДОЛЖНЫ (MUST) переноситься в столбик с выравниванием по центру.
+The footer caption with the brand and description MUST be readable at widths from 320px: the description MUST NOT begin a line with a dash, and the icon and brand MUST NOT be vertically desynchronized with a multi-line description. When the whole caption does not fit on one line, the brand and description MUST wrap into a centered column.
 
-#### Scenario: Футер на 320px
+#### Scenario: Footer at 320px
 
-- **WHEN** футер отображается на ширине 320px
-- **THEN** бренд и описание расположены друг под другом и выровнены по центру, а строка описания не начинается с тире
+- **WHEN** the footer is displayed at a width of 320px
+- **THEN** the brand and description are placed one below another and centered, and the description line does not begin with a dash
 
-#### Scenario: Футер на широком экране
+#### Scenario: Footer on a wide screen
 
-- **WHEN** футер отображается на ширине `sm` и выше
-- **THEN** иконка, бренд и описание остаются в одной строке, как прежде
+- **WHEN** the footer is displayed at a width of `sm` and above
+- **THEN** the icon, brand, and description remain on one line, as before

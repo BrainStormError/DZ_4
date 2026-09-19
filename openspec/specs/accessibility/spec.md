@@ -2,34 +2,34 @@
 
 ## Purpose
 
-Обеспечивает доступность интерактивных элементов шапки на всех размерах экрана, включая мобильную вёрстку, где текстовые подписи скрыты.
+Ensures accessibility of the header's interactive elements at all screen sizes, including the mobile layout where text labels are hidden.
 
 ## Requirements
 
-### Requirement: Доступные имена элементов шапки
+### Requirement: Accessible names for header elements
 
-Интерактивные элементы шапки ДОЛЖНЫ иметь доступное имя, не зависящее от видимости текстовой подписи. Переключатель темы и меню пользователя ДОЛЖНЫ сохранять осмысленное доступное имя на мобильном размере экрана, когда текстовая подпись скрыта. Элементы ДОЛЖНЫ быть доступны и активируемы с клавиатуры.
+The header's interactive elements MUST have an accessible name that does not depend on the visibility of the text label. The theme toggle and the user menu MUST retain a meaningful accessible name at mobile screen sizes when the text label is hidden. The elements MUST be accessible and activatable from the keyboard.
 
-#### Scenario: Мобильная шапка
+#### Scenario: Mobile header
 
-- **WHEN** приложение открыто на узком экране, где текст подписи скрыт
-- **THEN** переключатель темы и меню пользователя имеют доступное имя, а не только эмодзи или изображение
+- **WHEN** the application is open on a narrow screen where the label text is hidden
+- **THEN** the theme toggle and the user menu have an accessible name, and not just an emoji or an image
 
-#### Scenario: Активация с клавиатуры
+#### Scenario: Keyboard activation
 
-- **WHEN** пользователь переходит по элементам шапки клавишей Tab
-- **THEN** элемент получает фокус и активируется клавишами Enter или Space
+- **WHEN** the user navigates through the header elements with the Tab key
+- **THEN** the element receives focus and is activated with the Enter or Space keys
 
-### Requirement: Минимальный размер тап-таргета навигации
+### Requirement: Minimum tap target size for navigation
 
-Интерактивные элементы мобильной навигации ДОЛЖНЫ (MUST) иметь область нажатия не меньше 44×44px, чтобы по ним можно было надёжно попасть пальцем. Увеличение области нажатия НЕ ДОЛЖНО ломать текущую раскладку и НЕ ДОЛЖНО создавать горизонтальное переполнение.
+The interactive elements of the mobile navigation MUST have a tap area of at least 44×44px so that they can be reliably hit with a finger. Enlarging the tap area MUST NOT break the current layout and MUST NOT create horizontal overflow.
 
-#### Scenario: Размер области нажатия
+#### Scenario: Tap area size
 
-- **WHEN** мобильная навигация отображается на сенсорном устройстве
-- **THEN** высота области нажатия каждого пункта составляет не менее 44px
+- **WHEN** the mobile navigation is displayed on a touch device
+- **THEN** the tap area height of each item is at least 44px
 
-#### Scenario: Раскладка не ломается
+#### Scenario: Layout is not broken
 
-- **WHEN** области нажатия увеличены
-- **THEN** пункты навигации остаются выровненными, а страница не получает горизонтальный скролл
+- **WHEN** the tap areas are enlarged
+- **THEN** the navigation items remain aligned, and the page does not get horizontal scroll

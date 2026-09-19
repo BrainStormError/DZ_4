@@ -1,32 +1,32 @@
 ## Why
 
-В замерах LCP ключевой страницы `/admin` крупнейшим элементом оказывается служебная подпись «Управление суммами сборов», потому что весь контент страницы ждёт клиентской гидратации и чтения `localStorage`: `components/features/AdminTable.tsx:114` до `ready` возвращает пустой скелетон, а `ready` выставляется только эффектом в `lib/auth-context.tsx:22-29`. Это прямо противоречит существующему требованию `performance` «Серверный контент при первой отрисовке»: серверная разметка маршрута состоит из двух пустых `div`. Единственная причина барьера — сессия, неизвестная серверу, поэтому сессия переносится в cookie: сервер узнаёт пользователя до отдачи HTML, и контент страницы перестаёт зависеть от гидратации.
+In the LCP measurements of the key page `/admin`, the largest element turns out to be the secondary caption "Managing collection amounts", because all the page content waits for client-side hydration and reading of `localStorage`: `components/features/AdminTable.tsx:114` returns an empty skeleton until `ready`, and `ready` is set only by an effect in `lib/auth-context.tsx:22-29`. This directly contradicts the existing `performance` requirement "Server content on first render": the server markup of the route consists of two empty `div`s. The only cause of the barrier is the session being unknown to the server, so the session is moved to a cookie: the server learns the user before the HTML is sent, and the page content stops depending on hydration.
 
 ## What Changes
 
-- **Сессия входа переезжает из `localStorage` в cookie.** Cookie сессионная: без `Max-Age`/`Expires`, поэтому при закрытии браузера вход слетает; `Path=/`, `SameSite=Lax`. **BREAKING** (поведение): все, кто уже вошёл, выходят один раз, и вход больше не сохраняется между запусками браузера.
-- **Корневой серверный layout читает cookie** и проверяет адрес существующим правилом `checkCorpEmail`; найденный пользователь передаётся в `AuthProvider` как начальное значение состояния, поэтому сессия известна уже на сервере.
-- **Флаг `ready` и page-level скелетон удаляются.** Заголовок и описание административной страницы рендерятся всегда, а роль проверяется на сервере, а не после гидратации.
-- **Маршрут группы `(app)` защищается на сервере:** без валидной cookie сервер отвечает редиректом на `/login` до отдачи HTML, поэтому защищённая разметка больше не показывается неавторизованному пользователю.
-- **Страница входа отправляет вошедшего на главную серверным редиректом** вместо клиентского эффекта, который сейчас успевает показать форму.
-- **Cookie не подписана**, поэтому её значение можно подделать вручную; это осознанный размен демо-уровня — реальная аутентификация и защита остаются вне объёма, как и было зафиксировано ранее.
-- Тема остаётся в `localStorage`: перенос темы в cookie по-прежнему вне объёма (отклонённая альтернатива решения 4 в `archive/2026-09-15-reduce-render-fanout-and-first-load`).
+- **The login session moves from `localStorage` to a cookie.** The cookie is a session cookie: without `Max-Age`/`Expires`, so closing the browser drops the login; `Path=/`, `SameSite=Lax`. **BREAKING** (behavior): everyone who is already logged in is logged out once, and the login is no longer preserved between browser runs.
+- **The root server layout reads the cookie** and validates the address with the existing `checkCorpEmail` rule; the found user is passed to `AuthProvider` as the initial state value, so the session is known already on the server.
+- **The `ready` flag and the page-level skeleton are removed.** The title and description of the admin page render always, and the role is checked on the server rather than after hydration.
+- **The `(app)` group route is protected on the server:** without a valid cookie the server responds with a redirect to `/login` before sending the HTML, so the protected markup is no longer shown to an unauthorized user.
+- **The login page sends a logged-in user to the home page via a server redirect** instead of the client effect that currently manages to show the form.
+- **The cookie is not signed**, so its value can be forged manually; this is a conscious demo-level trade-off — real authentication and protection remain out of scope, as was recorded earlier.
+- The theme remains in `localStorage`: moving the theme to a cookie is still out of scope (the rejected alternative of decision 4 in `archive/2026-09-15-reduce-render-fanout-and-first-load`).
 
 ## Capabilities
 
 ### New Capabilities
 
-- нет
+- none
 
 ### Modified Capabilities
 
-- `performance`: требование «Серверный контент при первой отрисовке» усиливается — серверная разметка ключевой страницы содержит значимое содержимое, а восстановление сессии не может оставить страницу без контента из-за ожидания гидратации.
-- `auth`: требования «Вход по корпоративной почте» и «Разграничение доступа по ролям» уточняются — сессия хранится в сессионной cookie и доступ к административному разделу проверяется до отдачи разметки.
+- `performance`: the requirement "Server content on first render" is strengthened — the server markup of the key page contains meaningful content, and session restoration cannot leave the page without content due to waiting for hydration.
+- `auth`: the requirements "Login by corporate email" and "Role-based access control" are refined — the session is stored in a session cookie and access to the admin section is checked before the markup is sent.
 
 ## Impact
 
-- Сессия и оболочка: `lib/auth-context.tsx` (источник истины, `ready`, запись и удаление cookie), `app/layout.tsx` (чтение cookie, начальное значение провайдера), `components/layout/AuthGate.tsx` (клиентский редирект становится ненужным), `app/(app)/layout.tsx` (серверная защита группы), `app/(auth)/login/page.tsx` (запись cookie и редирект вошедшего).
-- Страницы: `app/(app)/admin/page.tsx`, `components/features/AdminTable.tsx` (снятие гейта `ready`, проверка роли).
-- Тесты: `components/features/AdminTable.test.tsx:22` и `components/features/DonateDialog.test.tsx:35` мокают `ready: true`; нужны проверки чтения cookie и серверного редиректа.
-- Производительность: все пользовательские маршруты живут внутри `(app)`, поэтому чтение cookie делает динамическими все значимые страницы — статическая отдача HTML пропадает, время до первого байта немного растёт, зато первая отрисовка содержит контент.
-- Хранилище: ключ `corp-gift-auth-email` в `localStorage` перестаёт читаться; тема, дата и данные остаются в текущих механизмах.
+- Session and shell: `lib/auth-context.tsx` (source of truth, `ready`, writing and deleting the cookie), `app/layout.tsx` (reading the cookie, the provider's initial value), `components/layout/AuthGate.tsx` (the client redirect becomes unnecessary), `app/(app)/layout.tsx` (server protection of the group), `app/(auth)/login/page.tsx` (writing the cookie and redirecting a logged-in user).
+- Pages: `app/(app)/admin/page.tsx`, `components/features/AdminTable.tsx` (removal of the `ready` gate, the role check).
+- Tests: `components/features/AdminTable.test.tsx:22` and `components/features/DonateDialog.test.tsx:35` mock `ready: true`; checks for cookie reading and the server redirect are needed.
+- Performance: all user routes live inside `(app)`, so reading the cookie makes all meaningful pages dynamic — static HTML delivery is lost, time to first byte grows slightly, but the first render contains content.
+- Storage: the key `corp-gift-auth-email` in `localStorage` is no longer read; the theme, date, and data remain in the current mechanisms.

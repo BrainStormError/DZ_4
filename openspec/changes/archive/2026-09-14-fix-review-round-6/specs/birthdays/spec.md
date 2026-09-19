@@ -1,20 +1,20 @@
 ## ADDED Requirements
 
-### Requirement: Стабильная подсветка дат при смене периода
+### Requirement: Stable date highlighting when the period changes
 
-При переключении месяца или года календарь ДОЛЖЕН (MUST) обновлять подсветку дат мгновенно, без видимого перехода цвета из состояния предыдущего периода. Подсветка дней с днями рождения и отметка текущего дня ДОЛЖНЫ сразу соответствовать выбранному периоду.
+When switching the month or year, the calendar (MUST) update the date highlighting instantly, without a visible color transition from the state of the previous period. The highlighting of days with birthdays and the marker for the current day (MUST) immediately correspond to the selected period.
 
-#### Scenario: Быстрая смена месяца без перетекания цвета
+#### Scenario: Fast month switching without color bleed
 
-- **WHEN** пользователь быстро переключает месяц вперёд или назад
-- **THEN** подсветка дат соответствует выбранному месяцу без видимой анимации изменения цвета между периодами
+- **WHEN** the user quickly switches the month forward or backward
+- **THEN** the date highlighting corresponds to the selected month without a visible color-change animation between periods
 
-#### Scenario: Смена года
+#### Scenario: Switching the year
 
-- **WHEN** пользователь переключает год вперёд или назад
-- **THEN** подсветка дат сразу соответствует выбранному году, а отметка текущего дня не отображается вне фактического текущего года
+- **WHEN** the user switches the year forward or backward
+- **THEN** the date highlighting immediately corresponds to the selected year, and the marker for the current day is not displayed outside the actual current year
 
-#### Scenario: Смена периода не мигает частично
+#### Scenario: Period switching does not flicker partially
 
-- **WHEN** месяцы различаются числом дней
-- **THEN** при смене месяца не возникает частичной подсветки, перетекающей из предыдущего месяца
+- **WHEN** months differ in the number of days
+- **THEN** when the month changes, no partial highlighting bleeding from the previous month occurs

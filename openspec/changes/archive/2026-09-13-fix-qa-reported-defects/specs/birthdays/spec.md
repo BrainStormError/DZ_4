@@ -1,61 +1,61 @@
 ## Purpose
 
-Определяет отображение именинников на главной странице и в календаре дней рождения: актуальная системная дата, корректный локальный часовой пояс, стартовый месяц календаря и грамматически верные подписи.
+Defines the display of birthday people on the home page and in the birthday calendar: the current system date, the correct local time zone, the calendar's starting month, and grammatically correct labels.
 
 ## ADDED Requirements
 
-### Requirement: Актуальная текущая дата
+### Requirement: Current date
 
-Список «Именинники сегодня» и признак «Сегодня» ДОЛЖНЫ вычисляться от системной даты в момент отображения, а НЕ от захардкоженного значения. Пользователь ДОЛЖЕН видеть именинников, чей день рождения совпадает с реальной текущей датой.
+The "Birthday people today" list and the "Today" indicator MUST be computed from the system date at the moment of display, and NOT from a hardcoded value. The user MUST see the birthday people whose birthday matches the real current date.
 
-#### Scenario: Дата отличается от даты разработки
+#### Scenario: Date differs from the development date
 
-- **WHEN** приложение открывается в день, отличный от захардкоженной даты `2026-09-13`
-- **THEN** «Именинники сегодня» содержит только тех, у кого день рождения совпадает с реальной датой
+- **WHEN** the application is opened on a day different from the hardcoded date `2026-09-13`
+- **THEN** "Birthday people today" contains only those whose birthday matches the real date
 
-#### Scenario: Даты нет в текущем дне
+#### Scenario: No dates on the current day
 
-- **WHEN** ни у кого из сотрудников нет дня рождения в реальную текущую дату
-- **THEN** отображается сообщение об отсутствии именинников, а не фиксированный сотрудник
+- **WHEN** none of the employees has a birthday on the real current date
+- **THEN** a message about the absence of birthday people is displayed, rather than a fixed employee
 
-### Requirement: Учёт локального часового пояса
+### Requirement: Local time zone handling
 
-Определение текущего дня ДОЛЖНО использовать локальную календарную дату браузера единообразно для сравнения месяца и дня. Переход суток НЕ ДОЛЖЕН смещать отображаемый «сегодняшний» день из-за разбора даты в UTC.
+The determination of the current day MUST use the browser's local calendar date uniformly for comparing the month and day. The day rollover MUST NOT shift the displayed "today" day due to date parsing in UTC.
 
-#### Scenario: Часовой пояс с отрицательным смещением
+#### Scenario: Time zone with a negative offset
 
-- **WHEN** браузер находится в часовом поясе к западу от UTC
-- **THEN** «сегодня» соответствует локальной дате браузера и не смещается на предыдущий день
+- **WHEN** the browser is in a time zone west of UTC
+- **THEN** "today" corresponds to the browser's local date and does not shift to the previous day
 
-### Requirement: Стартовый месяц календаря
+### Requirement: Calendar starting month
 
-Календарь дней рождения ДОЛЖЕН открываться на текущем месяце и текущем году. Пользователь ДОЛЖЕН иметь возможность переключать месяц и год в обе стороны.
+The birthday calendar MUST open on the current month and the current year. The user MUST be able to switch the month and year in both directions.
 
-#### Scenario: Текущий месяц не сентябрь
+#### Scenario: Current month is not September
 
-- **WHEN** календарь открывается в месяце, отличном от сентября
-- **THEN** по умолчанию отображается текущий месяц и текущий год
+- **WHEN** the calendar opens in a month other than September
+- **THEN** the current month and the current year are displayed by default
 
-#### Scenario: Навигация по календарю
+#### Scenario: Calendar navigation
 
-- **WHEN** пользователь переключает месяц или год
-- **THEN** заголовок и список именинников соответствуют выбранному периоду
+- **WHEN** the user switches the month or year
+- **THEN** the heading and the birthday people list correspond to the selected period
 
-### Requirement: Корректные формы числа и падежи
+### Requirement: Correct number forms and cases
 
-Подпись количества именинников ДОЛЖНА использовать правильные формы русского языка: `1 именинник`, `2–4 именинника`, `5 и более именинников`. Заголовок списка ДОЛЖЕН использовать предложный падеж месяца («Именинники в сентябре 2026»).
+The label for the number of birthday people MUST use the correct language forms: `1 именинник`, `2–4 именинника`, `5 и более именинников`. The list heading MUST use the prepositional case of the month ("Birthday people in September 2026").
 
-#### Scenario: Два именинника
+#### Scenario: Two birthday people
 
-- **WHEN** в выбранном месяце ровно двое именинников
-- **THEN** отображается «2 именинника», а не «2 именинников»
+- **WHEN** there are exactly two birthday people in the selected month
+- **THEN** the correct form "2 birthday people" is displayed, not an incorrect plural form
 
-#### Scenario: Пять и более именинников
+#### Scenario: Five or more birthday people
 
-- **WHEN** в выбранном месяце пять или более именинников
-- **THEN** отображается форма «именинников»
+- **WHEN** there are five or more birthday people in the selected month
+- **THEN** the "birthday people" form is displayed
 
-#### Scenario: Заголовок месяца
+#### Scenario: Month heading
 
-- **WHEN** отображается список именинников месяца
-- **THEN** заголовок содержит предложный падеж, например «Именинники в сентябре 2026»
+- **WHEN** the list of birthday people for the month is displayed
+- **THEN** the heading contains the prepositional case, for example "Birthday people in September 2026"

@@ -1,25 +1,25 @@
 ## ADDED Requirements
 
-### Requirement: Необязательное поздравление при отправке средств
+### Requirement: Optional congratulation when sending funds
 
-При отправке денежного поздравления пользователь ДОЛЖЕН иметь возможность приложить текст пожелания или отправить средства без него. Если текст указан, система ДОЛЖНА создать пожелание, которое показывается по правилу дня рождения получателя. Если текст не указан, система НЕ ДОЛЖНА создавать пожелание, а только добавляет сумму к сбору. Денежное поздравление ДОЛЖНО отправляться заранее, независимо от текущей даты.
+When sending a monetary congratulation, the user MUST be able to attach wish text or send funds without it. If text is provided, the system MUST create a wish that is shown according to the recipient's birthday rule. If text is not provided, the system MUST NOT create a wish and only adds the amount to the collection. A monetary congratulation MUST be sendable in advance, regardless of the current date.
 
-#### Scenario: Средства с пожеланием
+#### Scenario: Funds with a wish
 
-- **WHEN** пользователь указывает сумму и непустой текст поздравления и подтверждает отправку
-- **THEN** сумма добавляется к сбору, а пожелание создаётся и показывается на доске по правилу дня рождения получателя
+- **WHEN** the user specifies an amount and a non-empty congratulation text and confirms sending
+- **THEN** the amount is added to the collection, and the wish is created and shown on the board according to the recipient's birthday rule
 
-#### Scenario: Средства без пожелания
+#### Scenario: Funds without a wish
 
-- **WHEN** пользователь указывает сумму и оставляет текст поздравления пустым, затем подтверждает отправку
-- **THEN** сумма добавляется к сбору, а пожелание не создаётся
+- **WHEN** the user specifies an amount and leaves the congratulation text empty, then confirms sending
+- **THEN** the amount is added to the collection, and no wish is created
 
-#### Scenario: Результат отправки без пожелания
+#### Scenario: Result of sending without a wish
 
-- **WHEN** пользователь завершает отправку средств без текста поздравления
-- **THEN** экран результата сообщает о добавлении суммы к сбору и не утверждает, что поздравление передано
+- **WHEN** the user completes sending funds without congratulation text
+- **THEN** the result screen reports that the amount was added to the collection and does not claim that a congratulation was delivered
 
-#### Scenario: Отправка заранее
+#### Scenario: Sending in advance
 
-- **WHEN** пользователь отправляет денежное поздравление до дня рождения получателя
-- **THEN** сумма добавляется к сбору, а созданное пожелание не показывается на доске до дня рождения получателя
+- **WHEN** the user sends a monetary congratulation before the recipient's birthday
+- **THEN** the amount is added to the collection, and the created wish is not shown on the board until the recipient's birthday

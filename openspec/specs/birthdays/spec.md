@@ -2,194 +2,194 @@
 
 ## Purpose
 
-Показывает именинников на главной странице и предоставляет календарь дней рождения сотрудников с навигацией по месяцам и годам.
+Shows the birthday people on the home page and provides a calendar of employee birthdays with navigation across months and years.
 
 ## Requirements
 
-### Requirement: Именинники на главной странице
+### Requirement: Birthday people on the home page
 
-Главная страница ДОЛЖНА показывать сотрудников, чей день рождения приходится на текущую дату, и ДОЛЖНА показывать ближайшие дни рождения в пределах следующих 30 дней. Если именинников сегодня нет, система ДОЛЖНА показать соответствующее пустое состояние.
+The home page MUST show employees whose birthday falls on the current date and MUST show the upcoming birthdays within the next 30 days. If there are no birthday people today, the system MUST show a corresponding empty state.
 
-#### Scenario: Есть именинник сегодня
+#### Scenario: There is a birthday person today
 
-- **WHEN** текущая дата совпадает с днём рождения сотрудника
-- **THEN** сотрудник отображается в блоке «Именинники сегодня» с отметкой о сегодняшнем празднике
+- **WHEN** the current date matches an employee's birthday
+- **THEN** the employee is displayed in the "Birthday people today" block with a mark for today's celebration
 
-#### Scenario: Сегодня именинников нет
+#### Scenario: There are no birthday people today
 
-- **WHEN** ни один день рождения не совпадает с текущей датой
-- **THEN** система показывает пустое состояние с предложением заглянуть в календарь
+- **WHEN** no birthday matches the current date
+- **THEN** the system shows an empty state suggesting to look at the calendar
 
-### Requirement: Календарь дней рождения с навигацией по месяцам и годам
+### Requirement: Birthday calendar with navigation across months and years
 
-Календарь ДОЛЖЕН отображать дни рождения сотрудников по месяцам и ДОЛЖЕН позволять переключать отображаемый месяц в пределах выбранного года. Система ДОЛЖНА позволять переключать отображаемый год вперёд и назад, по умолчанию показывая текущий год. Дни рождения ДОЛЖНЫ рассчитываться относительно выбранного года, а отметка текущего дня ДОЛЖНА отображаться только для фактического текущего года.
+The calendar MUST display employees' birthdays by month and MUST allow switching the displayed month within the selected year. The system MUST allow switching the displayed year forward and backward, showing the current year by default. Birthdays MUST be calculated relative to the selected year, and the current-day marker MUST be displayed only for the actual current year.
 
-#### Scenario: Переключение месяца
+#### Scenario: Month switching
 
-- **WHEN** пользователь нажимает переход к следующему месяцу
-- **THEN** календарь показывает дни рождения следующего месяца выбранного года
+- **WHEN** the user clicks to go to the next month
+- **THEN** the calendar shows the birthdays of the next month of the selected year
 
-#### Scenario: Переключение на следующий год
+#### Scenario: Switching to the next year
 
-- **WHEN** пользователь переключает год вперёд
-- **THEN** календарь показывает выбранный год и пересчитывает дни рождения относительно него
+- **WHEN** the user switches the year forward
+- **THEN** the calendar shows the selected year and recalculates the birthdays relative to it
 
-#### Scenario: Переключение на предыдущий год
+#### Scenario: Switching to the previous year
 
-- **WHEN** пользователь переключает год назад
-- **THEN** календарь показывает предыдущий год и пересчитывает дни рождения относительно него
+- **WHEN** the user switches the year backward
+- **THEN** the calendar shows the previous year and recalculates the birthdays relative to it
 
-#### Scenario: Отметка текущего дня только в текущем году
+#### Scenario: Current-day marker only in the current year
 
-- **WHEN** выбран год, отличный от текущего
-- **THEN** отметка текущего дня в сетке календаря не отображается
+- **WHEN** a year other than the current one is selected
+- **THEN** the current-day marker is not displayed in the calendar grid
 
-### Requirement: Отметка дней рождения в сетке календаря
+### Requirement: Marking birthdays in the calendar grid
 
-Календарь ДОЛЖЕН помечать в сетке месяца дни, на которые приходятся дни рождения, и ДОЛЖЕН показывать список именинников выбранного месяца.
+The calendar MUST mark in the month grid the days on which birthdays fall and MUST show the list of birthday people of the selected month.
 
-#### Scenario: День с днём рождения
+#### Scenario: A day with a birthday
 
-- **WHEN** в выбранном месяце есть сотрудник с днём рождения
-- **THEN** соответствующий день в сетке помечен, а сотрудник присутствует в списке именинников месяца
+- **WHEN** the selected month has an employee with a birthday
+- **THEN** the corresponding day in the grid is marked, and the employee is present in the list of birthday people of the month
 
-#### Scenario: Месяц без дней рождения
+#### Scenario: A month without birthdays
 
-- **WHEN** в выбранном месяце нет дней рождения
-- **THEN** система показывает пустое состояние для этого месяца
+- **WHEN** the selected month has no birthdays
+- **THEN** the system shows an empty state for that month
 
-### Requirement: Актуальная текущая дата
+### Requirement: Actual current date
 
-Список «Именинники сегодня» и признак «Сегодня» ДОЛЖНЫ вычисляться от текущей даты, а НЕ от захардкоженного значения. По умолчанию текущая дата берётся из локальной системной даты браузера. Администратор ДОЛЖЕН иметь возможность включить режим предпросмотра даты, при котором текущая дата для блоков именинников и доски пожеланий берётся из выбранного дня; режим предпросмотра НЕ ДОЛЖЕН изменять реальные данные и ДОЛЖЕН сбрасываться к системной дате.
+The "Birthday people today" list and the "Today" flag MUST be computed from the current date, and NOT from a hardcoded value. By default the current date is taken from the browser's local system date. The administrator MUST be able to enable a date preview mode, in which the current date for the birthday blocks and the wish board is taken from the selected day; preview mode MUST NOT change real data and MUST be reset to the system date.
 
-#### Scenario: Дата отличается от даты разработки
+#### Scenario: The date differs from the development date
 
-- **WHEN** приложение открывается в день, отличный от захардкоженной даты `2026-09-13`
-- **THEN** «Именинники сегодня» содержит только тех, у кого день рождения совпадает с реальной датой
+- **WHEN** the application is opened on a day other than the hardcoded date `2026-09-13`
+- **THEN** "Birthday people today" contains only those whose birthday matches the real date
 
-#### Scenario: Даты нет в текущем дне
+#### Scenario: No birthdays on the current day
 
-- **WHEN** ни у кого из сотрудников нет дня рождения в реальную текущую дату
-- **THEN** отображается сообщение об отсутствии именинников, а не фиксированный сотрудник
+- **WHEN** none of the employees has a birthday on the real current date
+- **THEN** a message about the absence of birthday people is displayed, and not a fixed employee
 
-#### Scenario: Предпросмотр даты администратором
+#### Scenario: Date preview by the administrator
 
-- **WHEN** администратор выбирает в календаре дату, отличную от реальной
-- **THEN** блоки именинников и доска пожеланий показывают состояние на выбранную дату, а реальные данные не изменяются
+- **WHEN** the administrator selects a date in the calendar that differs from the real one
+- **THEN** the birthday blocks and the wish board show the state for the selected date, and real data is not changed
 
-### Requirement: Учёт локального часового пояса
+### Requirement: Local time zone handling
 
-Определение текущего дня ДОЛЖНО использовать локальную календарную дату браузера единообразно для сравнения месяца и дня. Переход суток НЕ ДОЛЖЕН смещать отображаемый «сегодняшний» день из-за разбора даты в UTC.
+Determining the current day MUST use the browser's local calendar date uniformly for comparing the month and the day. The transition of the day MUST NOT shift the displayed "today" day because of parsing the date in UTC.
 
-#### Scenario: Часовой пояс с отрицательным смещением
+#### Scenario: A time zone with a negative offset
 
-- **WHEN** браузер находится в часовом поясе к западу от UTC
-- **THEN** «сегодня» соответствует локальной дате браузера и не смещается на предыдущий день
+- **WHEN** the browser is in a time zone west of UTC
+- **THEN** "today" corresponds to the browser's local date and is not shifted to the previous day
 
-### Requirement: Стартовый месяц календаря
+### Requirement: Calendar starting month
 
-Календарь дней рождения ДОЛЖЕН открываться на текущем месяце и текущем году. Пользователь ДОЛЖЕН иметь возможность переключать месяц и год в обе стороны.
+The birthday calendar MUST open on the current month and the current year. The user MUST be able to switch the month and the year in both directions.
 
-#### Scenario: Текущий месяц не сентябрь
+#### Scenario: The current month is not September
 
-- **WHEN** календарь открывается в месяце, отличном от сентября
-- **THEN** по умолчанию отображается текущий месяц и текущий год
+- **WHEN** the calendar opens in a month other than September
+- **THEN** the current month and the current year are displayed by default
 
-#### Scenario: Навигация по календарю
+#### Scenario: Calendar navigation
 
-- **WHEN** пользователь переключает месяц или год
-- **THEN** заголовок и список именинников соответствуют выбранному периоду
+- **WHEN** the user switches the month or the year
+- **THEN** the heading and the list of birthday people correspond to the selected period
 
-### Requirement: Корректные формы числа и падежи
+### Requirement: Correct number forms and cases
 
-Подпись количества именинников ДОЛЖНА использовать правильные формы русского языка: `1 именинник`, `2–4 именинника`, `5 и более именинников`. Заголовок списка ДОЛЖЕН использовать предложный падеж месяца («Именинники в сентябре 2026»).
+The label for the number of birthday people MUST use the correct Russian language forms: `1 именинник`, `2–4 именинника`, `5 и более именинников`. The list heading MUST use the prepositional case of the month («Именинники в сентябре 2026»).
 
-#### Scenario: Два именинника
+#### Scenario: Two birthday people
 
-- **WHEN** в выбранном месяце ровно двое именинников
-- **THEN** отображается «2 именинника», а не «2 именинников»
+- **WHEN** the selected month has exactly two birthday people
+- **THEN** «2 именинника» is displayed, and not «2 именинников»
 
-#### Scenario: Пять и более именинников
+#### Scenario: Five or more birthday people
 
-- **WHEN** в выбранном месяце пять или более именинников
-- **THEN** отображается форма «именинников»
+- **WHEN** the selected month has five or more birthday people
+- **THEN** the form «именинников» is displayed
 
-#### Scenario: Заголовок месяца
+#### Scenario: Month heading
 
-- **WHEN** отображается список именинников месяца
-- **THEN** заголовок содержит предложный падеж, например «Именинники в сентябре 2026»
+- **WHEN** the list of birthday people of the month is displayed
+- **THEN** the heading contains the prepositional case, for example «Именинники в сентябре 2026»
 
-### Requirement: Единый цвет именинника в карточке и ленте
+### Requirement: Single color of a birthday person in the card and the strip
 
-Карточка сотрудника в блоке «Именинники сегодня» и карточки его поздравлений в ленте ДОЛЖНЫ использовать один и тот же персональный цвет. Цвет ДОЛЖЕН назначаться сотруднику детерминированно, чтобы один и тот же именинник был узнаваем во всех блоках страницы.
+The employee card in the "Birthday people today" block and the cards of their congratulations in the strip MUST use the same personal color. The color MUST be assigned to the employee deterministically so that the same birthday person is recognizable in all blocks of the page.
 
-#### Scenario: Цвет карточки совпадает с цветом поздравлений
+#### Scenario: The card color matches the color of the congratulations
 
-- **WHEN** сотрудник отображается в блоке «Именинники сегодня» и его поздравления отображаются в ленте
-- **THEN** обводка карточки именинника совпадает по цвету с обводкой карточек его поздравлений
+- **WHEN** an employee is displayed in the "Birthday people today" block and their congratulations are displayed in the strip
+- **THEN** the border of the birthday person's card matches in color the border of the cards of their congratulations
 
-#### Scenario: Разные именинники различаются цветом
+#### Scenario: Different birthday people differ in color
 
-- **WHEN** в ленте присутствуют поздравления для нескольких именинников
-- **THEN** каждый именинник получает собственный цвет, отличный от цвета другого именинника
+- **WHEN** the strip contains congratulations for several birthday people
+- **THEN** each birthday person gets their own color, different from the color of another birthday person
 
-### Requirement: Стабильная подсветка дат при смене периода
+### Requirement: Stable date highlighting when the period changes
 
-При переключении месяца или года календарь ДОЛЖЕН (MUST) обновлять подсветку дат мгновенно, без видимого перехода цвета из состояния предыдущего периода. Подсветка дней с днями рождения и отметка текущего дня ДОЛЖНЫ сразу соответствовать выбранному периоду.
+When the month or the year is switched, the calendar MUST update the date highlighting instantly, without a visible color transition from the state of the previous period. The highlighting of days with birthdays and the current-day marker MUST immediately correspond to the selected period.
 
-#### Scenario: Быстрая смена месяца без перетекания цвета
+#### Scenario: Rapid month switching without color bleeding
 
-- **WHEN** пользователь быстро переключает месяц вперёд или назад
-- **THEN** подсветка дат соответствует выбранному месяцу без видимой анимации изменения цвета между периодами
+- **WHEN** the user rapidly switches the month forward or backward
+- **THEN** the date highlighting corresponds to the selected month without a visible color-change animation between periods
 
-#### Scenario: Смена года
+#### Scenario: Year switching
 
-- **WHEN** пользователь переключает год вперёд или назад
-- **THEN** подсветка дат сразу соответствует выбранному году, а отметка текущего дня не отображается вне фактического текущего года
+- **WHEN** the user switches the year forward or backward
+- **THEN** the date highlighting immediately corresponds to the selected year, and the current-day marker is not displayed outside the actual current year
 
-#### Scenario: Смена периода не мигает частично
+#### Scenario: Period switching does not partially flicker
 
-- **WHEN** месяцы различаются числом дней
-- **THEN** при смене месяца не возникает частичной подсветки, перетекающей из предыдущего месяца
+- **WHEN** the months differ in the number of days
+- **THEN** when the month changes, no partial highlighting bleeding from the previous month occurs
 
-### Requirement: Навигация календаря на узком экране
+### Requirement: Calendar navigation on a narrow screen
 
-Навигация по месяцам и годам ДОЛЖНА (MUST) оставаться полностью доступной на ширинах 320–360px и НЕ ДОЛЖНА создавать горизонтальное переполнение страницы. Группа кнопок переключения ДОЛЖНА переноситься или сжиматься так, чтобы все кнопки и заголовок текущего месяца были видны одновременно.
+Navigation across months and years MUST remain fully available at widths of 320–360px and MUST NOT create horizontal overflow of the page. The group of switching buttons MUST wrap or shrink so that all buttons and the heading of the current month are visible at the same time.
 
-#### Scenario: Навигация на 320px
+#### Scenario: Navigation at 320px
 
-- **WHEN** календарь открыт на ширине 320px
-- **THEN** все кнопки переключения месяца и года и заголовок видны, а страница не получает горизонтальный скролл
+- **WHEN** the calendar is open at a width of 320px
+- **THEN** all month and year switching buttons and the heading are visible, and the page does not get horizontal scroll
 
-#### Scenario: Переключение месяца на узком экране
+#### Scenario: Month switching on a narrow screen
 
-- **WHEN** пользователь нажимает переход к следующему месяцу на узком экране
-- **THEN** календарь показывает следующий месяц, а навигация остаётся доступной без изменения ширины страницы
+- **WHEN** the user clicks to go to the next month on a narrow screen
+- **THEN** the calendar shows the next month, and the navigation remains available without changing the page width
 
-### Requirement: Читаемость ячеек календаря на узком экране
+### Requirement: Readability of calendar cells on a narrow screen
 
-Содержимое ячейки дня ДОЛЖНО (MUST) оставаться читаемым на узких экранах. На экранах меньше `sm` имена именинников НЕ ДОЛЖНЫ отображаться в обрезанном виде, оставляющем одну букву; вместо усечённого имени ДОЛЖНА показываться компактная отметка дня рождения с доступным полным именем.
+The content of a day cell MUST remain readable on narrow screens. On screens smaller than `sm`, the names of birthday people MUST NOT be displayed in a truncated form leaving a single letter; instead of a truncated name, a compact birthday marker with an accessible full name MUST be shown.
 
-#### Scenario: Ячейка с именинником на узком экране
+#### Scenario: A cell with a birthday person on a narrow screen
 
-- **WHEN** ячейка дня содержит именинника, а экран меньше `sm`
-- **THEN** вместо обрезанного до одной буквы имени отображается компактная отметка, а полное имя доступно пользователю
+- **WHEN** a day cell contains a birthday person, and the screen is smaller than `sm`
+- **THEN** instead of a name truncated to a single letter, a compact marker is displayed, and the full name is available to the user
 
-#### Scenario: Отметка дня рождения различима
+#### Scenario: The birthday marker is discernible
 
-- **WHEN** в дне есть дни рождения на узком экране
-- **THEN** наличие именинника в этот день остаётся визуально различимым
+- **WHEN** a day has birthdays on a narrow screen
+- **THEN** the presence of a birthday person on that day remains visually discernible
 
-### Requirement: Сетка ближайших именинников без обрезки имён
+### Requirement: Grid of upcoming birthday people without name truncation
 
-Сетка блока ближайших дней рождения ДОЛЖНА (MUST) распределять карточки так, чтобы доступная для имени ширина не приводила к обрезке. Число колонок ДОЛЖНО увеличиваться постепенно с ростом ширины экрана.
+The grid of the upcoming birthdays block MUST distribute the cards so that the width available for a name does not lead to truncation. The number of columns MUST increase gradually as the screen width grows.
 
-#### Scenario: Планшетная ширина
+#### Scenario: Tablet width
 
-- **WHEN** блок ближайших именинников отображается на ширине около 640px
-- **THEN** число колонок не приводит к обрезке имени, а карточка показывает имя полностью
+- **WHEN** the upcoming birthday people block is displayed at a width of about 640px
+- **THEN** the number of columns does not lead to name truncation, and the card shows the name in full
 
-#### Scenario: Широкая раскладка
+#### Scenario: Wide layout
 
-- **WHEN** ширина экрана достаточна для большего числа колонок
-- **THEN** сетка использует более широкую раскладку без потери читаемости имён
+- **WHEN** the screen width is sufficient for a larger number of columns
+- **THEN** the grid uses a wider layout without losing the readability of names

@@ -1,29 +1,29 @@
 ## ADDED Requirements
 
-### Requirement: Переписка прокручивается внутри карточки
+### Requirement: The conversation scrolls inside the card
 
-Карточка переписки ДОЛЖНА (MUST) ограничивать свою высоту доступной высотой экрана, а история сообщений ДОЛЖНА прокручиваться внутри карточки. Содержимое переписки НЕ ДОЛЖНО выходить за границы карточки и НЕ ДОЛЖНО растягивать страницу при длинной истории.
+The conversation card MUST limit its height to the available screen height, and the message history MUST scroll inside the card. The conversation content MUST NOT go outside the card boundaries and MUST NOT stretch the page with a long history.
 
-#### Scenario: Длинная переписка
+#### Scenario: Long conversation
 
-- **WHEN** в ветке накопилось столько сообщений, что они не помещаются в карточку
-- **THEN** карточка сохраняет свою высоту, а история прокручивается внутри неё, не выходя за границы
+- **WHEN** so many messages have accumulated in the thread that they do not fit in the card
+- **THEN** the card keeps its height, and the history scrolls inside it without going outside the boundaries
 
-#### Scenario: Содержимое не вылетает из карточки
+#### Scenario: Content does not fly out of the card
 
-- **WHEN** переписка длинная
-- **THEN** ни один элемент переписки не отображается за пределами карточки
+- **WHEN** the conversation is long
+- **THEN** no element of the conversation is displayed outside the card
 
-### Requirement: Форма отправки достижима при ограниченной высоте
+### Requirement: The submit form is reachable with a limited height
 
-Форма отправки сообщения ДОЛЖНА (MUST) оставаться внутри карточки и быть достижимой при любой длине переписки и при ограниченной высоте экрана, включая мобильные устройства. Ввод текста НЕ ДОЛЖЕН требовать прокрутки страницы к форме.
+The message submit form MUST remain inside the card and be reachable with any conversation length and with a limited screen height, including mobile devices. Entering text MUST NOT require scrolling the page to the form.
 
-#### Scenario: Форма ввода на мобильном
+#### Scenario: The input form on mobile
 
-- **WHEN** пользователь открывает переписку на мобильном устройстве
-- **THEN** поле ввода и кнопка отправки видны внутри карточки и доступны без прокрутки страницы
+- **WHEN** the user opens the conversation on a mobile device
+- **THEN** the input field and the send button are visible inside the card and available without scrolling the page
 
-#### Scenario: Форма остаётся на месте при росте истории
+#### Scenario: The form stays in place as the history grows
 
-- **WHEN** в переписку добавляются новые сообщения
-- **THEN** форма отправки остаётся внутри карточки и не уезжает за её нижнюю границу
+- **WHEN** new messages are added to the conversation
+- **THEN** the submit form remains inside the card and does not move past its bottom boundary

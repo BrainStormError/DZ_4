@@ -1,65 +1,65 @@
 ## Purpose
 
-Обеспечивает единообразие пользовательских формулировок и контролов: одно утверждение — один источник, одно действие — один первичный контрол, а интерактивные и справочные элементы не дублируются и не вводят в заблуждение.
+Ensures consistency of user-facing wording and controls: one statement — one source, one action — one primary control, and interactive and reference elements are neither duplicated nor misleading.
 
 ## ADDED Requirements
 
-### Requirement: Единый источник сообщения о добровольности и скрытых суммах
+### Requirement: A single source of the message about voluntariness and hidden amounts
 
-Система ДОЛЖНА представлять утверждение о добровольности участия и о том, что суммы сборов видны только администратору, в одном каноническом месте интерфейса. На одной странице одинаковое по смыслу утверждение НЕ ДОЛЖНО повторяться более одного раза вне контекста конкретного шага сценария.
+The system MUST present the statement about the voluntariness of participation and that collection amounts are visible only to the administrator in a single canonical place in the interface. On one page, a statement with the same meaning MUST NOT be repeated more than once outside the context of a specific scenario step.
 
-#### Scenario: Главная страница без дублирующих блоков
+#### Scenario: Home page without duplicate blocks
 
-- **WHEN** пользователь открывает главную страницу
-- **THEN** утверждение о добровольности и скрытии сумм встречается не более одного раза в содержимом страницы (помимо футера), а дублирующие hero-бейдж и privacy-карточки отсутствуют
+- **WHEN** the user opens the home page
+- **THEN** the statement about voluntariness and hiding amounts appears no more than once in the page content (aside from the footer), and duplicate hero badge and privacy cards are absent
 
-#### Scenario: FAQ без дублирующих карточек
+#### Scenario: FAQ without duplicate cards
 
-- **WHEN** пользователь открывает раздел «Вопросы и ответы»
-- **THEN** quick-info карточки, повторяющие ответы Q1/Q2 и текст главной, отсутствуют, а ответы FAQ остаются единственным источником формулировок
+- **WHEN** the user opens the "Questions and Answers" section
+- **THEN** quick-info cards repeating answers Q1/Q2 and the home page text are absent, and the FAQ answers remain the only source of wording
 
-#### Scenario: Диалог участия без повторяющихся пояснений
+#### Scenario: Participation dialog without repeated explanations
 
-- **WHEN** пользователь проходит шаги диалога участия
-- **THEN** пояснение о скрытии суммы показывается не более одного раза — на релевантном шаге
+- **WHEN** the user goes through the steps of the participation dialog
+- **THEN** the explanation about hiding the amount is shown no more than once — at the relevant step
 
-### Requirement: Один первичный контроль на действие
+### Requirement: One primary control per action
 
-Каждое пользовательское действие ДОЛЖНО иметь один первичный контроль в своей области. Контролы, запускающие один и тот же сценарий с одинаковым контекстом, НЕ ДОЛЖНЫ отображаться одновременно. Разные точки входа для разных сущностей (например, карточка конкретного именинника) допускаются.
+Each user action MUST have one primary control in its area. Controls that launch the same scenario with the same context MUST NOT be displayed simultaneously. Different entry points for different entities (for example, a specific birthday person's card) are allowed.
 
-#### Scenario: Поздравление без взноса
+#### Scenario: Congratulation without a contribution
 
-- **WHEN** пользователь находится на главной странице
-- **THEN** действие «пожелание без взноса» доступно через один первичный контроль, без одновременного дублирования отдельной кнопкой в области доски пожеланий
+- **WHEN** the user is on the home page
+- **THEN** the "wish without a contribution" action is available through one primary control, without simultaneous duplication by a separate button in the wish board area
 
-#### Scenario: Раскрытие формы пожелания
+#### Scenario: Opening the wish form
 
-- **WHEN** пользователь активирует первичный контроль пожелания
-- **THEN** форма переходит в открытое состояние, а повторный контрол не создаёт второй независимой формы
+- **WHEN** the user activates the primary wish control
+- **THEN** the form transitions to the open state, and the repeated control does not create a second independent form
 
-### Requirement: Интерактивные элементы выполняют действие
+### Requirement: Interactive elements perform an action
 
-Элементы, оформленные как команда (кнопка, пункт меню), ДОЛЖНЫ выполнять действие. Информация, не предполагающая действия, НЕ ДОЛЖНА быть представлена как интерактивная команда.
+Elements styled as a command (a button, a menu item) MUST perform an action. Information that does not imply an action MUST NOT be presented as an interactive command.
 
-#### Scenario: Меню пользователя без неинтерактивного пункта
+#### Scenario: User menu without a non-interactive item
 
-- **WHEN** пользователь открывает меню пользователя в шапке
-- **THEN** отдел отображается как неинтерактивная информация либо отсутствует, и в меню нет пункта, который выглядит кликабельным, но не выполняет действие
+- **WHEN** the user opens the user menu in the header
+- **THEN** the department is displayed as non-interactive information or is absent, and the menu has no item that looks clickable but does not perform an action
 
-### Requirement: Единый источник подписей причин возврата
+### Requirement: A single source of refund reason labels
 
-Подписи причин возврата ДОЛЖНЫ формироваться единым источником. Для одной и той же причины НЕ ДОЛЖНЫ существовать расходящиеся хардкод-формулировки в разных местах интерфейса.
+Refund reason labels MUST be generated by a single source. For the same reason, divergent hardcoded wordings MUST NOT exist in different places in the interface.
 
-#### Scenario: Согласованность причины в выборе и журнале
+#### Scenario: Consistency of the reason in the selection and the log
 
-- **WHEN** администратор выбирает причину изменения суммы и затем просматривает журнал изменений
-- **THEN** формулировка причины совпадает, так как берётся из единого источника
+- **WHEN** the administrator selects a reason for the amount change and then views the change log
+- **THEN** the reason wording matches, because it is taken from a single source
 
-### Requirement: Отсутствие неиспользуемых UI-примитивов
+### Requirement: Absence of unused UI primitives
 
-Проект НЕ ДОЛЖЕН содержать UI-компоненты и модули, на которые нет ссылок из достижимого кода приложения.
+The project MUST NOT contain UI components and modules that are not referenced from the reachable application code.
 
-#### Scenario: Сборка без недостижимых модулей
+#### Scenario: Build without unreachable modules
 
-- **WHEN** выполняется сборка и проверка типов проекта
-- **THEN** отсутствуют импорты удалённых неиспользуемых UI-модулей и сборка завершается без ошибок
+- **WHEN** the project build and type checking are performed
+- **THEN** there are no imports of the deleted unused UI modules, and the build finishes without errors

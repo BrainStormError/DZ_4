@@ -1,72 +1,72 @@
 ## Context
 
-Мотивация — в `proposal.md`. Опорные факты текущего состояния:
+The motivation is in `proposal.md`. Supporting facts about the current state:
 
-- `app/layout.tsx:3-51` подключает пять семейств `next/font/google` (`Nunito`, `Bricolage_Grotesque`, `Manrope`, `Fraunces`, `Inter`) и вешает пять CSS-переменных на `<html>`.
-- `app/globals.css:34-35,69-70,104-105` внутри каждого `[data-theme]` переопределяет `--font-heading` и `--font-body`, ссылаясь на переменные семейств.
-- `lib/theme.ts:9,26,41,56` объявляет `ThemeMeta.fonts { heading, body }`, но поле нигде не потребляется вне `lib/theme.ts`.
-- `tailwind.config.ts:12-15` маппит `fontFamily.heading`/`fontFamily.body` на `var(--font-heading)`/`var(--font-body)`.
-- `--font-body` применяется к `body`, `--font-heading` — к `h1..h6` (`app/globals.css:117,123`); класс `font-heading` используется на заголовках страниц и карточек.
-- `Bricolage_Grotesque` и `Fraunces` объявлены `subsets: ['latin']` (`app/layout.tsx:17-22,31-36`), то есть кириллические заголовки уже подменяются системным шрифтом.
-- Синхронизированное требование `performance` обязывает при первой загрузке запрашивать шрифты только активной темы.
+- `app/layout.tsx:3-51` includes five `next/font/google` families (`Nunito`, `Bricolage_Grotesque`, `Manrope`, `Fraunces`, `Inter`) and attaches five CSS variables to `<html>`.
+- `app/globals.css:34-35,69-70,104-105` inside each `[data-theme]` overrides `--font-heading` and `--font-body`, referencing the family variables.
+- `lib/theme.ts:9,26,41,56` declares `ThemeMeta.fonts { heading, body }`, but the field is not consumed anywhere outside `lib/theme.ts`.
+- `tailwind.config.ts:12-15` maps `fontFamily.heading`/`fontFamily.body` to `var(--font-heading)`/`var(--font-body)`.
+- `--font-body` is applied to `body`, `--font-heading` to `h1..h6` (`app/globals.css:117,123`); the `font-heading` class is used on page and card headings.
+- `Bricolage_Grotesque` and `Fraunces` are declared with `subsets: ['latin']` (`app/layout.tsx:17-22,31-36`), that is, Cyrillic headings are already substituted with a system font.
+- The synchronized `performance` requirement mandates requesting only the active theme's fonts on the first load.
 
 ## Goals / Non-Goals
 
 **Goals:**
 
-- Единственное семейство `Manrope` для заголовков и текста во всех темах.
-- Один источник подключения шрифта вместо трёх пар в `globals.css`.
-- Корректная кириллица без подмены системным шрифтом.
-- Минимум правок в потребителях: имена токенов `--font-heading`/`--font-body` и утилиты `font-heading`/`font-body` сохраняются.
+- A single `Manrope` family for headings and text in all themes.
+- One source of font inclusion instead of three pairs in `globals.css`.
+- Correct Cyrillic without substitution with a system font.
+- Minimum changes in consumers: the token names `--font-heading`/`--font-body` and the `font-heading`/`font-body` utilities are preserved.
 
 **Non-Goals:**
 
-- Пересмотр палитр, радиусов и декора тем — они по-прежнему различают темы.
-- Изменение требований `performance`, `hydration`, `ui-consistency` — их формулировки остаются валидными.
-- Вторая часть исходного запроса (раздельные цвета выделения шапки и кнопок) — вне этого изменения.
+- Revisiting the palettes, radii, and decoration of the themes — they still distinguish the themes.
+- Changing the `performance`, `hydration`, `ui-consistency` requirements — their wording remains valid.
+- The second part of the original request (separate highlight colors for the header and buttons) — outside this change.
 
 ## Decisions
 
-### 1. Единое семейство — `Manrope`
+### 1. A single family — `Manrope`
 
-`Manrope` объявлен с `subsets: ['latin', 'cyrillic']` (`app/layout.tsx:24-29`), то есть закрывает кириллицу, и это единственное семейство фестиваля, пригодное как единственный шрифт.
+`Manrope` is declared with `subsets: ['latin', 'cyrillic']` (`app/layout.tsx:24-29`), that is, it covers Cyrillic, and it is the only family of the festival suitable as a single font.
 
-Альтернативы: `Nunito` (тёплая тема) и `Inter` (премиум) тоже поддерживают кириллицу, но запрошен шрифт именно из фестиваля; `Bricolage_Grotesque` и `Fraunces` отклонены как latin-only — они воспроизвели бы текущую подмену шрифта на кириллице уже для всех тем.
+Alternatives: `Nunito` (warm theme) and `Inter` (premium) also support Cyrillic, but a font specifically from the festival was requested; `Bricolage_Grotesque` and `Fraunces` are rejected as latin-only — they would reproduce the current font substitution on Cyrillic for all themes now.
 
-### 2. Токен шрифта объявляется один раз, имена `--font-*` сохраняются
+### 2. The font token is declared once, the `--font-*` names are preserved
 
-`--font-heading` и `--font-body` переносятся в общий блок `:root`/`[data-theme='warm']` как единое значение `var(--font-manrope)` и удаляются из блоков `festival` и `premium`. Имена оставлены, чтобы не трогать `h1..h6`, `body` и классы `font-heading`/`font-body`.
+`--font-heading` and `--font-body` are moved into the common `:root`/`[data-theme='warm']` block as the single value `var(--font-manrope)` and removed from the `festival` and `premium` blocks. The names are kept so as not to touch `h1..h6`, `body`, and the `font-heading`/`font-body` classes.
 
-Альтернатива — оставить переопределение в каждой теме, указав везде `Manrope`: три копии одного значения, которые разъедутся при следующей правке. Отклонена.
+Alternative — keep the override in each theme, specifying `Manrope` everywhere: three copies of the same value that will drift apart on the next edit. Rejected.
 
-### 3. Поле `ThemeMeta.fonts` удаляется
+### 3. The `ThemeMeta.fonts` field is removed
 
-Поле не читается ни одним потребителем и описывает изменчивость, которой больше нет. Тип и записи `THEMES` теряют `fonts`.
+The field is not read by any consumer and describes variability that no longer exists. The type and the `THEMES` entries lose `fonts`.
 
-Альтернатива — заменить на `family: 'Manrope'`: сохраняет в metadata значение, которое нигде не используется и может разойтись с `globals.css`. Отклонена.
+Alternative — replace with `family: 'Manrope'`: preserves in the metadata a value that is not used anywhere and may diverge from `globals.css`. Rejected.
 
-### 4. `Manrope` получает `preload: true`
+### 4. `Manrope` gets `preload: true`
 
-Раз семейство одно и используется всегда, прелоад перестаёт тянуть чужие темы и перестаёт быть развилкой из прошлого изменения. Остальные семейства удаляются вместе с импортами.
+Since the family is single and always used, preloading stops pulling in other themes and stops being a fork from the previous change. The remaining families are removed together with the imports.
 
-Альтернатива — оставить `preload: false`: лишний цикл подмены шрифта на первой загрузке без выигрыша, поскольку конкурирующих семейств больше нет.
+Alternative — keep `preload: false`: an extra font-substitution cycle on the first load with no benefit, since there are no competing families anymore.
 
-### 5. `tailwind.config.ts` не меняется
+### 5. `tailwind.config.ts` does not change
 
-Маппинг `fontFamily.heading`/`body` на переменные остаётся корректным. Правок не требуется.
+The mapping of `fontFamily.heading`/`body` to the variables remains correct. No changes are required.
 
 ## Risks / Trade-offs
 
-- **Визуальный откат тем `festival`/`premium`** (потеря акцидентных заголовков) → осознанный размен, зафиксирован как breaking в `proposal.md`.
-- **Заголовок и текст перестают различаться семейством** → различие остаётся за счёт размеров, насыщенности и регистра; при необходимости регулируется весами `Manrope` без нового семейства.
-- **Смена метрик шрифта** → `display: 'swap'` и требование `performance` о несдвигающейся разметке сохраняются; проверка CLS в задачах.
-- **Остаточные ссылки на удалённые семейства** → сборка и проверка типов ловят неиспользуемые импорты; в `globals.css` не остаётся `--font-nunito`/`--font-bricolage`/`--font-fraunces`/`--font-inter`.
+- **Visual rollback of the `festival`/`premium` themes** (loss of display headings) → a deliberate trade-off, recorded as breaking in `proposal.md`.
+- **The heading and text stop being distinguished by family** → the distinction remains through sizes, weight, and case; if necessary it is adjusted with `Manrope` weights without a new family.
+- **Change of font metrics** → `display: 'swap'` and the `performance` requirement about non-shifting layout are preserved; CLS is checked in the tasks.
+- **Residual references to the removed families** → the build and type checking catch unused imports; `--font-nunito`/`--font-bricolage`/`--font-fraunces`/`--font-inter` do not remain in `globals.css`.
 
 ## Migration Plan
 
-1. `app/layout.tsx`: оставить только импорт и конфиг `Manrope` (`subsets: ['latin','cyrillic']`, `variable: '--font-manrope'`, `preload: true`); `fontVariables` = переменная `Manrope`.
-2. `lib/theme.ts`: удалить `fonts` из `ThemeMeta` и из трёх записей `THEMES`.
-3. `app/globals.css`: `--font-heading`/`--font-body` задать один раз, удалить переопределения в `[data-theme='festival']` и `[data-theme='premium']`.
-4. Проверка: `npm run build`, проверка типов, `npm test`; переключение всех трёх тем, кириллические заголовки, отсутствие запросов удалённых семейств.
+1. `app/layout.tsx`: keep only the `Manrope` import and config (`subsets: ['latin','cyrillic']`, `variable: '--font-manrope'`, `preload: true`); `fontVariables` = the `Manrope` variable.
+2. `lib/theme.ts`: remove `fonts` from `ThemeMeta` and from the three `THEMES` entries.
+3. `app/globals.css`: set `--font-heading`/`--font-body` once, remove the overrides in `[data-theme='festival']` and `[data-theme='premium']`.
+4. Check: `npm run build`, type checking, `npm test`; switching all three themes, Cyrillic headings, absence of requests for the removed families.
 
-Откат — возврат прежних значений `--font-*` и импортов в одном коммите; данные и localStorage не затрагиваются.
+Rollback — restoring the former `--font-*` values and imports in a single commit; data and localStorage are not affected.

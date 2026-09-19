@@ -1,23 +1,23 @@
 ## MODIFIED Requirements
 
-### Requirement: Понятный результат участия
+### Requirement: A clear participation result
 
-После подтверждения система ДОЛЖНА показывать результат участия, одинаковый для обеих ролей: подтверждение отправки поздравления получателю, поскольку администратор проходит тот же сценарий, что и сотрудник. Экран результата НЕ ДОЛЖЕН различаться по роли и НЕ ДОЛЖЕН показывать сумму сбора сотруднику. Закрытие результата ДОЛЖНО завершать сценарий участия.
+After confirmation, the system MUST show a participation result that is identical for both roles: confirmation that the congratulation was sent to the recipient, since the administrator goes through the same scenario as the employee. The result screen MUST NOT differ by role and MUST NOT show the collection amount to the employee. Closing the result MUST end the participation scenario.
 
-#### Scenario: Результат для сотрудника
+#### Scenario: Result for the employee
 
-- **WHEN** сотрудник завершает участие
-- **THEN** система показывает подтверждение отправки поздравления получателю
+- **WHEN** the employee completes participation
+- **THEN** the system shows confirmation that the congratulation was sent to the recipient
 
-#### Scenario: Результат для администратора
+#### Scenario: Result for the administrator
 
-- **WHEN** администратор завершает участие
-- **THEN** система показывает то же подтверждение отправки поздравления получателю, что и у сотрудника
+- **WHEN** the administrator completes participation
+- **THEN** the system shows the same confirmation that the congratulation was sent to the recipient as for the employee
 
 ## REMOVED Requirements
 
-### Requirement: Ролевой результат участия
+### Requirement: Role-based participation result
 
-**Reason**: Результат участия стал одинаковым для обеих ролей, поэтому требование о различии экрана результата по роли больше не отражает поведение системы.
+**Reason**: The participation result has become identical for both roles, so the requirement that the result screen differ by role no longer reflects the system's behavior.
 
-**Migration**: Используйте требование «Понятный результат участия», которое теперь описывает единый экран результата для всех ролей.
+**Migration**: Use the requirement "A clear participation result", which now describes a single result screen for all roles.

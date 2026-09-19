@@ -1,24 +1,24 @@
 ## ADDED Requirements
 
-### Requirement: Таблица сборов пригодна на узком экране
+### Requirement: The collection table is usable on a narrow screen
 
-Таблица сборов ДОЛЖНА (MUST) оставаться пригодной для использования на узких экранах. На мобильных размерах система ДОЛЖНА либо представлять строки в виде списка карточек, либо скрывать второстепенные колонки так, чтобы ключевая информация и действие оставались видимыми. Горизонтальная прокрутка ДОЛЖНА (MUST) быть только внутренней для области таблицы и НЕ ДОЛЖНА создавать горизонтальный скролл страницы.
+The collection table MUST remain usable on narrow screens. At mobile sizes the system MUST either present rows as a card list or hide secondary columns so that the key information and the action remain visible. Horizontal scrolling MUST be internal to the table area only and MUST NOT create horizontal page scrolling.
 
-#### Scenario: Таблица на мобильном
+#### Scenario: Table on mobile
 
-- **WHEN** администратор открывает таблицу сборов на узком экране
-- **THEN** ключевая информация о сотруднике и действие доступны без горизонтальной прокрутки страницы
+- **WHEN** the administrator opens the collection table on a narrow screen
+- **THEN** the key information about the employee and the action are available without horizontal page scrolling
 
-#### Scenario: Колонка действия достижима
+#### Scenario: The action column is reachable
 
-- **WHEN** администратор просматривает строку сотрудника на узком экране
-- **THEN** действие изменения строки достижимо, а не скрыто за краем
+- **WHEN** the administrator views an employee row on a narrow screen
+- **THEN** the row edit action is reachable and not hidden behind the edge
 
-### Requirement: Единственный контейнер прокрутки таблицы
+### Requirement: A single table scroll container
 
-Область таблицы НЕ ДОЛЖНА (MUST NOT) содержать вложенные дублирующие контейнеры горизонтальной прокрутки. Прокрутка таблицы ДОЛЖНА выполняться в одном контейнере.
+The table area MUST NOT contain nested duplicate horizontal scroll containers. Table scrolling MUST be performed in a single container.
 
-#### Scenario: Отсутствие двойной прокрутки
+#### Scenario: No double scrolling
 
-- **WHEN** пользователь прокручивает таблицу по горизонтали
-- **THEN** прокручивается только один контейнер, без вложенной двойной прокрутки
+- **WHEN** the user scrolls the table horizontally
+- **THEN** only a single container scrolls, without nested double scrolling

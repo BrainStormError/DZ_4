@@ -1,33 +1,33 @@
 ## Why
 
-Демо-приложение «Корподарки» в целом реализует заявленный функционал, но содержит ряд поведенческих дефектов, из-за которых часть ключевых сценариев не работает: администратор не видит обращения сотрудников и не может им ответить, поздравление от сотрудника не создаёт пожелание, календарь ограничен 2026 годом, а валидация корпоративной почты не согласована между входом и формой участия. Нужно зафиксировать корректное поведение в спецификациях и устранить расхождения.
+The "Korporpodarki" demo application generally implements the declared functionality but contains a number of behavioral defects that make some key scenarios not work: the administrator does not see employee requests and cannot reply to them, an employee's congratulation does not create a wish, the calendar is limited to 2026, and corporate email validation is not consistent between login and the participation form. The correct behavior needs to be fixed in the specifications and the discrepancies eliminated.
 
 ## What Changes
 
-- Администратор видит все ветки переписки сотрудников и может отвечать в каждой из них; сотрудник по-прежнему видит только свою ветку.
-- Поздравление сотрудника в форме участия создаёт запись на доске пожеланий, как и обещает интерфейс после отправки.
-- Кнопка «Оставить пожелание» в hero-блоке главной страницы открывает форму пожелания (сейчас не имеет обработчика).
-- Календарь дней рождения поддерживает переключение года, а не только месяца в пределах 2026.
-- Валидация корпоративной почты едина: адрес должен заканчиваться на `@company.com` и присутствовать в корпоративном справочнике; правило применяется и при входе, и при подтверждении участия в сборе.
-- Сообщения чата получают корректный признак автора (`isAdmin`) вместо жёстко заданного `false`.
-- Удаляется мёртвый код `getRole()` в `lib/auth-context.tsx`.
+- The administrator sees all employee chat threads and can reply in each of them; the employee still sees only their own thread.
+- An employee's congratulation in the participation form creates an entry on the wish board, as the interface promises after sending.
+- The "Leave a wish" button in the home page hero block opens the wish form (it currently has no handler).
+- The birthday calendar supports year switching, not only month switching within 2026.
+- Corporate email validation is unified: the address must end with `@company.com` and be present in the corporate directory; the rule applies both at login and when confirming participation in the collection.
+- Chat messages get the correct author flag (`isAdmin`) instead of a hard-coded `false`.
+- The dead code `getRole()` in `lib/auth-context.tsx` is removed.
 
 ## Capabilities
 
 ### New Capabilities
-- `auth`: вход по корпоративной почте и единое правило проверки корпоративного адреса.
-- `birthdays`: именинники на главной и календарь дней рождения с навигацией по месяцам и годам.
-- `wishes`: доска пожеланий, авторство под корпоративным ником и создание пожеланий из формы поздравления.
-- `donations`: подтверждение корпоративной почты перед участием, скрытие сумм сбора от сотрудников и учёт участия.
-- `support-chat`: частые вопросы и приватная переписка сотрудника с администратором.
+- `auth`: login by corporate email and a unified corporate address validation rule.
+- `birthdays`: birthday people on the home page and a birthday calendar with navigation by months and years.
+- `wishes`: the wish board, authorship under a corporate nickname, and wish creation from the congratulation form.
+- `donations`: corporate email confirmation before participation, hiding collection amounts from employees, and tracking participation.
+- `support-chat`: FAQ and private chat between the employee and the administrator.
 
 ### Modified Capabilities
-<!-- Существующих спецификаций в openspec/specs/ пока нет, поэтому изменяемых capability не перечисляем. -->
+<!-- There are no existing specifications in openspec/specs/ yet, so we do not list modified capabilities. -->
 
 ## Impact
 
-- `components/features/ChatThread.tsx`, `lib/data-store.ts`, `lib/data-context.tsx` — доступ администратора к веткам и признак автора.
-- `components/features/DonateDialog.tsx`, `components/features/WishBoard.tsx`, `app/(app)/page.tsx` — сценарий поздравления и кнопка пожелания.
-- `app/(app)/calendar/page.tsx` — навигация по годам.
-- `lib/auth-context.tsx` — единая валидация почты, удаление мёртвого кода.
-- Внешних API и зависимостей изменение не затрагивает; приложение остаётся клиентским демо на mock-данных.
+- `components/features/ChatThread.tsx`, `lib/data-store.ts`, `lib/data-context.tsx` — administrator access to threads and the author flag.
+- `components/features/DonateDialog.tsx`, `components/features/WishBoard.tsx`, `app/(app)/page.tsx` — the congratulation scenario and the wish button.
+- `app/(app)/calendar/page.tsx` — year navigation.
+- `lib/auth-context.tsx` — unified email validation, removal of dead code.
+- The change does not affect external APIs or dependencies; the application remains a client-side demo on mock data.

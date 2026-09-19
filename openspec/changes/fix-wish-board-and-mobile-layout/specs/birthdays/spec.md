@@ -1,25 +1,25 @@
 ## MODIFIED Requirements
 
-### Requirement: Сетка ближайших именинников без обрезки имён
+### Requirement: Upcoming birthdays grid without name truncation
 
-Карточки блока ближайших дней рождения ДОЛЖНЫ (MUST) отображаться так, чтобы фамилия и имя сотрудника не обрезались на любой ширине экрана от 320px. Там, где две колонки не оставляют имени достаточно места, карточки ДОЛЖНЫ (MUST) располагаться друг под другом в одну колонку. Число колонок ДОЛЖНО увеличиваться постепенно с ростом ширины экрана и нарастать только тогда, когда имя помещается целиком.
+The cards of the upcoming birthdays block MUST be displayed so that the employee's last name and first name are not truncated at any screen width from 320px. Where two columns do not leave enough room for the name, the cards MUST be placed one below another in a single column. The number of columns MUST increase gradually as the screen width grows and grow only when the name fits entirely.
 
-#### Scenario: Узкий экран 320px
+#### Scenario: Narrow 320px screen
 
-- **WHEN** блок ближайших именинников отображается на ширине 320px
-- **THEN** карточки идут в одну колонку, и каждое имя отображается целиком
+- **WHEN** the upcoming birthdays block is displayed at a width of 320px
+- **THEN** the cards go in one column, and each name is displayed in full
 
-#### Scenario: Мобильная ширина
+#### Scenario: Mobile width
 
-- **WHEN** блок ближайших именинников отображается на ширине 360–414px
-- **THEN** имя сотрудника не обрезается, в том числе если ради этого карточки остаются в одну колонку
+- **WHEN** the upcoming birthdays block is displayed at a width of 360–414px
+- **THEN** the employee's name is not truncated, including if the cards remain in one column for that reason
 
-#### Scenario: Планшетная ширина
+#### Scenario: Tablet width
 
-- **WHEN** блок ближайших именинников отображается на ширине около 640px
-- **THEN** число колонок не приводит к обрезке имени, а карточка показывает имя полностью
+- **WHEN** the upcoming birthdays block is displayed at a width of about 640px
+- **THEN** the number of columns does not lead to name truncation, and the card shows the name in full
 
-#### Scenario: Широкая раскладка
+#### Scenario: Wide layout
 
-- **WHEN** ширина экрана достаточна для большего числа колонок
-- **THEN** сетка использует более широкую раскладку без потери читаемости имён
+- **WHEN** the screen width is sufficient for a larger number of columns
+- **THEN** the grid uses a wider layout without losing name readability

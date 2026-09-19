@@ -58,14 +58,14 @@ getCongratulatableUsers(today, users) -> users where hasBirthdayNotPassed, exclu
 
 ### 4. Gift status as a boolean on the donation record
 
-Extend `Donation` with `giftSent: boolean` (default `false`, seeded in `mock-data.ts`) and add `setGiftSent(userId, sent)` to `useDataStore`. `AdminTable` gains a "Дата рождения" column (`format(parseIsoLocal(birthDate), 'd MMMM yyyy', { locale: ru })`) and a "Подарок" column with a manual toggle showing «Выслано» / «Не выслано». The status stays admin-only because `AdminTable` is already admin-gated; employees never render it.
+Extend `Donation` with `giftSent: boolean` (default `false`, seeded in `mock-data.ts`) and add `setGiftSent(userId, sent)` to `useDataStore`. `AdminTable` gains a "Birthday date" column (`format(parseIsoLocal(birthDate), 'd MMMM yyyy', { locale: ru })`) and a "Gift" column with a manual toggle showing "Sent" / "Not sent". The status stays admin-only because `AdminTable` is already admin-gated; employees never render it.
 
 - Alternative: a separate `GiftStatus[]` store. Rejected — overkill for one boolean keyed by `userId`.
 - Assumption (per user): no sent date is stored; if needed later, add `giftSentAt` without changing behavior.
 
 ### 5. Copy fixes
 
-Remove the footer statement in `components/layout/Footer.tsx`; the hero sentence in `app/(app)/page.tsx` remains the single voluntary-participation source. Update the FAQ author answer in `app/(app)/faq/page.tsx` to describe `Фамилия Имя (ник)`.
+Remove the footer statement in `components/layout/Footer.tsx`; the hero sentence in `app/(app)/page.tsx` remains the single voluntary-participation source. Update the FAQ author answer in `app/(app)/faq/page.tsx` to describe `Last name First name (nick)`.
 
 ## Risks / Trade-offs
 
@@ -73,7 +73,7 @@ Remove the footer statement in `components/layout/Footer.tsx`; the hero sentence
 - [Duplicated track announced twice by screen readers] → keep `aria-hidden` on the copy and only mount the copy in loop mode.
 - [Color mismatch if the two lists order users differently] → assign colors through the same shared helper (sorted by `fullName`) on both screens.
 - [Gift status resets on reload] → acceptable for the in-memory demo; consistent with all other state.
-- [Disabling the free-wish control on birthday-less days could look like a defect] → show a short explanatory hint next to the disabled control, matching the "заранее только деньгами" rule.
+- [Disabling the free-wish control on birthday-less days could look like a defect] → show a short explanatory hint next to the disabled control, matching the "in advance only with money" rule.
 
 ## Migration Plan
 

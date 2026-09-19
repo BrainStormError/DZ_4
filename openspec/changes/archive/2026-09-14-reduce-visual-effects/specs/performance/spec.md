@@ -1,25 +1,25 @@
 ## ADDED Requirements
 
-### Requirement: Отсутствие непрерывных визуальных эффектов
+### Requirement: Absence of continuous visual effects
 
-Система НЕ ДОЛЖНА (MUST NOT) применять непрерывно выполняющиеся визуальные эффекты: бесконечные анимации и размытие фона под прокручиваемым содержимым. Тени ДОЛЖНЫ (MUST) быть статичными и лёгкими, а неиспользуемые декоративные анимации НЕ ДОЛЖНЫ (MUST NOT) присутствовать в стилях. Кратковременные эффекты перехода состояния (появление поповеров, меню и диалогов) и индикаторы фокуса ДОПУСКАЮТСЯ, так как не создают постоянной нагрузки.
+The system MUST NOT apply continuously running visual effects: infinite animations and background blur under scrollable content. Shadows MUST be static and light, and unused decorative animations MUST NOT be present in the styles. Short-lived state transition effects (appearance of popovers, menus, and dialogs) and focus indicators ARE ALLOWED, since they do not create a constant load.
 
-#### Scenario: Шапка без размытия
+#### Scenario: Header without blur
 
-- **WHEN** пользователь прокручивает страницу
-- **THEN** закреплённая шапка имеет сплошной фон и не пересчитывает размытие содержимого под собой
+- **WHEN** the user scrolls the page
+- **THEN** the sticky header has a solid background and does not recompute the blur of the content beneath it
 
-#### Scenario: Лента без бесконечной анимации
+#### Scenario: Strip without infinite animation
 
-- **WHEN** на странице отображается лента карточек с переполнением
-- **THEN** никакая бесконечная анимация не выполняется, а прокрутка доступна вручную
+- **WHEN** a strip of cards with overflow is displayed on the page
+- **THEN** no infinite animation runs, and scrolling is available manually
 
-#### Scenario: Статичные лёгкие тени
+#### Scenario: Static light shadows
 
-- **WHEN** пользователь просматривает карточки и панели
-- **THEN** применяются статичные тени с малой областью размытия, не создающие постоянных перерисовок
+- **WHEN** the user views cards and panels
+- **THEN** static shadows with a small blur area are applied, not creating constant repaints
 
-#### Scenario: Декоративные анимации отсутствуют
+#### Scenario: Decorative animations are absent
 
-- **WHEN** выполняется сборка стилей проекта
-- **THEN** в стилях отсутствуют неиспользуемые декоративные анимации (мерцание, парение, наклон, свечение)
+- **WHEN** the project's styles are built
+- **THEN** the styles contain no unused decorative animations (shimmer, floating, tilt, glow)

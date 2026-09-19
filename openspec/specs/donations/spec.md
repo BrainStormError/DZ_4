@@ -2,276 +2,276 @@
 
 ## Purpose
 
-Позволяет сотруднику участвовать в добровольном сборе только после подтверждения корпоративной почты и гарантирует, что суммы сбора не раскрываются сотрудникам.
+Allows an employee to participate in a voluntary collection only after confirming their corporate email and guarantees that collection amounts are not disclosed to employees.
 
 ## Requirements
 
-### Requirement: Подтверждение корпоративной почты перед участием
+### Requirement: Confirmation of corporate email before participation
 
-Система ДОЛЖНА требовать подтверждения корпоративной почты до отправки участия в сборе. Адрес ДОЛЖЕН заканчиваться на `@company.com` и присутствовать в корпоративном справочнике; правило проверки ДОЛЖНО совпадать с правилом входа. Пока адрес не подтверждён, переход к следующему шагу участия ДОЛЖЕН быть недоступен.
+The system MUST require confirmation of the corporate email before submitting participation in the collection. The address MUST end in `@company.com` and be present in the corporate directory; the validation rule MUST match the login rule. Until the address is confirmed, proceeding to the next participation step MUST be unavailable.
 
-#### Scenario: Корректная корпоративная почта
+#### Scenario: Valid corporate email
 
-- **WHEN** пользователь вводит существующий адрес `@company.com`
-- **THEN** система подтверждает адрес и переходит к следующему шагу участия
+- **WHEN** the user enters an existing `@company.com` address
+- **THEN** the system confirms the address and proceeds to the next participation step
 
-#### Scenario: Адрес вне корпоративного домена
+#### Scenario: Address outside the corporate domain
 
-- **WHEN** пользователь вводит адрес без домена `@company.com`
-- **THEN** система показывает ошибку и не переходит к следующему шагу
+- **WHEN** the user enters an address without the `@company.com` domain
+- **THEN** the system shows an error and does not proceed to the next step
 
-#### Scenario: Неизвестный корпоративный адрес
+#### Scenario: Unknown corporate address
 
-- **WHEN** пользователь вводит адрес `unknown.user@company.com`, отсутствующий в справочнике
-- **THEN** система отклоняет адрес так же, как при входе, и не переходит к следующему шагу
+- **WHEN** the user enters the address `unknown.user@company.com`, which is absent from the directory
+- **THEN** the system rejects the address in the same way as at login and does not proceed to the next step
 
-### Requirement: Собранные суммы скрыты от сотрудников
+### Requirement: Collected amounts are hidden from employees
 
-Система ДОЛЖНА (MUST) скрывать от пользователей с ролью `employee` собранные суммы по получателям: ни по себе, ни по другим сотрудникам. Числовое значение собранной суммы НЕ ДОЛЖНО отображаться сотруднику ни на одном шаге участия и нигде на доступных ему страницах. На шаге подтверждения отображается только сумма, введённая самим пользователем; итоговая собранная сумма, равно как и отдельное пояснение о её скрытии, НЕ ДОЛЖНЫ показываться.
+The system MUST hide the collected amounts per recipient from users with the `employee` role: neither for themselves nor for other employees. The numeric value of the collected amount MUST NOT be displayed to an employee at any participation step or anywhere on the pages available to them. At the confirmation step only the amount entered by the user themselves is displayed; the total collected amount, as well as a separate explanation about hiding it, MUST NOT be shown.
 
-#### Scenario: Сотрудник не видит собранные суммы
+#### Scenario: Employee does not see collected amounts
 
-- **WHEN** сотрудник просматривает доступные ему страницы и шаги участия
-- **THEN** нигде не отображается числовое значение собранной суммы
+- **WHEN** an employee views the pages available to them and the participation steps
+- **THEN** the numeric value of the collected amount is not displayed anywhere
 
-#### Scenario: Скрытая сумма при подтверждении
+#### Scenario: Hidden amount at confirmation
 
-- **WHEN** сотрудник видит шаг подтверждения участия
-- **THEN** отображается только введённая им сумма, а итоговая собранная сумма и отдельное пояснение о скрытии отсутствуют
+- **WHEN** an employee sees the participation confirmation step
+- **THEN** only the amount they entered is displayed, and the total collected amount and a separate explanation about hiding are absent
 
-### Requirement: Участие сотрудника в сборе
+### Requirement: Employee participation in the collection
 
-Сотрудник ДОЛЖЕН иметь возможность указать положительную сумму своего участия при подтверждении корпоративной почты. Указанная сумма ДОЛЖНА добавляться к общему сбору выбранного получателя, при этом итоговая собранная сумма сотруднику НЕ ДОЛЖНА показываться: отображается только его собственный вклад и пояснение о скрытии. **На всех шагах диалога участие ДОЛЖНО показывать состояния загрузки (disabled кнопки со спиннером), ошибки (Alert с «Повторить»), успех (тост и переход к следующему шагу или экран успеха).**
+The employee MUST be able to specify a positive amount for their participation while confirming the corporate email. The specified amount MUST be added to the total collection of the selected recipient, while the total collected amount MUST NOT be shown to the employee: only their own contribution and an explanation about hiding are displayed. **At all steps of the dialog, participation MUST show loading states (disabled buttons with a spinner), error (Alert with "Retry"), success (a toast and a transition to the next step or the success screen).**
 
-#### Scenario: Сотрудник указывает сумму участия
-- **WHEN** сотрудник вводит положительную сумму и подтверждает отправку
-- **THEN** сумма добавляется к общему сбору выбранного получателя
+#### Scenario: Employee specifies the participation amount
+- **WHEN** the employee enters a positive amount and confirms the submission
+- **THEN** the amount is added to the total collection of the selected recipient
 
-#### Scenario: Итоговая сумма остаётся скрытой
-- **WHEN** сотрудник проходит шаги участия
-- **THEN** отображается только введённая им сумма, а итоговая собранная сумма не показывается
+#### Scenario: The total amount remains hidden
+- **WHEN** the employee goes through the participation steps
+- **THEN** only the amount they entered is displayed, and the total collected amount is not shown
 
-#### Scenario: Состояние загрузки на шаге суммы
-- **WHEN** пользователь нажимает «Продолжить» на шаге ввода суммы
-- **THEN** кнопка становится `disabled` с `Loader2`, после успеха — переход к шагу сообщения, после ошибки — `Alert` с кнопкой «Повторить»
+#### Scenario: Loading state at the amount step
+- **WHEN** the user clicks "Continue" at the amount entry step
+- **THEN** the button becomes `disabled` with `Loader2`, after success — a transition to the message step, after error — an `Alert` with a "Retry" button
 
-#### Scenario: Состояние загрузки на шаге подтверждения
-- **WHEN** пользователь нажимает «Поздравить» / «Отправить средства» на шаге подтверждения
-- **THEN** кнопка становится `disabled` с `Loader2`, после успеха — экран `success` с тостом, после ошибки — `Alert` с кнопкой «Повторить»
+#### Scenario: Loading state at the confirmation step
+- **WHEN** the user clicks "Congratulate" / "Send funds" at the confirmation step
+- **THEN** the button becomes `disabled` with `Loader2`, after success — the `success` screen with a toast, after error — an `Alert` with a "Retry" button
 
-### Requirement: Учёт участия администратором
+### Requirement: Administrator records participation
 
-Администратор ДОЛЖЕН иметь возможность указать сумму участия, и указанная сумма ДОЛЖНА добавляться к общему сбору выбранного сотрудника. Введённая сумма ДОЛЖНА быть положительной. **Состояния загрузки/ошибки/успеха аналогичны сотруднику.**
+The administrator MUST be able to specify a participation amount, and the specified amount MUST be added to the total collection of the selected employee. The entered amount MUST be positive. **The loading/error/success states are analogous to those of the employee.**
 
-#### Scenario: Добавление суммы администратором
-- **WHEN** администратор вводит положительную сумму и подтверждает отправку
-- **THEN** сумма добавляется к общему сбору выбранного получателя
+#### Scenario: Adding an amount by the administrator
+- **WHEN** the administrator enters a positive amount and confirms the submission
+- **THEN** the amount is added to the total collection of the selected recipient
 
-#### Scenario: Некорректная сумма
-- **WHEN** администратор вводит нулевую, отрицательную или пустую сумму
-- **THEN** продолжение сценария недоступно
+#### Scenario: Invalid amount
+- **WHEN** the administrator enters a zero, negative, or empty amount
+- **THEN** continuing the scenario is unavailable
 
-#### Scenario: Состояние загрузки при участии администратора
-- **WHEN** администратор подтверждает отправку на любом шаге
-- **THEN** кнопка показывает `Loader2` и `disabled`, результат — тост/успех/ошибка как у сотрудника
+#### Scenario: Loading state during administrator participation
+- **WHEN** the administrator confirms the submission at any step
+- **THEN** the button shows `Loader2` and `disabled`, and the result is a toast/success/error like for the employee
 
-### Requirement: Понятный результат участия
+### Requirement: Clear participation result
 
-После подтверждения система ДОЛЖНА показывать результат участия, одинаковый для обеих ролей: подтверждение отправки поздравления получателю. Экран результата НЕ ДОЛЖЕН различаться по роли и НЕ ДОЛЖЕН показывать сумму сбора сотруднику. **На экране успеха показывается тост-уведомление, закрытие завершает сценарий.**
+After confirmation, the system MUST show the participation result, identical for both roles: confirmation that a congratulation has been sent to the recipient. The result screen MUST NOT differ by role and MUST NOT show the collection amount to the employee. **The success screen shows a toast notification, and closing completes the scenario.**
 
-#### Scenario: Результат для сотрудника
-- **WHEN** сотрудник завершает участие
-- **THEN** система показывает подтверждение отправки поздравления получателю
+#### Scenario: Result for the employee
+- **WHEN** the employee completes participation
+- **THEN** the system shows confirmation that a congratulation has been sent to the recipient
 
-#### Scenario: Результат для администратора
-- **WHEN** администратор завершает участие
-- **THEN** система показывает то же подтверждение отправки поздравления получателю, что и у сотрудника
+#### Scenario: Result for the administrator
+- **WHEN** the administrator completes participation
+- **THEN** the system shows the same confirmation that a congratulation has been sent to the recipient as for the employee
 
-#### Scenario: Экран успеха с тостом
-- **WHEN** мутация доната успешно завершается
-- **THEN** отображается шаг `success` с иконкой, текстом и тост-уведомлением «Средства добавлены к сбору» / «Поздравление отправлено»
+#### Scenario: Success screen with a toast
+- **WHEN** the donation mutation completes successfully
+- **THEN** the `success` step is displayed with an icon, text, and the toast notification "Funds added to the collection" / "Congratulation sent"
 
-### Requirement: Обязательный получатель перед участием
+### Requirement: Mandatory recipient before participation
 
-Система НЕ ДОЛЖНА начинать сценарий участия без выбранного получателя. При запуске общей кнопки «Поздравить / отправить средства» на главной странице система ДОЛЖНА требовать выбор именинника до перехода к шагам участия. Тексты шагов участия НЕ ДОЛЖНЫ содержать `undefined`, пустое имя получателя или иным образом раскрывать отсутствие выбранного сотрудника. Подтверждение без выбранного получателя НЕ ДОЛЖНО завершаться молчаливым бездействием: отправка недоступна с понятным пояснением.
+The system MUST NOT start the participation scenario without a selected recipient. When the common "Congratulate / send funds" button on the home page is triggered, the system MUST require selecting a birthday person before proceeding to the participation steps. The texts of the participation steps MUST NOT contain `undefined`, an empty recipient name, or otherwise disclose the absence of a selected employee. Confirmation without a selected recipient MUST NOT end in silent inaction: submission is unavailable with a clear explanation.
 
-#### Scenario: Получатель выбран из карточки именинника
+#### Scenario: Recipient selected from a birthday person card
 
-- **WHEN** пользователь открывает участие из карточки именинника
-- **THEN** на всех шагах отображается имя выбранного получателя без `undefined`
+- **WHEN** the user opens participation from a birthday person card
+- **THEN** the name of the selected recipient is displayed at all steps without `undefined`
 
-#### Scenario: Запуск участия с общей кнопки без получателя
+#### Scenario: Starting participation from the common button without a recipient
 
-- **WHEN** пользователь нажимает «Поздравить / отправить средства» на главной, не выбрав именинника
-- **THEN** система требует выбрать получателя, а шаги участия недоступны или содержат корректный выбор получателя
+- **WHEN** the user clicks "Congratulate / send funds" on the home page without selecting a birthday person
+- **THEN** the system requires selecting a recipient, and the participation steps are unavailable or contain a correct recipient selection
 
-#### Scenario: Отправка без выбранного получателя
+#### Scenario: Submission without a selected recipient
 
-- **WHEN** пользователь пытается подтвердить участие без выбранного получателя
-- **THEN** отправка недоступна, пользователь видит понятное пояснение, данные не изменяются
+- **WHEN** the user tries to confirm participation without a selected recipient
+- **THEN** submission is unavailable, the user sees a clear explanation, and data is not changed
 
-### Requirement: Идентичность отправителя совпадает с учётной записью
+### Requirement: Sender identity matches the account
 
-Введённая в диалоге участия корпоративная почта ДОЛЖНА совпадать с адресом текущего авторизованного пользователя. При несовпадении система ДОЛЖНА показать ошибку и НЕ ДОЛЖНА переходить к следующему шагу. Отображаемый на подтверждении отправитель ДОЛЖЕН совпадать с фактическим автором пожелания.
+The corporate email entered in the participation dialog MUST match the address of the current authorized user. If they do not match, the system MUST show an error and MUST NOT proceed to the next step. The sender displayed at confirmation MUST match the actual author of the wish.
 
-#### Scenario: Введена почта другого сотрудника
+#### Scenario: Another employee's email was entered
 
-- **WHEN** авторизованный пользователь вводит корпоративную почту коллеги
-- **THEN** система отклоняет ввод с ошибкой и не переходит к следующему шагу
+- **WHEN** the authorized user enters a colleague's corporate email
+- **THEN** the system rejects the input with an error and does not proceed to the next step
 
-#### Scenario: Подтверждение корректного отправителя
+#### Scenario: Confirmation of a correct sender
 
-- **WHEN** пользователь вводит собственную корпоративную почту
-- **THEN** на подтверждении отображается его адрес, и пожелание публикуется под его корпоративным ником
+- **WHEN** the user enters their own corporate email
+- **THEN** their address is displayed at confirmation, and the wish is published under their corporate nickname
 
-### Requirement: Строгая проверка суммы участия
+### Requirement: Strict validation of the participation amount
 
-К участию ДОЛЖНО приниматься только целое положительное число в обычной десятичной записи. Научная нотация, дробные, нулевые, отрицательные, пустые и нечисловые значения ДОЛЖНЫ отклоняться без усечения (например, `1e3` не ДОЛЖНО превращаться в `1`). Значение, показанное на подтверждении, ДОЛЖНО точно совпадать с суммой, добавляемой к сбору.
+Only a positive integer in ordinary decimal notation MUST be accepted for participation. Scientific notation, fractional, zero, negative, empty, and non-numeric values MUST be rejected without truncation (for example, `1e3` MUST NOT turn into `1`). The value shown at confirmation MUST exactly match the amount added to the collection.
 
-#### Scenario: Научная нотация отклоняется
+#### Scenario: Scientific notation is rejected
 
-- **WHEN** пользователь вводит `1e3`
-- **THEN** значение отклоняется, переход к следующему шагу недоступен
+- **WHEN** the user enters `1e3`
+- **THEN** the value is rejected, and the transition to the next step is unavailable
 
-#### Scenario: Некорректные числовые значения
+#### Scenario: Invalid numeric values
 
-- **WHEN** пользователь вводит `0`, отрицательное, дробное или пустое значение
-- **THEN** продолжение сценария недоступно
+- **WHEN** the user enters `0`, a negative, fractional, or empty value
+- **THEN** continuing the scenario is unavailable
 
-#### Scenario: Корректная сумма переносится точно
+#### Scenario: A valid amount is carried over exactly
 
-- **WHEN** пользователь вводит `500` и подтверждает отправку
-- **THEN** к сбору добавляется ровно 500 ₽, и это же значение показано на подтверждении
+- **WHEN** the user enters `500` and confirms the submission
+- **THEN** exactly 500 ₽ is added to the collection, and this same value is shown at confirmation
 
-### Requirement: Пожелание без взноса не предлагается в диалоге участия
+### Requirement: A wish without a contribution is not offered in the participation dialog
 
-Диалог участия НЕ ДОЛЖЕН обещать отправку пожелания без указания суммы. Текст ДОЛЖЕН направлять пользователя к существующей кнопке «Оставить пожелание» на доске пожеланий как к способу поздравить без взноса.
+The participation dialog MUST NOT promise to send a wish without specifying an amount. The text MUST direct the user to the existing "Leave a wish" button on the wish board as a way to congratulate without a contribution.
 
-#### Scenario: Копирайт шага подтверждения почты
+#### Scenario: Copy of the email confirmation step
 
-- **WHEN** пользователь открывает шаг подтверждения корпоративной почты
-- **THEN** текст не содержит обещания поздравить без отправки средств и указывает на доску пожеланий
+- **WHEN** the user opens the corporate email confirmation step
+- **THEN** the text does not contain a promise to congratulate without sending funds and points to the wish board
 
-### Requirement: Валидация изменения суммы администратором
+### Requirement: Validation of amount change by the administrator
 
-При изменении суммы сбора администратором новая сумма ДОЛЖНА (MUST) быть целым неотрицательным числом. Отрицательные, пустые и нечисловые значения НЕ ДОЛЖНЫ сохраняться и НЕ ДОЛЖНЫ попадать в журнал изменений. Причина и комментарий остаются обязательными. Для причины «Возврат (отказ от подарка)» новая сумма ДОЛЖНА быть равна нулю: выбор этой причины принудительно устанавливает нулевую сумму, поскольку отказ от подарка возвращает весь сбор. Экстренный возврат допускает любую неотрицательную сумму. Для сотрудника, отказавшегося от подарка, изменение суммы НЕ ДОЛЖНО быть доступно: сумма остаётся зафиксированной на `0`.
+When the administrator changes a collection amount, the new amount MUST be a non-negative integer. Negative, empty, and non-numeric values MUST NOT be saved and MUST NOT end up in the change log. The reason and the comment remain mandatory. For the reason "Refund (gift declined)" the new amount MUST be equal to zero: selecting this reason forcibly sets a zero amount, since declining the gift returns the entire collection. An emergency refund allows any non-negative amount. For an employee who declined the gift, changing the amount MUST NOT be available: the amount remains fixed at `0`.
 
-#### Scenario: Отрицательная сумма не сохраняется
+#### Scenario: A negative amount is not saved
 
-- **WHEN** администратор вводит отрицательную сумму, выбирает причину и комментарий и нажимает «Сохранить»
-- **THEN** значение не сохраняется, в таблице и журнале не появляется отрицательная сумма
+- **WHEN** the administrator enters a negative amount, selects a reason and a comment, and clicks "Save"
+- **THEN** the value is not saved, and a negative amount does not appear in the table or the log
 
-#### Scenario: Корректная сумма сохраняется
+#### Scenario: A valid amount is saved
 
-- **WHEN** администратор вводит неотрицательную сумму, выбирает причину и указывает комментарий
-- **THEN** сумма сохраняется, а в журнал добавляется запись с предыдущим и новым значением
+- **WHEN** the administrator enters a non-negative amount, selects a reason, and provides a comment
+- **THEN** the amount is saved, and an entry with the previous and the new value is added to the log
 
-#### Scenario: Отказ от подарка обнуляет сумму
+#### Scenario: Declining the gift zeroes the amount
 
-- **WHEN** администратор выбирает причину «Возврат (отказ от подарка)»
-- **THEN** новая сумма устанавливается равной нулю и не может быть сохранена как ненулевая
+- **WHEN** the administrator selects the reason "Refund (gift declined)"
+- **THEN** the new amount is set equal to zero and cannot be saved as non-zero
 
-#### Scenario: Экстренный возврат допускает частичную сумму
+#### Scenario: An emergency refund allows a partial amount
 
-- **WHEN** администратор выбирает причину «Экстренный возврат» и указывает неотрицательную сумму
-- **THEN** сумма сохраняется и попадает в журнал изменений
+- **WHEN** the administrator selects the reason "Emergency refund" and specifies a non-negative amount
+- **THEN** the amount is saved and ends up in the change log
 
-#### Scenario: Изменение суммы недоступно после отказа
+#### Scenario: Amount change is unavailable after a decline
 
-- **WHEN** администратор просматривает строку сотрудника, отказавшегося от подарка
-- **THEN** изменение суммы недоступно, а сумма остаётся `0 ₽`
+- **WHEN** the administrator views the row of an employee who declined the gift
+- **THEN** the amount change is unavailable, and the amount remains `0 ₽`
 
-### Requirement: Необязательное поздравление при отправке средств
+### Requirement: Optional congratulation when sending funds
 
-При отправке денежного поздравления пользователь ДОЛЖЕН (MUST) иметь возможность приложить текст пожелания или отправить средства без него. Если текст указан, система ДОЛЖНА создать пожелание, которое показывается по правилу дня рождения получателя. Если текст не указан, система НЕ ДОЛЖНА создавать пожелание, а только добавляет сумму к сбору. Денежное поздравление ДОЛЖНО отправляться заранее, независимо от текущей даты. Диалог участия НЕ ДОЛЖЕН содержать отдельный контрол отправки без пожелания: отправка без текста выполняется продолжением сценария при пустом поле.
+When sending a monetary congratulation, the user MUST be able to attach a wish text or send funds without it. If text is provided, the system MUST create a wish that is shown according to the recipient's birthday rule. If text is not provided, the system MUST NOT create a wish and only adds the amount to the collection. The monetary congratulation MUST be sent in advance, regardless of the current date. The participation dialog MUST NOT contain a separate control for sending without a wish: sending without text is performed by continuing the scenario with an empty field.
 
-#### Scenario: Средства с пожеланием
+#### Scenario: Funds with a wish
 
-- **WHEN** пользователь указывает сумму и непустой текст поздравления и подтверждает отправку
-- **THEN** сумма добавляется к сбору, а пожелание создаётся и показывается на доске по правилу дня рождения получателя
+- **WHEN** the user specifies an amount and a non-empty congratulation text and confirms the submission
+- **THEN** the amount is added to the collection, and the wish is created and shown on the board according to the recipient's birthday rule
 
-#### Scenario: Средства без пожелания
+#### Scenario: Funds without a wish
 
-- **WHEN** пользователь указывает сумму и оставляет текст поздравления пустым, затем подтверждает отправку
-- **THEN** сумма добавляется к сбору, а пожелание не создаётся
+- **WHEN** the user specifies an amount and leaves the congratulation text empty, then confirms the submission
+- **THEN** the amount is added to the collection, and no wish is created
 
-#### Scenario: Единственный контрол продолжения без текста
+#### Scenario: The only continuation control is without text
 
-- **WHEN** пользователь оставляет текст поздравления пустым
-- **THEN** продолжение сценария доступно основной кнопкой, и отдельной кнопки «отправить без пожелания» в диалоге нет
+- **WHEN** the user leaves the congratulation text empty
+- **THEN** continuing the scenario is available with the main button, and there is no separate "send without a wish" button in the dialog
 
-#### Scenario: Результат отправки без пожелания
+#### Scenario: Result of sending without a wish
 
-- **WHEN** пользователь завершает отправку средств без текста поздравления
-- **THEN** экран результата сообщает о добавлении суммы к сбору и не утверждает, что поздравление передано
+- **WHEN** the user completes sending funds without a congratulation text
+- **THEN** the result screen reports that the amount has been added to the collection and does not claim that a congratulation has been delivered
 
-#### Scenario: Отправка заранее
+#### Scenario: Sending in advance
 
-- **WHEN** пользователь отправляет денежное поздравление до дня рождения получателя
-- **THEN** сумма добавляется к сбору, а созданное пожелание не показывается на доске до дня рождения получателя
+- **WHEN** the user sends a monetary congratulation before the recipient's birthday
+- **THEN** the amount is added to the collection, and the created wish is not shown on the board until the recipient's birthday
 
-### Requirement: Допустимые получатели денежного поздравления
+### Requirement: Eligible recipients of a monetary congratulation
 
-Денежное поздравление ДОЛЖНО (MUST) быть доступно только для сотрудников, чей день рождения сегодня или ещё не наступил в текущем году. Сотрудники, чей день рождения уже прошёл, НЕ ДОЛЖНЫ отображаться в списке получателей. Сам текущий пользователь в список НЕ ДОЛЖЕН попадать. Сотрудник, отказавшийся от подарка, НЕ ДОЛЖЕН быть доступен как получатель денежного поздравления: его запись ДОЛЖНА отображаться в списке выбора неактивной с пометкой «отказался от подарка», чтобы поздравление было возможно только текстом.
+A monetary congratulation MUST be available only for employees whose birthday is today or has not yet occurred in the current year. Employees whose birthday has already passed MUST NOT be displayed in the recipient list. The current user themselves MUST NOT be included in the list. An employee who declined the gift MUST NOT be available as a recipient of a monetary congratulation: their entry MUST be displayed in the selection list as inactive with the note "declined the gift", so that a congratulation is possible only as text.
 
-#### Scenario: Прошедший день рождения исключён из списка
+#### Scenario: A past birthday is excluded from the list
 
-- **WHEN** пользователь открывает выбор получателя для денежного поздравления
-- **THEN** сотрудники с прошедшей датой дня рождения отсутствуют в списке получателей
+- **WHEN** the user opens the recipient selection for a monetary congratulation
+- **THEN** employees with a past birthday date are absent from the recipient list
 
-#### Scenario: Сегодняшний именинник доступен
+#### Scenario: Today's birthday person is available
 
-- **WHEN** у сотрудника день рождения совпадает с текущей датой
-- **THEN** сотрудник доступен в списке получателей для денежного поздравления
+- **WHEN** an employee's birthday matches the current date
+- **THEN** the employee is available in the recipient list for a monetary congratulation
 
-#### Scenario: Будущий именинник доступен заранее
+#### Scenario: A future birthday person is available in advance
 
-- **WHEN** у сотрудника день рождения ещё не наступил в текущем году
-- **THEN** сотрудник доступен в списке получателей, и средства можно отправить заранее
+- **WHEN** an employee's birthday has not yet occurred in the current year
+- **THEN** the employee is available in the recipient list, and funds can be sent in advance
 
-#### Scenario: Отказавшийся от подарка недоступен для денег
+#### Scenario: A person who declined the gift is unavailable for money
 
-- **WHEN** пользователь открывает выбор получателя денежного поздравления
-- **THEN** сотрудник, отказавшийся от подарка, отображается неактивной записью и не может быть выбран для отправки средств
+- **WHEN** the user opens the recipient selection for a monetary congratulation
+- **THEN** an employee who declined the gift is displayed as an inactive entry and cannot be selected for sending funds
 
-#### Scenario: Пометка об отказе в списке
+#### Scenario: Decline note in the list
 
-- **WHEN** в списке получателей присутствует отказавшийся от подарка сотрудник
-- **THEN** его запись содержит пометку «отказался от подарка»
+- **WHEN** the recipient list contains an employee who declined the gift
+- **THEN** their entry contains the note "declined the gift"
 
-### Requirement: Почта получателя в выборе
+### Requirement: Recipient email in the selection
 
-Форма выбора получателя денежного поздравления ДОЛЖНА (MUST) показывать корпоративную почту получателя в дополнение к его имени и отделу, чтобы пользователь мог отличить одноимённых сотрудников и убедиться в правильности адресата.
+The recipient selection form for a monetary congratulation MUST show the recipient's corporate email in addition to their name and department, so that the user can distinguish employees with the same name and make sure the addressee is correct.
 
-#### Scenario: Почта видна в списке получателей
+#### Scenario: Email is visible in the recipient list
 
-- **WHEN** пользователь открывает выбор получателя денежного поздравления
-- **THEN** для каждого доступного получателя показаны имя, отдел и корпоративная почта
+- **WHEN** the user opens the recipient selection for a monetary congratulation
+- **THEN** the name, the department, and the corporate email are shown for each available recipient
 
-#### Scenario: Почта соответствует выбранному получателю
+#### Scenario: Email corresponds to the selected recipient
 
-- **WHEN** пользователь выбирает получателя из списка
-- **THEN** последующие шаги относятся к тому же сотруднику, чья корпоративная почта была показана в списке
+- **WHEN** the user selects a recipient from the list
+- **THEN** the subsequent steps relate to the same employee whose corporate email was shown in the list
 
-### Requirement: Выбор получателя различим на узком экране
+### Requirement: Recipient selection is discernible on a narrow screen
 
-Форма выбора получателя денежного поздравления ДОЛЖНА (MUST) оставаться пригодной на узких экранах. Длинные подписи получателей НЕ ДОЛЖНЫ обрезаться без возможности прочитать полный текст: подпись ДОЛЖНА усекаться аккуратно с доступным полным значением, а список выбора НЕ ДОЛЖЕН выходить за пределы вьюпорта.
+The recipient selection form for a monetary congratulation MUST remain usable on narrow screens. Long recipient labels MUST NOT be truncated without the ability to read the full text: the label MUST be truncated neatly with the full value available, and the selection list MUST NOT extend beyond the viewport.
 
-#### Scenario: Длинная подпись получателя
+#### Scenario: A long recipient label
 
-- **WHEN** пользователь открывает список получателей на узком экране
-- **THEN** подпись получателя усекается предсказуемо, а полное значение остаётся доступным пользователю
+- **WHEN** the user opens the recipient list on a narrow screen
+- **THEN** the recipient label is truncated predictably, and the full value remains available to the user
 
-#### Scenario: Список не выходит за экран
+#### Scenario: The list does not extend beyond the screen
 
-- **WHEN** пользователь раскрывает список выбора получателя на ширине 320px
-- **THEN** список укладывается в ширину вьюпорта и не обрезается по краям
+- **WHEN** the user expands the recipient selection list at a width of 320px
+- **THEN** the list fits within the viewport width and is not cut off at the edges
 
-### Requirement: Диалог участия вписывается во вьюпорт
+### Requirement: The participation dialog fits the viewport
 
-Диалог участия ДОЛЖЕН (MUST) сохранять боковые отступы и ограничение высоты, чтобы ни один шаг, включая заголовок и кнопки действий, не оказывался недоступным на узком или низком экране.
+The participation dialog MUST preserve side margins and a height limit so that no step, including the heading and the action buttons, becomes unavailable on a narrow or short screen.
 
-#### Scenario: Шаги участия на мобильном
+#### Scenario: Participation steps on mobile
 
-- **WHEN** пользователь проходит шаги участия на узком экране
-- **THEN** заголовок, содержимое шага и кнопки действий остаются внутри вьюпорта и достижимы
+- **WHEN** the user goes through the participation steps on a narrow screen
+- **THEN** the heading, the step content, and the action buttons remain within the viewport and are reachable

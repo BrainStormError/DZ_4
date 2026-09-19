@@ -1,44 +1,44 @@
 ## Why
 
-На узких экранах (320–360px) приложение ломается: CTA и навигация по месяцам вылезают за карточку и создают горизонтальный скролл всей страницы, диалог изменения суммы не влезает в высоту экрана и не прокручивается, а чат при длинной переписке «выпускает» форму ввода за пределы карточки на ~813px. Пользователь не может увидеть кнопку целиком, добраться до поля ответа или прочитать длинные подписи, а часть ссылок мобильного меню скрыта за краем без индикатора прокрутки. Это блокирует основные сценарии (поздравить, ответить в чате, изменить сумму) на телефонах и планшетах.
+On narrow screens (320–360px) the application breaks: the CTA and month navigation overflow the card and create horizontal scrolling of the whole page, the amount-change dialog does not fit the screen height and does not scroll, and the chat with a long conversation "releases" the input form outside the card by ~813px. The user cannot see a button in full, reach the reply field, or read long labels, and some links of the mobile menu are hidden behind the edge without a scroll indicator. This blocks the main scenarios (congratulate, reply in chat, change the amount) on phones and tablets.
 
 ## What Changes
 
-- **Общие инварианты узкого экрана.** Страница НЕ ДОЛЖНА получать горизонтальный скролл из-за содержимого; на `<body>` добавляется защитный `overflow-x-hidden`, а любой «выпадающий» элемент (диалог, popover, select) ДОЛЖЕН укладываться в вьюпорт.
-- **Hero CTA.** Кнопки hero ДОЛЖНЫ переноситься на отдельные строки на мобильном и занимать доступную ширину вместо фиксированных 320.6px с `whitespace-nowrap`; на 320px текст не режется.
-- **Навигация календаря.** Группа кнопок месяца/года ДОЛЖНА переноситься или сжиматься на 320–360px без горизонтального скролла; `min-w-[160px]` у заголовка убирается, стрелки становятся `size="sm"`.
-- **Ячейки календаря.** На экранах `< sm` имена именинников НЕ ДОЛЖНЫ рендериться в обрезанном до одной буквы виде; вместо этого точка/эмодзи с доступным `title`.
-- **Сетка «Скоро день рождения».** Раскладка ДОЛЖНА быть `grid-cols-2 md:grid-cols-3 lg:grid-cols-4`, чтобы имена не обрезались на `sm`.
-- **Диалоги.** `DialogContent` ДОЛЖЕН иметь боковые отступы (`w-[calc(100%-1.5rem)]`), ограничение высоты `max-h-[90dvh]` и внутреннюю прокрутку (`overflow-y-auto overscroll-contain`); заголовок и футер остаются доступными.
-- **Чат.** Карточка чата ДОЛЖНА удерживать форму ввода внутри себя и включать прокрутку истории: `min-h-0` в цепочке flex и динамическая высота вместо `max-h-[600px]`.
-- **Таблица админа.** На `< md` таблица ДОЛЖНА заменяться карточным списком либо скрывать второстепенные колонки; обязательный горизонтальный скролл и двойная вложенная обёртка `overflow-x-auto` убираются, колонка «Действие» остаётся доступной.
-- **Мобильное меню.** Ссылки ДОЛЖНЫ иметь тап-таргет ≥ 44px и явную подсказку о горизонтальной прокрутке (`scroll-snap`/градиент) — сейчас «FAQ»/«Админ» уезжают за край без индикатора.
-- **Выбор получателя.** Длинные подписи опций ДОЛЖНЫ обрезаться `truncate` с доступным полным текстом, а `SelectContent` НЕ ДОЛЖЕН выходить за вьюпорт (ограничение ширины, короткие подписи на мобильных).
-- **Popover с DayPicker.** `align="end"` ДОЛЖЕН получать `collisionPadding`, чтобы не вылезать за левый край на ≤320px.
-- **Единицы высоты.** Вместо `min-h-screen` используется `min-h-dvh` (`login/page.tsx`, `app/(app)/layout.tsx`) — без скачка при показе/скрытии адресной строки.
-- **Якорь доски пожеланий.** Секция `#wish-board` ДОЛЖНА иметь `scroll-mt-20`, чтобы заголовок не прятался под sticky-шапкой.
-- **Hover и лента.** `hover:scale-[1.02]` применяется только на устройствах с наведением; лента пожеланий получает `scroll-snap` и визуальную подсказку, оставаясь прокручиваемой вручную.
+- **General narrow-screen invariants.** The page MUST NOT get horizontal scrolling because of the content; a defensive `overflow-x-hidden` is added to `<body>`, and any "drop-down" element (dialog, popover, select) MUST fit within the viewport.
+- **Hero CTA.** The hero buttons MUST wrap onto separate lines on mobile and occupy the available width instead of the fixed 320.6px with `whitespace-nowrap`; at 320px the text is not clipped.
+- **Calendar navigation.** The group of month/year buttons MUST wrap or shrink at 320–360px without horizontal scrolling; `min-w-[160px]` is removed from the heading, the arrows become `size="sm"`.
+- **Calendar cells.** On screens `< sm` the names of birthday people MUST NOT be rendered in a form clipped to a single letter; instead, a dot/emoji with an accessible `title`.
+- **The "Birthday soon" grid.** The layout MUST be `grid-cols-2 md:grid-cols-3 lg:grid-cols-4` so that names are not clipped at `sm`.
+- **Dialogs.** `DialogContent` MUST have side margins (`w-[calc(100%-1.5rem)]`), a height limit `max-h-[90dvh]`, and internal scrolling (`overflow-y-auto overscroll-contain`); the header and footer remain accessible.
+- **Chat.** The chat card MUST keep the input form inside itself and enable history scrolling: `min-h-0` in the flex chain and a dynamic height instead of `max-h-[600px]`.
+- **Admin table.** At `< md` the table MUST be replaced by a card list or hide the secondary columns; the mandatory horizontal scroll and the double nested `overflow-x-auto` wrapper are removed, the "Action" column remains accessible.
+- **Mobile menu.** The links MUST have a tap target ≥ 44px and an explicit hint about horizontal scrolling (`scroll-snap`/gradient) — currently "FAQ"/"Admin" slide off the edge without an indicator.
+- **Recipient selection.** Long option labels MUST be truncated with `truncate` with the full text accessible, and `SelectContent` MUST NOT go outside the viewport (width limit, short labels on mobile).
+- **Popover with DayPicker.** `align="end"` MUST get `collisionPadding` so as not to go outside the left edge at ≤320px.
+- **Height units.** Instead of `min-h-screen`, `min-h-dvh` is used (`login/page.tsx`, `app/(app)/layout.tsx`) — without a jump when the address bar is shown/hidden.
+- **Wish board anchor.** The `#wish-board` section MUST have `scroll-mt-20` so that the heading does not hide under the sticky header.
+- **Hover and strip.** `hover:scale-[1.02]` is applied only on devices with hover; the wish strip gets `scroll-snap` and a visual hint, remaining scrollable manually.
 
 ## Capabilities
 
 ### New Capabilities
 
-- `responsive-layout`: сквозные инварианты узкого вьюпорта — отсутствие горизонтального скролла страницы, вписывание диалогов/поповеров/селектов, динамические единицы высоты, отступ якорных секций под sticky-шапкой и применение hover-эффектов только к устройствам с наведением.
+- `responsive-layout`: end-to-end invariants of the narrow viewport — no horizontal page scrolling, dialogs/popovers/selects fitting within the viewport, dynamic height units, anchor-section offset under the sticky header, and hover effects applied only to devices with hover.
 
 ### Modified Capabilities
 
-- `birthdays`: навигация по месяцам/годам и содержимое ячеек календаря ДОЛЖНЫ оставаться читаемыми и не создавать горизонтальный скролл на 320–360px; сетка ближайших именинников ДОЛЖНА переноситься без обрезки имён.
-- `app-shell`: мобильная навигация ДОЛЖНА показывать все доступные ссылки и подсказывать горизонтальную прокрутку вместо скрытия части пунктов за краем.
-- `accessibility`: интерактивные элементы мобильной навигации ДОЛЖНЫ иметь минимальный тап-таргет 44×44px.
-- `support-chat`: переписка ДОЛЖНА прокручиваться внутри карточки, а форма отправки — оставаться внутри карточки и быть достижимой при длинной истории и ограниченной высоте экрана.
-- `admin-panel`: таблица сборов ДОЛЖНА оставаться пригодной на узких экранах — без обязательного горизонтального скролла страницы, с доступной колонкой «Действие» и одним контейнером прокрутки.
-- `donations`: диалог участия и селект получателя ДОЛЖНЫ вписываться во вьюпорт, а длинные подписи получателей — оставаться различимыми.
-- `wishes`: лента поздравлений ДОЛЖНА давать визуальную подсказку о горизонтальной прокрутке и использовать `scroll-snap`, сохраняя ручную прокрутку и отсутствие автопрокрутки.
+- `birthdays`: month/year navigation and the contents of the calendar cells MUST remain readable and not create horizontal scrolling at 320–360px; the grid of upcoming birthday people MUST wrap without clipping names.
+- `app-shell`: mobile navigation MUST show all available links and hint at horizontal scrolling instead of hiding some items behind the edge.
+- `accessibility`: interactive elements of the mobile navigation MUST have a minimum tap target of 44×44px.
+- `support-chat`: the conversation MUST scroll inside the card, and the submit form MUST remain inside the card and be reachable with a long history and a limited screen height.
+- `admin-panel`: the collection table MUST remain usable on narrow screens — without mandatory horizontal page scrolling, with an accessible "Action" column and a single scroll container.
+- `donations`: the participation dialog and the recipient select MUST fit within the viewport, and long recipient labels MUST remain distinguishable.
+- `wishes`: the congratulations strip MUST give a visual hint about horizontal scrolling and use `scroll-snap`, preserving manual scrolling and the absence of auto-scroll.
 
 ## Impact
 
-- Компоненты: `app/(app)/page.tsx`, `app/(app)/calendar/page.tsx`, `app/(app)/layout.tsx`, `app/(auth)/login/page.tsx`, `components/features/AdminTable.tsx`, `components/features/ChatThread.tsx`, `components/features/DonateDialog.tsx`, `components/features/BirthdayCard.tsx`, `components/features/WishBoard.tsx`, `components/layout/Header.tsx`.
-- UI-примитивы: `components/ui/dialog.tsx`, `components/ui/popover.tsx`, `components/ui/select.tsx`, `components/ui/table.tsx`, `components/ui/button.tsx` (локальные классы, без изменения вариантов по умолчанию).
-- Стили: `app/globals.css` (защита `overflow-x`, `scroll-snap`).
-- Спецификации: новая `responsive-layout`; дельты `birthdays`, `app-shell`, `accessibility`, `support-chat`, `admin-panel`, `donations`, `wishes`.
-- Не меняются: данные, персистентность, бэкенд, аутентификация, бизнес-правила (скрытие сумм, допустимые получатели, статусы подарков, автопрокрутка ленты).
+- Components: `app/(app)/page.tsx`, `app/(app)/calendar/page.tsx`, `app/(app)/layout.tsx`, `app/(auth)/login/page.tsx`, `components/features/AdminTable.tsx`, `components/features/ChatThread.tsx`, `components/features/DonateDialog.tsx`, `components/features/BirthdayCard.tsx`, `components/features/WishBoard.tsx`, `components/layout/Header.tsx`.
+- UI primitives: `components/ui/dialog.tsx`, `components/ui/popover.tsx`, `components/ui/select.tsx`, `components/ui/table.tsx`, `components/ui/button.tsx` (local classes, without changing the default variants).
+- Styles: `app/globals.css` (`overflow-x` protection, `scroll-snap`).
+- Specifications: the new `responsive-layout`; the deltas `birthdays`, `app-shell`, `accessibility`, `support-chat`, `admin-panel`, `donations`, `wishes`.
+- Unchanged: data, persistence, backend, authentication, business rules (hiding amounts, allowed recipients, gift statuses, strip auto-scroll).

@@ -2,130 +2,130 @@
 
 ## Purpose
 
-Фиксирует целевые бюджеты Core Web Vitals для ключевых страниц приложения и обязывает проверять фактические показатели загрузки, отзывчивости и визуальной стабильности на реальных контролах.
+Establishes target Core Web Vitals budgets for the application's key pages and requires verifying the actual metrics of loading, responsiveness, and visual stability on real controls.
 
 ## Requirements
 
-### Requirement: Бюджеты Core Web Vitals
+### Requirement: Core Web Vitals budgets
 
-Ключевые страницы приложения ДОЛЖНЫ (MUST) укладываться в целевые бюджеты Core Web Vitals: LCP не более 2,5 секунд, INP не более 200 миллисекунд, CLS не более 0,1. Показатели ДОЛЖНЫ проверяться на ключевых страницах и НЕ ДОЛЖНЫ превышать указанные значения.
+The application's key pages MUST fit within the target Core Web Vitals budgets: LCP no more than 2.5 seconds, INP no more than 200 milliseconds, CLS no more than 0.1. The metrics MUST be verified on the key pages and MUST NOT exceed the specified values.
 
-#### Scenario: LCP в пределах бюджета
+#### Scenario: LCP within budget
 
-- **WHEN** измеряется LCP ключевой страницы
-- **THEN** значение не превышает 2,5 секунд
+- **WHEN** the LCP of a key page is measured
+- **THEN** the value does not exceed 2.5 seconds
 
-#### Scenario: INP в пределах бюджета
+#### Scenario: INP within budget
 
-- **WHEN** измеряется INP при взаимодействии с ключевым контролом страницы
-- **THEN** значение не превышает 200 миллисекунд
+- **WHEN** the INP is measured when interacting with a key control of the page
+- **THEN** the value does not exceed 200 milliseconds
 
-#### Scenario: CLS в пределах бюджета
+#### Scenario: CLS within budget
 
-- **WHEN** измеряется CLS ключевой страницы при загрузке
-- **THEN** значение не превышает 0,1
+- **WHEN** the CLS of a key page is measured during loading
+- **THEN** the value does not exceed 0.1
 
-### Requirement: Шрифты не блокируют первичный рендер
+### Requirement: Fonts do not block the initial render
 
-Загрузка шрифтов НЕ ДОЛЖНА (MUST NOT) блокировать первичный рендер. Внешние блокирующие запросы на таблицы стилей шрифтов ДОЛЖНЫ быть устранены в пользу способа загрузки, который не задерживает отображение текста и не вызывает заметного сдвига разметки при подмене шрифта. При первой загрузке страницы ДОЛЖНЫ (MUST) запрашиваться файлы шрифтов только той темы, которая применена к документу; шрифты остальных тем НЕ ДОЛЖНЫ (MUST NOT) запрашиваться заранее и ДОЛЖНЫ загружаться только при переключении на соответствующую тему.
+Font loading MUST NOT block the initial render. External blocking requests for font stylesheets MUST be eliminated in favor of a loading method that does not delay text display and does not cause a noticeable layout shift when the font is substituted. On the first page load, font files MUST be requested only for the theme that is applied to the document; fonts of the other themes MUST NOT be requested in advance and MUST be loaded only when switching to the corresponding theme.
 
-#### Scenario: Текст отображается без ожидания внешних шрифтов
+#### Scenario: Text is displayed without waiting for external fonts
 
-- **WHEN** страница загружается на медленном соединении
-- **THEN** отображение текста не ожидает внешнего блокирующего запроса шрифтов
+- **WHEN** the page loads on a slow connection
+- **THEN** text display does not wait for an external blocking font request
 
-#### Scenario: Подмена шрифта не сдвигает разметку
+#### Scenario: Font substitution does not shift the layout
 
-- **WHEN** браузер применяет загруженный шрифт вместо резервного
-- **THEN** положение текста и блоков не смещается заметным образом
+- **WHEN** the browser applies the loaded font instead of the fallback
+- **THEN** the position of the text and blocks does not shift noticeably
 
-#### Scenario: Загружаются только шрифты активной темы
+#### Scenario: Only the fonts of the active theme are loaded
 
-- **WHEN** документ открывается с темой по умолчанию
-- **THEN** заранее запрашиваются файлы только семейств этой темы, а файлы семейств других тем не запрашиваются
+- **WHEN** the document opens with the default theme
+- **THEN** files of only the families of this theme are requested in advance, and files of the families of other themes are not requested
 
-#### Scenario: Сохранённая нестандартная тема не тянет чужие шрифты
+#### Scenario: A saved non-default theme does not pull other themes' fonts
 
-- **WHEN** у пользователя сохранена нестандартная тема и он открывает страницу
-- **THEN** запрашиваются файлы семейств этой темы, а семейства остальных тем не запрашиваются
+- **WHEN** the user has a non-default theme saved and opens the page
+- **THEN** files of the families of this theme are requested, and the families of the other themes are not requested
 
-### Requirement: Изоляция перерисовок по доменам данных
+### Requirement: Isolation of re-renders by data domains
 
-Изменение данных одного домена — пожеланий, взносов или переписки — НЕ ДОЛЖНО (MUST NOT) вызывать повторную отрисовку интерфейса, который эти данные не отображает и не изменяет. Компонент ДОЛЖЕН (MUST) отрисовываться заново только тогда, когда изменяются данные, которые он показывает или изменяет.
+A change in the data of one domain — wishes, contributions, or the conversation — MUST NOT cause a re-render of the interface that neither displays nor changes this data. A component MUST re-render only when the data it shows or changes is modified.
 
-#### Scenario: Добавление пожелания не трогает остальной интерфейс
+#### Scenario: Adding a wish does not touch the rest of the interface
 
-- **WHEN** пользователь отправляет пожелание
-- **THEN** шапка приложения, лента переписки и админ-таблица не выполняют повторную отрисовку
+- **WHEN** the user submits a wish
+- **THEN** the application header, the conversation strip, and the admin table do not re-render
 
-#### Scenario: Взнос не трогает доску пожеланий и переписку
+#### Scenario: A contribution does not touch the wish board or the conversation
 
-- **WHEN** пользователь отправляет взнос
-- **THEN** доска пожеланий и лента переписки не выполняют повторную отрисовку
+- **WHEN** the user submits a contribution
+- **THEN** the wish board and the conversation strip do not re-render
 
-#### Scenario: Смена статуса подарка не трогает пожелания
+#### Scenario: Changing the gift status does not touch wishes
 
-- **WHEN** администратор меняет статус подарка или сумму сбора
-- **THEN** интерфейс, работающий только с пожеланиями, не выполняет повторную отрисовку
+- **WHEN** the administrator changes the gift status or the collection amount
+- **THEN** the interface that works only with wishes does not re-render
 
-#### Scenario: Смена темы и вход не заражают подписчиков
+#### Scenario: Theme and login changes do not infect subscribers
 
-- **WHEN** состояние темы или сессии не менялось
-- **THEN** повторная отрисовка поставщика темы и сессии не вызывает повторную отрисовку его подписчиков
+- **WHEN** the theme or session state has not changed
+- **THEN** a re-render of the theme and session provider does not cause a re-render of its subscribers
 
-### Requirement: Тяжёлые фичи вне критического пути первой загрузки
+### Requirement: Heavy features outside the critical path of the first load
 
-Если первая загрузка ключевой страницы не укладывается в бюджет LCP, код фич, не отображаемых при первой отрисовке, ДОЛЖЕН (MUST) подключаться отдельно от критического пути и загружаться только тогда, когда фича становится нужна пользователю. Фичи, находящиеся внутри маршрута, который уже загружается как отдельная страница, дополнительной ленивой загрузкой не дробятся.
+If the first load of a key page does not fit within the LCP budget, the code of features not displayed on the first render MUST be loaded separately from the critical path and be loaded only when the feature becomes needed by the user. Features located inside a route that is already loaded as a separate page are not split further by additional lazy loading.
 
-#### Scenario: Диалог участия не удлиняет критический путь главной
+#### Scenario: The participation dialog does not lengthen the critical path of the home page
 
-- **WHEN** первая загрузка главной страницы превышает бюджет LCP
-- **THEN** код диалога участия не входит в критический путь первой отрисовки и подключается при первом открытии диалога
+- **WHEN** the first load of the home page exceeds the LCP budget
+- **THEN** the participation dialog code is not part of the first-render critical path and is loaded when the dialog is first opened
 
-#### Scenario: Загрузка ленивой фичи не сдвигает разметку
+#### Scenario: Loading a lazy feature does not shift the layout
 
-- **WHEN** лениво подключаемая фича загружается
-- **THEN** на время загрузки отображается заполнитель, не вызывающий заметного сдвига разметки
+- **WHEN** a lazily loaded feature is loaded
+- **THEN** a placeholder that does not cause a noticeable layout shift is displayed during loading
 
-#### Scenario: Отдельная страница не дробится повторно
+#### Scenario: A separate page is not split again
 
-- **WHEN** пользователь открывает админ-панель как отдельный раздел
-- **THEN** её код загружается одним чанком раздела без дополнительной ленивой загрузки внутри страницы
+- **WHEN** the user opens the admin panel as a separate section
+- **THEN** its code is loaded as a single section chunk without additional lazy loading inside the page
 
-### Requirement: Серверный контент при первой отрисовке
+### Requirement: Server content on the first render
 
-Приложение ДОЛЖНО (MUST) отдавать серверную разметку со значимым содержимым при первой отрисовке, а не пустой документ, ожидающий клиентской гидратации и чтения локального хранилища. Восстановление темы и сессии НЕ ДОЛЖНО приводить к исчезновению основного содержимого страницы до гидратации.
+The application MUST serve server-side markup with meaningful content on the first render, and not an empty document waiting for client-side hydration and reading of local storage. Restoring the theme and session MUST NOT lead to the disappearance of the page's main content before hydration.
 
-#### Scenario: Первая отрисовка содержит содержимое
+#### Scenario: The first render contains content
 
-- **WHEN** браузер получает HTML страницы до выполнения клиентского JavaScript
-- **THEN** документ содержит основное содержимое страницы, а не пустое дерево
+- **WHEN** the browser receives the page's HTML before the client-side JavaScript runs
+- **THEN** the document contains the page's main content, and not an empty tree
 
-#### Scenario: Восстановление темы и сессии не скрывает страницу
+#### Scenario: Restoring the theme and session does not hide the page
 
-- **WHEN** в локальном хранилище сохранены тема и активная сессия
-- **THEN** основное содержимое остаётся видимым на протяжении восстановления, без перехода через полностью пустой экран
+- **WHEN** the theme and an active session are saved in local storage
+- **THEN** the main content remains visible throughout the restoration, without passing through a completely empty screen
 
-### Requirement: Отсутствие непрерывных визуальных эффектов
+### Requirement: No continuous visual effects
 
-Система НЕ ДОЛЖНА (MUST NOT) применять непрерывно выполняющиеся визуальные эффекты: бесконечные анимации и размытие фона под прокручиваемым содержимым. Тени ДОЛЖНЫ (MUST) быть статичными и лёгкими, а неиспользуемые декоративные анимации НЕ ДОЛЖНЫ (MUST NOT) присутствовать в стилях. Кратковременные эффекты перехода состояния (появление поповеров, меню и диалогов) и индикаторы фокуса ДОПУСКАЮТСЯ, так как не создают постоянной нагрузки.
+The system MUST NOT apply continuously running visual effects: infinite animations and background blur under scrollable content. Shadows MUST be static and light, and unused decorative animations MUST NOT be present in the styles. Short-term state-transition effects (the appearance of popovers, menus, and dialogs) and focus indicators ARE ALLOWED, since they do not create a constant load.
 
-#### Scenario: Шапка без размытия
+#### Scenario: Header without blur
 
-- **WHEN** пользователь прокручивает страницу
-- **THEN** закреплённая шапка имеет сплошной фон и не пересчитывает размытие содержимого под собой
+- **WHEN** the user scrolls the page
+- **THEN** the fixed header has a solid background and does not recompute the blur of the content beneath it
 
-#### Scenario: Лента без бесконечной анимации
+#### Scenario: Strip without an infinite animation
 
-- **WHEN** на странице отображается лента карточек с переполнением
-- **THEN** никакая бесконечная анимация не выполняется, а прокрутка доступна вручную
+- **WHEN** a strip of cards with overflow is displayed on the page
+- **THEN** no infinite animation runs, and scrolling is available manually
 
-#### Scenario: Статичные лёгкие тени
+#### Scenario: Static light shadows
 
-- **WHEN** пользователь просматривает карточки и панели
-- **THEN** применяются статичные тени с малой областью размытия, не создающие постоянных перерисовок
+- **WHEN** the user views cards and panels
+- **THEN** static shadows with a small blur radius are applied, without creating constant re-renders
 
-#### Scenario: Декоративные анимации отсутствуют
+#### Scenario: Decorative animations are absent
 
-- **WHEN** выполняется сборка стилей проекта
-- **THEN** в стилях отсутствуют неиспользуемые декоративные анимации (мерцание, парение, наклон, свечение)
+- **WHEN** the project's styles are built
+- **THEN** unused decorative animations (flicker, hover, tilt, glow) are absent from the styles

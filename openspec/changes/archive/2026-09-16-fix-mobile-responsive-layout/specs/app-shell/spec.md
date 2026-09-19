@@ -1,15 +1,15 @@
 ## ADDED Requirements
 
-### Requirement: Мобильная навигация без скрытых пунктов
+### Requirement: Mobile navigation without hidden items
 
-Мобильная навигация ДОЛЖНА (MUST) делать все доступные пользователю разделы достижимыми на узком экране. Пункты НЕ ДОЛЖНЫ пропадать за краем без признака продолжения: если пункты не помещаются, система ДОЛЖНА давать визуальную подсказку о горизонтальной прокрутке, а прокрутка ДОЛЖНА быть предсказуемой.
+Mobile navigation MUST make all sections available to the user reachable on a narrow screen. Items MUST NOT disappear behind the edge without a sign of continuation: if the items do not fit, the system MUST give a visual hint about horizontal scrolling, and the scrolling MUST be predictable.
 
-#### Scenario: Все пункты достижимы на узком экране
+#### Scenario: All items are reachable on a narrow screen
 
-- **WHEN** пользователь с ролью администратора открывает приложение на ширине 320px
-- **THEN** все пункты мобильной навигации, включая «FAQ» и «Админ», достижимы
+- **WHEN** a user with the administrator role opens the application at a width of 320px
+- **THEN** all items of the mobile navigation, including "FAQ" and "Admin", are reachable
 
-#### Scenario: Подсказка о продолжении списка
+#### Scenario: Hint about the list continuing
 
-- **WHEN** пункты мобильной навигации не помещаются по ширине
-- **THEN** пользователь видит признак того, что список продолжается по горизонтали, а прокрутка выполняется по одному пункту
+- **WHEN** the mobile navigation items do not fit in width
+- **THEN** the user sees a sign that the list continues horizontally, and scrolling moves one item at a time

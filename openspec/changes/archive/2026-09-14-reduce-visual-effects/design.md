@@ -1,81 +1,81 @@
 ## Context
 
-См. `proposal.md` — Why. Текущее состояние:
+See `proposal.md` — Why. Current state:
 
-- `components/features/WishBoard.tsx` держит `ResizeObserver`, состояние `isOverflowing`/`prefersReducedMotion`, вычисляет `isLooping` и рендерит вторую `<ul aria-hidden>` с копией карточек. Анимация — `@keyframes wish-marquee` в `app/globals.css:208-231`.
-- `components/layout/Header.tsx:84` — закреплённая шапка с `bg-background/80 backdrop-blur-md`.
-- Тяжёлые тени заданы переменной `--card-shadow` в трёх темах (`globals.css:36/72/108`) и классом `.card-shadow` (`globals.css:137`), который применён ~в 15 местах.
-- В `globals.css:150-206` объявлены декоративные классы/`@keyframes`, на которые нет ни одной ссылки в коде.
-- Проект spec-driven: поведение доски пожеланий закреплено в `openspec/specs/wishes/spec.md`; бюджеты производительности — в `openspec/specs/performance/spec.md`.
+- `components/features/WishBoard.tsx` holds `ResizeObserver`, the `isOverflowing`/`prefersReducedMotion` state, computes `isLooping`, and renders a second `<ul aria-hidden>` with a copy of the cards. The animation is `@keyframes wish-marquee` in `app/globals.css:208-231`.
+- `components/layout/Header.tsx:84` — a sticky header with `bg-background/80 backdrop-blur-md`.
+- Heavy shadows are defined by the `--card-shadow` variable in three themes (`globals.css:36/72/108`) and by the `.card-shadow` class (`globals.css:137`), which is applied in ~15 places.
+- In `globals.css:150-206`, decorative classes/`@keyframes` are declared that are not referenced anywhere in the code.
+- The project is spec-driven: the wish board's behavior is fixed in `openspec/specs/wishes/spec.md`; performance budgets are in `openspec/specs/performance/spec.md`.
 
 ## Goals / Non-Goals
 
 **Goals:**
 
-- Убрать непрерывно выполняющиеся эффекты: бегущую строку, размытие фона шапки.
-- Снизить стоимость отрисовки теней, сохранив визуальное разделение поверхностей.
-- Удалить недостижимый декоративный CSS.
-- Привести спецификации `wishes` и `performance` в соответствие новому поведению.
+- Remove continuously running effects: the marquee and the header's background blur.
+- Reduce the rendering cost of shadows while preserving the visual separation of surfaces.
+- Remove unreachable decorative CSS.
+- Bring the `wishes` and `performance` specifications in line with the new behavior.
 
 **Non-Goals:**
 
-- Не менять правила показа пожеланий по дню рождения, состав данных и цветовую подсветку именинников.
-- Не трогать кратковременные эффекты состояния (появление поповеров, меню, диалогов) и focus-ring.
-- Не менять шрифты, палитры, структуру страниц и логику тем.
+- Do not change the rules for displaying wishes by birthday, the data composition, or the color highlighting of birthday people.
+- Do not touch short-lived state effects (appearance of popovers, menus, dialogs) or the focus-ring.
+- Do not change fonts, palettes, page structure, or theme logic.
 
 ## Decisions
 
-### 1. Лента поздравлений — статичная модель
+### 1. Congratulations strip — a static model
 
-Убираются: дублирующая `<ul>`, `ResizeObserver`, состояния `isOverflowing`/`isLooping`/`prefersReducedMotion`, классы `wish-marquee*` и `@keyframes wish-marquee`. Остаётся один `<ul>` внутри блока с `overflow-x-auto` и `tabIndex={0}`.
+Removed: the duplicate `<ul>`, `ResizeObserver`, the `isOverflowing`/`isLooping`/`prefersReducedMotion` states, the `wish-marquee*` classes, and `@keyframes wish-marquee`. One `<ul>` remains inside a block with `overflow-x-auto` and `tabIndex={0}`.
 
-- **Почему:** при отсутствии автопрокрутки дубли и измерение переполнения не нужны; ручная прокрутка полностью покрывает случай переполнения.
-- **Альтернатива:** оставить автопрокрутку, но замедлить/паузировать чаще — отклонено, так как непрерывная анимация остаётся.
+- **Why:** without auto-scroll, duplicates and overflow measurement are unnecessary; manual scrolling fully covers the overflow case.
+- **Alternative:** keep auto-scroll but slow it down/pause it more often — rejected, since a continuous animation remains.
 
-### 2. Шапка — сплошной фон
+### 2. Header — a solid background
 
-`bg-background/80 backdrop-blur-md` заменяется на `bg-background`.
+`bg-background/80 backdrop-blur-md` is replaced with `bg-background`.
 
-- **Почему:** `backdrop-blur` у закреплённого элемента пересчитывается на каждом кадре прокрутки — единственный по-настоящему тяжёлый эффект после ленты.
-- **Альтернатива:** включать размытие только при прокрутке — отклонено: сложность и остаточная нагрузка без заметной выгоды.
-- **Совместимость:** граница `border-b` сохраняется, контраст шапки над контентом не теряется.
+- **Why:** `backdrop-blur` on a sticky element is recomputed on every scroll frame — the only truly heavy effect after the strip.
+- **Alternative:** enable blur only while scrolling — rejected: complexity and residual load without noticeable benefit.
+- **Compatibility:** the `border-b` border is preserved, and the header's contrast over the content is not lost.
 
-### 3. Тени — тяжёлую заменить, а не убирать
+### 3. Shadows — replace the heavy one rather than removing it
 
-Кастомные `--card-shadow` (blur 16-32px) удаляются; карточки опираются на штатную `shadow-sm` из `components/ui/card.tsx` вместе с существующим `border`.
+The custom `--card-shadow` (blur 16-32px) are removed; cards rely on the standard `shadow-sm` from `components/ui/card.tsx` together with the existing `border`.
 
-- **Почему:** box-shadow — статичный paint, полное удаление не даёт выигрыша в кадрах, но ухудшает читаемость границ. Лёгкая `shadow-sm` + `border` сохраняют разделение поверхностей.
-- **Альтернатива:** ввести новую «среднюю» тень-токен — отклонено: лишняя сущность без пользы.
-- Сохраняются `shadow-sm/md/lg` у открываемых поповеров, меню и диалогов: они рисуются только пока открыты.
+- **Why:** box-shadow is a static paint, so removing it entirely gives no gain in frames but worsens the readability of boundaries. A light `shadow-sm` + `border` preserve the separation of surfaces.
+- **Alternative:** introduce a new "medium" shadow token — rejected: an extra entity with no benefit.
+- The `shadow-sm/md/lg` of opened popovers, menus, and dialogs are preserved: they are painted only while open.
 
-### 4. Микровзаимодействие карточки именинника
+### 4. Micro-interaction of the birthday card
 
-В `components/features/BirthdayCard.tsx:37` `transition-all hover:scale-[1.02]` заменяется на `transition-transform hover:scale-[1.02]`.
+In `components/features/BirthdayCard.tsx:37`, `transition-all hover:scale-[1.02]` is replaced with `transition-transform hover:scale-[1.02]`.
 
-- **Почему:** `scale` — композитный transform, дешёвый и только по наведению; узкий `transition-transform` перестаёт анимировать все свойства подряд, качество микровзаимодействия сохраняется.
+- **Why:** `scale` is a composite transform, cheap and only on hover; the narrow `transition-transform` stops animating all properties in a row, and the quality of the micro-interaction is preserved.
 
-### 5. Удаление недостижимого CSS
+### 5. Removing unreachable CSS
 
-Удаляются `confetti-fall`, `gentle-float`, `subtle-shimmer`, `festival-tilt`, `festival-gradient-text`, `festival-card-glow` и `warm-soft-shadow`. `--hero-overlay` при этом сохраняется. Ссылок на удаляемые классы в `app/**`, `components/**`, `lib/**` нет (проверено grep).
+`confetti-fall`, `gentle-float`, `subtle-shimmer`, `festival-tilt`, `festival-gradient-text`, `festival-card-glow`, and `warm-soft-shadow` are removed. `--hero-overlay` is preserved. There are no references to the removed classes in `app/**`, `components/**`, `lib/**` (verified by grep).
 
-- **Почему:** недостижимый декоративный код не несёт поведения и вводит в заблуждение; согласуется с требованием `ui-consistency` об отсутствии неиспользуемых модулей.
-- `hero-overlay` (статичный градиент на `app/(app)/page.tsx:55`) **сохраняется** — один paint, постоянной нагрузки не создаёт.
+- **Why:** unreachable decorative code carries no behavior and is misleading; consistent with the `ui-consistency` requirement about the absence of unused modules.
+- `hero-overlay` (a static gradient in `app/(app)/page.tsx:55`) **is preserved** — one paint, it creates no constant load.
 
-### 6. Форма дельты `wishes`
+### 6. Form of the `wishes` delta
 
-Требование «Лента поздравлений для именинников дня» оформляется как `REMOVED` + новое `ADDED` «Статичная лента поздравлений», а не `MODIFIED`: валидатор OpenSpec запрещает `MODIFIED`-блоку выбрасывать существующие сценарии (автопрокрутка и её доступность), а сохранять их с прежними именами было бы неверно по смыслу.
+The requirement "Congratulations strip for the day's birthday people" is issued as `REMOVED` + a new `ADDED` "Static congratulations strip", rather than `MODIFIED`: the OpenSpec validator forbids a `MODIFIED` block from discarding existing scenarios (auto-scroll and its accessibility), and keeping them under their former names would be incorrect in meaning.
 
 ## Risks / Trade-offs
 
-- **Плоские карточки после снятия тени** → оставляем `border` + `shadow-sm`; проверить визуально все три темы (`warm`, `festival`, `premium`).
-- **Шапка хуже читается поверх пёстрого hero** → сплошной `bg-background` и `border-b`; проверить на главной странице при прокрутке.
-- **Расхождение с исходным ТЗ** (`InitialSpec.md` просит «плавные тени», «конфетти», «наклон», «блёстки») → это осознанный компромисс пользователя; смысловые праздничные акценты (цветные карточки, статичный градиент hero, эмодзи) сохраняются.
-- **Незаархивированный `fix-review-round-8`** содержит дельту «Лента поздравлений не зацикливает рендеринг», теряющую смысл → см. Migration Plan.
-- **Случайно удалить используемый класс эффекта** → перед удалением CSS выполнить grep по классам и сборку/typecheck; удалять только подтверждённо недостижимое.
+- **Flat cards after removing the shadow** → we keep `border` + `shadow-sm`; check visually in all three themes (`warm`, `festival`, `premium`).
+- **Header reads worse over a colorful hero** → a solid `bg-background` and `border-b`; check on the home page while scrolling.
+- **Divergence from the original technical specification** (`InitialSpec.md` asks for "smooth shadows", "confetti", "tilt", "sparkles") → this is the user's deliberate compromise; meaningful festive accents (colored cards, the static hero gradient, emojis) are preserved.
+- **Unarchived `fix-review-round-8`** contains the delta "The congratulations strip does not loop rendering", which loses its meaning → see Migration Plan.
+- **Accidentally deleting a used effect class** → before removing CSS, run grep for the classes and build/typecheck; remove only what is confirmed unreachable.
 
 ## Migration Plan
 
-1. Изменения только в репозитории, данные и API не мигрируются; откат — через git.
-2. Порядок относительно незавершённого архива: заархивировать `fix-review-round-7` и `fix-review-round-8` до применения этого изменения либо при архивации reconcile-ить их `wishes`-дельту, признав её неактуальной после отказа от автопрокрутки.
-3. Применить правки кода по `tasks.md`, затем синхронизировать/заархивировать дельты `wishes` и `performance`.
-4. Проверка: `npm run build`/typecheck (по фактическим скриптам проекта), визуальный прогон трёх тем и ленты с переполнением и без.
+1. Changes are in the repository only; data and API are not migrated; rollback is via git.
+2. Order relative to the unfinished archive: archive `fix-review-round-7` and `fix-review-round-8` before applying this change, or when archiving reconcile their `wishes` delta, acknowledging it is no longer relevant after abandoning auto-scroll.
+3. Apply the code edits per `tasks.md`, then sync/archive the `wishes` and `performance` deltas.
+4. Check: `npm run build`/typecheck (per the project's actual scripts), a visual run of the three themes and the strip with and without overflow.

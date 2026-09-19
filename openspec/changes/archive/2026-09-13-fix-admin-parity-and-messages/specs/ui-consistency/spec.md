@@ -1,28 +1,28 @@
 ## REMOVED Requirements
 
-### Requirement: Единый источник сообщения о добровольности и скрытых суммах
+### Requirement: Single source of the message about voluntariness and hidden amounts
 
-**Reason**: Утверждение о видимости сумм сбора убрано из интерфейса, поэтому требование о его размещении в едином каноническом месте больше не отражает поведение системы. Дедупликация сохраняется только для утверждения о добровольности.
+**Reason**: The statement about collection amount visibility has been removed from the interface, so the requirement to place it in a single canonical place no longer reflects the system's behavior. Deduplication is preserved only for the voluntariness statement.
 
-**Migration**: Используйте требование «Единый источник сообщения о добровольности участия»; скрытие сумм от сотрудника регулируется способностью `donations`.
+**Migration**: Use the requirement "Single source of the message about participation voluntariness"; hiding amounts from the employee is governed by the `donations` capability.
 
 ## ADDED Requirements
 
-### Requirement: Единый источник сообщения о добровольности участия
+### Requirement: Single source of the message about participation voluntariness
 
-Система ДОЛЖНА представлять утверждение о добровольности участия в одном каноническом месте интерфейса. Утверждение о видимости сумм сбора НЕ ДОЛЖНО размещаться в футере и на главной странице. На одной странице одинаковое по смыслу утверждение о добровольности НЕ ДОЛЖНО повторяться более одного раза вне контекста конкретного шага сценария.
+The system MUST present the statement about participation voluntariness in a single canonical place in the interface. The statement about collection amount visibility MUST NOT be placed in the footer or on the home page. On a single page, a statement about voluntariness with the same meaning MUST NOT be repeated more than once outside the context of a specific scenario step.
 
-#### Scenario: Главная страница без дублирующих блоков
+#### Scenario: Home page without duplicate blocks
 
-- **WHEN** пользователь открывает главную страницу
-- **THEN** утверждение о добровольности встречается не более одного раза в содержимом страницы (помимо футера), а утверждение о видимости сумм сбора на странице отсутствует
+- **WHEN** the user opens the home page
+- **THEN** the voluntariness statement appears no more than once in the page content (besides the footer), and the collection amount visibility statement is absent from the page
 
-#### Scenario: Футер без утверждения о суммах
+#### Scenario: Footer without a statement about amounts
 
-- **WHEN** пользователь просматривает футер приложения
-- **THEN** футер не содержит утверждения о видимости сумм сбора
+- **WHEN** the user views the application footer
+- **THEN** the footer does not contain a statement about collection amount visibility
 
-#### Scenario: FAQ без дублирующих карточек
+#### Scenario: FAQ without duplicate cards
 
-- **WHEN** пользователь открывает раздел «Вопросы и ответы»
-- **THEN** quick-info карточки, повторяющие ответы Q1/Q2 и текст главной, отсутствуют, а ответы FAQ остаются единственным источником формулировок
+- **WHEN** the user opens the "Questions and answers" section
+- **THEN** quick-info cards duplicating the Q1/Q2 answers and the home page text are absent, and the FAQ answers remain the only source of wording

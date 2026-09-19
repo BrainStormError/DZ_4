@@ -1,47 +1,47 @@
 ## Purpose
 
-Обеспечивает вход сотрудников и администраторов по корпоративной почте и задаёт единое правило проверки корпоративного адреса для всех сценариев, где он запрашивается.
+Provides login for employees and administrators by corporate email and defines a unified corporate address validation rule for all scenarios where it is requested.
 
 ## ADDED Requirements
 
-### Requirement: Вход по корпоративной почте
+### Requirement: Login by corporate email
 
-Система ДОЛЖНА разрешать вход только по адресу, который заканчивается на `@company.com` и присутствует в корпоративном справочнике. После успешного входа система ДОЛЖНА сохранять сессию, а роль пользователя ДОЛЖНА определяться по данным справочника.
+The system MUST allow login only with an address that ends with `@company.com` and is present in the corporate directory. After a successful login, the system MUST save the session, and the user's role MUST be determined from the directory data.
 
-#### Scenario: Успешный вход сотрудника
+#### Scenario: Successful employee login
 
-- **WHEN** пользователь вводит адрес `anna.smirnova@company.com` из справочника
-- **THEN** система выполняет вход и открывает главную страницу с правами роли `employee`
+- **WHEN** the user enters the address `anna.smirnova@company.com` from the directory
+- **THEN** the system logs in and opens the home page with `employee` role permissions
 
-#### Scenario: Адрес вне корпоративного домена
+#### Scenario: Address outside the corporate domain
 
-- **WHEN** пользователь вводит адрес, не заканчивающийся на `@company.com`
-- **THEN** система отклоняет вход с сообщением о необходимости использовать корпоративную почту
+- **WHEN** the user enters an address that does not end with `@company.com`
+- **THEN** the system rejects the login with a message that a corporate email must be used
 
-#### Scenario: Неизвестный корпоративный адрес
+#### Scenario: Unknown corporate address
 
-- **WHEN** пользователь вводит адрес `unknown.user@company.com`, отсутствующий в справочнике
-- **THEN** система отклоняет вход с сообщением, что сотрудник не найден
+- **WHEN** the user enters the address `unknown.user@company.com`, which is absent from the directory
+- **THEN** the system rejects the login with a message that the employee was not found
 
-### Requirement: Единое правило проверки корпоративного адреса
+### Requirement: Unified corporate address validation rule
 
-Система ДОЛЖНА применять одинаковое правило проверки корпоративной почты во всех формах, где адрес запрашивается: при входе и при подтверждении участия в сборе. Адрес считается корректным, только если он заканчивается на `@company.com` и найден в корпоративном справочнике.
+The system MUST apply the same corporate email validation rule in all forms where the address is requested: at login and when confirming participation in the collection. An address is considered valid only if it ends with `@company.com` and is found in the corporate directory.
 
-#### Scenario: Согласованность проверки между формами
+#### Scenario: Validation consistency between forms
 
-- **WHEN** адрес `unknown.user@company.com` отклоняется при входе как ненайденный
-- **THEN** тот же адрес отклоняется и при подтверждении участия в сборе, а не принимается только по признаку домена
+- **WHEN** the address `unknown.user@company.com` is rejected at login as not found
+- **THEN** the same address is rejected when confirming participation in the collection as well, rather than being accepted based only on the domain
 
-### Requirement: Разграничение доступа по ролям
+### Requirement: Role-based access control
 
-Система ДОЛЖНА скрывать административные возможности от пользователей с ролью `employee` и ДОЛЖНА ограничивать доступ к административному разделу ролью `admin`.
+The system MUST hide administrative capabilities from users with the `employee` role and MUST restrict access to the administrative section to the `admin` role.
 
-#### Scenario: Сотрудник без административного доступа
+#### Scenario: Employee without administrative access
 
-- **WHEN** пользователь с ролью `employee` открывает административный раздел напрямую
-- **THEN** система не показывает административные данные и сообщает об отсутствии доступа
+- **WHEN** a user with the `employee` role opens the administrative section directly
+- **THEN** the system does not show administrative data and reports the absence of access
 
-#### Scenario: Скрытый административный пункт меню
+#### Scenario: Hidden administrative menu item
 
-- **WHEN** пользователь с ролью `employee` просматривает навигацию
-- **THEN** пункт перехода в административный раздел не отображается
+- **WHEN** a user with the `employee` role views the navigation
+- **THEN** the navigation item to the administrative section is not displayed

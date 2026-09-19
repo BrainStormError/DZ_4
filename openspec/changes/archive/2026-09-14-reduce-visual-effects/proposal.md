@@ -1,30 +1,30 @@
 ## Why
 
-Непрерывные визуальные эффекты дают постоянную нагрузку на рендеринг: бегущая лента поздравлений крутит анимацию и `ResizeObserver` постоянно, «стеклянная» шапка пересчитывает `backdrop-blur` на каждом кадре прокрутки, а крупные тематические тени добавляют множество слоёв отрисовки. При этом требование `wishes` прямо обязывает к автопрокрутке, поэтому снизить нагрузку без правки спецификации невозможно.
+Continuous visual effects place a constant load on rendering: the running congratulations strip spins an animation and a `ResizeObserver` constantly, the "glassy" header recomputes `backdrop-blur` on every scroll frame, and large theme shadows add many paint layers. At the same time, the `wishes` requirement explicitly mandates auto-scroll, so reducing the load without amending the specification is impossible.
 
 ## What Changes
 
-- **Доска пожеланий без бегущей строки.** Лента поздравлений перестаёт автоматически прокручиваться. Остаётся одна горизонтальная лента с ручным скроллом; дублирующая копия карточек, `ResizeObserver` и логика определения переполнения удаляются. Цветовая подсветка карточек по имениннику сохраняется. **BREAKING** для требования `wishes` «Лента поздравлений для именинников дня».
-- **Шапка без размытия.** У `Header` убирается `backdrop-blur` — используется сплошной фон вместо полупрозрачного с размытием.
-- **Лёгкие тени вместо тяжёлых.** Кастомные тематические тени `--card-shadow` (крупный blur, 24-32px) заменяются штатной лёгкой `shadow-sm` карточки в сочетании с существующим `border`; визуальное разделение карточек сохраняется.
-- **Удаление мёртвого декоративного CSS.** Неиспользуемые классы эффектов (мерцание конфетти, парение, мерцание premium, наклон и градиентный текст festival, свечение карточки) удаляются как недостижимый код.
-- **Сохранение дешёвых эффектов.** Focus-ring, короткие анимации появления поповеров/меню/диалогов, статичный градиент hero и переход темы остаются как не создающие постоянной нагрузки.
+- **Wish board without a marquee.** The congratulations strip stops scrolling automatically. One horizontal strip with manual scrolling remains; the duplicate copy of the cards, the `ResizeObserver`, and the overflow detection logic are removed. The color highlighting of cards by birthday person is preserved. **BREAKING** for the `wishes` requirement "Congratulations strip for the day's birthday people".
+- **Header without blur.** `backdrop-blur` is removed from `Header` — a solid background is used instead of a translucent one with blur.
+- **Light shadows instead of heavy ones.** The custom theme shadows `--card-shadow` (large blur, 24-32px) are replaced with the card's standard light `shadow-sm` in combination with the existing `border`; the visual separation of cards is preserved.
+- **Removal of dead decorative CSS.** Unused effect classes (confetti shimmer, floating, premium shimmer, festival tilt and gradient text, card glow) are removed as unreachable code.
+- **Preservation of cheap effects.** The focus-ring, short appearance animations of popovers/menus/dialogs, the static hero gradient, and theme transition remain as they do not create a constant load.
 
 ## Capabilities
 
 ### New Capabilities
 
-(нет)
+(none)
 
 ### Modified Capabilities
 
-- `wishes`: требование «Лента поздравлений для именинников дня» заменяется требованием «Статичная лента поздравлений» — автопрокрутка и её сценарии убираются в пользу ленты с ручной прокруткой.
-- `performance`: добавляется требование об отсутствии непрерывных визуальных эффектов (бесконечных анимаций и размытия фона) и о статичных лёгких тенях.
+- `wishes`: the requirement "Congratulations strip for the day's birthday people" is replaced with the requirement "Static congratulations strip" — auto-scroll and its scenarios are removed in favor of a strip with manual scrolling.
+- `performance`: a requirement is added about the absence of continuous visual effects (infinite animations and background blur) and about static light shadows.
 
 ## Impact
 
-- Компоненты: `components/features/WishBoard.tsx`, `components/layout/Header.tsx`, `components/features/BirthdayCard.tsx`.
-- Стили: `app/globals.css` (бегущая строка, декоративные @keyframes/классы, `--card-shadow`), плюс ~15 мест с классом `card-shadow` в `app/**` и `components/**`.
-- Спецификации: дельты для `wishes` и `performance`.
-- Примечание: завершённое изменение `fix-review-round-8` ещё не заархивировано и содержит дельту «Лента поздравлений не зацикливает рендеринг»; после отказа от автопрокрутки эта дельта становится неактуальной и подлежит согласованию при архивации.
-- Не меняются: данные и правила показа по дню рождения, цветовая подсветка авторов, персистентность, бэкенд, доступность (focus-ring и клавиатурная навигация сохраняются).
+- Components: `components/features/WishBoard.tsx`, `components/layout/Header.tsx`, `components/features/BirthdayCard.tsx`.
+- Styles: `app/globals.css` (the marquee, decorative @keyframes/classes, `--card-shadow`), plus ~15 places with the `card-shadow` class in `app/**` and `components/**`.
+- Specifications: deltas for `wishes` and `performance`.
+- Note: the completed change `fix-review-round-8` is not yet archived and contains the delta "The congratulations strip does not loop rendering"; after abandoning auto-scroll, this delta becomes irrelevant and is subject to reconciliation during archiving.
+- Not changed: data and display rules by birthday, color highlighting of authors, persistence, backend, accessibility (focus-ring and keyboard navigation are preserved).

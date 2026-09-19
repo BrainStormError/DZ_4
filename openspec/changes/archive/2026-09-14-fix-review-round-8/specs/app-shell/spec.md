@@ -1,15 +1,15 @@
 ## ADDED Requirements
 
-### Requirement: Модальные диалоги не блокируют приложение при переходе
+### Requirement: Modal dialogs do not block the application during navigation
 
-Модальные диалоги (участие, изменение суммы, изменение пожелания) НЕ ДОЛЖНЫ оставлять страницу заблокированной после перехода между разделами. После навигации прокрутка страницы и взаимодействие с интерактивными элементами ДОЛЖНЫ (MUST) оставаться доступными без перезагрузки.
+Modal dialogs (participation, amount change, wish change) MUST NOT leave the page blocked after navigating between sections. After navigation, page scrolling and interaction with interactive elements MUST remain available without a reload.
 
-#### Scenario: Переход при открытом диалоге
+#### Scenario: Navigation with an open dialog
 
-- **WHEN** пользователь переходит на другую страницу, в том числе кнопками «назад» или «вперёд» браузера, пока открыт модальный диалог
-- **THEN** после перехода страница прокручивается, а элементы управления реагируют на клики без перезагрузки
+- **WHEN** the user navigates to another page, including with the browser's "back" or "forward" buttons, while a modal dialog is open
+- **THEN** after navigation the page scrolls and controls respond to clicks without a reload
 
-#### Scenario: Блокировка не сохраняется
+#### Scenario: The lock is not retained
 
-- **WHEN** переход между разделами происходит при открытом модальном диалоге
-- **THEN** признак блокировки прокрутки и указателя не остаётся на странице после завершения перехода
+- **WHEN** navigation between sections occurs while a modal dialog is open
+- **THEN** the scroll and pointer lock flag does not remain on the page after navigation completes

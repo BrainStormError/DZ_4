@@ -73,7 +73,7 @@ Gate writes on `isPreview` from `useAppDate()`:
 
 - `WishBoard` submit button disabled and `handleSubmit` returns early.
 - `DonateDialog` primary actions disabled and handlers return early.
-- `AdminTable` `Сохранить` disabled and `handleSave` returns early.
+- `AdminTable` `Save` disabled and `handleSave` returns early.
 
 A slim banner shows the preview date and a reset action, and the calendar page's today marker reads `useAppDate().today` so all three views agree. Session-only is achieved by keeping preview in React state with no `localStorage`.
 
@@ -81,13 +81,13 @@ A slim banner shows the preview date and a reset action, and the calendar page's
 
 ### 7. Optional congratulation step in `DonateDialog` without a second flow
 
-Keep the existing `message` step but make it skippable ("Без пожелания" / "Пропустить") and allow empty submission; `handleConfirm` calls `addWish` only when `wishText.trim()` is non-empty. The confirm and success copy branch on whether text exists, so a money-only gift never claims a congratulation was sent.
+Keep the existing `message` step but make it skippable ("Without a wish" / "Skip") and allow empty submission; `handleConfirm` calls `addWish` only when `wishText.trim()` is non-empty. The confirm and success copy branch on whether text exists, so a money-only gift never claims a congratulation was sent.
 
 - Alternative: a separate "send money only" flow. Rejected — duplication of recipient/email/amount steps.
 
 ### 8. Names rendered from existing mock data
 
-Resolve author via `getUserByEmail` and recipient via `getUserById`; render `От: <fullName> (<nick>) → Кому: <fullName>`. Reuses existing data, no mock change. The `wishes` spec delta captures the new display contract.
+Resolve author via `getUserByEmail` and recipient via `getUserById`; render `From: <fullName> (<nick>) → To: <fullName>`. Reuses existing data, no mock change. The `wishes` spec delta captures the new display contract.
 
 ## Risks / Trade-offs
 

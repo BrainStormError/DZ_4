@@ -1,15 +1,15 @@
 ## ADDED Requirements
 
-### Requirement: Минимальный размер тап-таргета навигации
+### Requirement: Minimum navigation tap target size
 
-Интерактивные элементы мобильной навигации ДОЛЖНЫ (MUST) иметь область нажатия не меньше 44×44px, чтобы по ним можно было надёжно попасть пальцем. Увеличение области нажатия НЕ ДОЛЖНО ломать текущую раскладку и НЕ ДОЛЖНО создавать горизонтальное переполнение.
+The interactive elements of the mobile navigation MUST have a tap area of at least 44×44px so that they can be reliably hit with a finger. Increasing the tap area MUST NOT break the current layout and MUST NOT create horizontal overflow.
 
-#### Scenario: Размер области нажатия
+#### Scenario: Tap area size
 
-- **WHEN** мобильная навигация отображается на сенсорном устройстве
-- **THEN** высота области нажатия каждого пункта составляет не менее 44px
+- **WHEN** the mobile navigation is displayed on a touch device
+- **THEN** the tap area height of each item is at least 44px
 
-#### Scenario: Раскладка не ломается
+#### Scenario: The layout does not break
 
-- **WHEN** области нажатия увеличены
-- **THEN** пункты навигации остаются выровненными, а страница не получает горизонтальный скролл
+- **WHEN** the tap areas are enlarged
+- **THEN** the navigation items remain aligned, and the page does not get horizontal scrolling

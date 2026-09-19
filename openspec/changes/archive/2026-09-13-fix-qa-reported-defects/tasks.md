@@ -1,36 +1,36 @@
-## 1. Общие хелперы
+## 1. Common helpers
 
-- [x] 1.1 Добавить в `lib/utils.ts` функции `parsePositiveInt`, `parseNonNegativeInt`, `pluralizeRu` и `prepositionalMonth`; проверить, что `parsePositiveInt('1e3')`, `parsePositiveInt('12.5')`, `parsePositiveInt('0')` возвращают `null`, а `parsePositiveInt('500')` возвращает `500`
-- [x] 1.2 Проверить состояние проекта: `npm run typecheck` и `npm run lint` завершаются без новых ошибок
+- [x] 1.1 Add the functions `parsePositiveInt`, `parseNonNegativeInt`, `pluralizeRu`, and `prepositionalMonth` to `lib/utils.ts`; verify that `parsePositiveInt('1e3')`, `parsePositiveInt('12.5')`, `parsePositiveInt('0')` return `null`, and `parsePositiveInt('500')` returns `500`
+- [x] 1.2 Check the project state: `npm run typecheck` and `npm run lint` complete without new errors
 
-## 2. Сценарий участия (donations)
+## 2. Participation scenario (donations)
 
-- [x] 2.1 В `components/features/DonateDialog.tsx` добавить первый шаг выбора получателя, когда `targetUser` не задан (открытие с общей кнопки); проверить, что шаги `amount/message/confirm` недоступны до выбора и в текстах нет `undefined`
-- [x] 2.2 Заблокировать переход к подтверждению без выбранного получателя и заменить молчаливый выход в `handleConfirm` на недоступную отправку с пояснением; проверить, что подтверждение без получателя не меняет данные
-- [x] 2.3 Предзаполнять почту значением текущего пользователя и отклонять чужой адрес; проверить, что при вводе почты коллеги показывается ошибка, а при своей — «От:» совпадает с автором пожелания
-- [x] 2.4 Заменить `parseInt` на `parsePositiveInt` в шаге суммы; проверить, что `1e3`, `0`, `-5`, `12.5` и пустое значение не пропускаются, а `500` переносится как ровно 500 ₽
-- [x] 2.5 Переформулировать текст шага подтверждения почты: убрать обещание участия без средств и указать кнопку «Оставить пожелание»; проверить текст в диалоге
-- [x] 2.6 Сделать экран успеха ролевым: для администратора — про добавление суммы без упоминания поздравления; проверить оба сценария (employee и admin)
-- [x] 2.7 Убрать склоняемые шаблоны `для ${fullName}` в диалоге, заменив нейтральной конструкцией `Получатель: <ФИО>`; проверить все шаги `amount/message/confirm`, включая админский вариант
+- [x] 2.1 In `components/features/DonateDialog.tsx`, add a first recipient selection step when `targetUser` is not set (opening from the common button); verify that the `amount/message/confirm` steps are unavailable before selection and that the texts contain no `undefined`
+- [x] 2.2 Block the transition to confirmation without a selected recipient and replace the silent exit in `handleConfirm` with an unavailable submission with an explanation; verify that confirmation without a recipient does not change the data
+- [x] 2.3 Prefill the email with the current user's value and reject a third-party address; verify that entering a colleague's email shows an error, and that for one's own email the "From:" matches the wish author
+- [x] 2.4 Replace `parseInt` with `parsePositiveInt` in the amount step; verify that `1e3`, `0`, `-5`, `12.5`, and an empty value are not accepted, and that `500` is carried over as exactly 500 ₽
+- [x] 2.5 Reformulate the text of the email confirmation step: remove the promise of participation without funds and point to the "Leave a wish" button; verify the text in the dialog
+- [x] 2.6 Make the success screen role-based: for an administrator — about the amount being added without mentioning a congratulation; verify both scenarios (employee and admin)
+- [x] 2.7 Remove the declinable templates `for ${fullName}` in the dialog, replacing them with the neutral construction `Recipient: <Full name>`; verify all the `amount/message/confirm` steps, including the admin variant
 
-## 3. Изменение суммы администратором (donations)
+## 3. Admin amount change (donations)
 
-- [x] 3.1 В `components/features/AdminTable.tsx` добавить проверку `parseNonNegativeInt` в `canSave`; проверить, что отрицательная сумма не сохраняется и не появляется в таблице и журнале
-- [x] 3.2 Проверить, что корректная неотрицательная сумма сохраняется, а в журнал изменений добавляется запись с причиной, комментарием и значениями до/после
+- [x] 3.1 In `components/features/AdminTable.tsx`, add a `parseNonNegativeInt` check to `canSave`; verify that a negative amount is not saved and does not appear in the table or the log
+- [x] 3.2 Verify that a correct non-negative amount is saved, and a record with the reason, comment, and before/after values is added to the change log
 
-## 4. Даты и календарь (birthdays)
+## 4. Dates and calendar (birthdays)
 
-- [x] 4.1 В `app/(app)/page.tsx` убрать хардкод `2026-09-13` и вычислять «сегодня» от реальной локальной даты с обновлением после монтирования; проверить, что список именинников соответствует системной дате и нет hydration-предупреждений
-- [x] 4.2 В `app/(app)/calendar/page.tsx` инициализировать стартовые месяц и год текущей датой; проверить, что при запуске в любом месяце открывается текущий период, а навигация по месяцам и годам работает
-- [x] 4.3 Использовать `pluralizeRu` для счётчика и `prepositionalMonth` для заголовка; проверить «1 именинник», «2 именинника», «5 именинников» и «Именинники в сентябре 2026»
+- [x] 4.1 In `app/(app)/page.tsx`, remove the hardcoded `2026-09-13` and compute "today" from the real local date with an update after mounting; verify that the birthday people list matches the system date and there are no hydration warnings
+- [x] 4.2 In `app/(app)/calendar/page.tsx`, initialize the starting month and year with the current date; verify that when launched in any month, the current period opens, and month and year navigation works
+- [x] 4.3 Use `pluralizeRu` for the counter and `prepositionalMonth` for the heading; verify "1 birthday person", "2 birthday people", "5 birthday people", and "Birthday people in September 2026"
 
-## 5. Тексты, доступность, аватары
+## 5. Texts, accessibility, avatars
 
-- [x] 5.1 В `app/(app)/faq/page.tsx` исправить «тёлое» на «тёплое»; проверить ответ первого вопроса
-- [x] 5.2 Добавить доступные имена (`aria-label`) для переключателя темы и меню пользователя в `components/layout/ThemeSwitcher.tsx` и `components/layout/Header.tsx`; проверить на ширине 375 px и с клавиатуры (Tab, Enter/Space)
-- [x] 5.3 Перевести `avatarUrl` в `lib/mock-data.ts` на локальные файлы `public/avatars/*` или inline SVG с инициалами; проверить, что при недоступности источника показываются инициалы и в консоли нет ошибок загрузки ресурсов
+- [x] 5.1 In `app/(app)/faq/page.tsx`, fix the misspelling of "warm attention"; verify the answer to the first question
+- [x] 5.2 Add accessible names (`aria-label`) for the theme switcher and the user menu in `components/layout/ThemeSwitcher.tsx` and `components/layout/Header.tsx`; verify at a width of 375 px and with the keyboard (Tab, Enter/Space)
+- [x] 5.3 Switch `avatarUrl` in `lib/mock-data.ts` to local files `public/avatars/*` or an inline SVG with initials; verify that when the source is unavailable, initials are shown and there are no resource loading errors in the console
 
-## 6. Интеграционная проверка
+## 6. Integration check
 
-- [x] 6.1 Прогнать сценарии в браузере: hero-кнопка → выбор получателя → успех; отклонение чужой почты; отклонение `1e3` и отрицательной суммы; сохранение админской суммы; календарь и «именинники сегодня»; мобильная шапка
-- [x] 6.2 Проверить, что консоль не содержит ошибок на страницах `/`, `/calendar`, `/faq`, `/admin` и что `npm run typecheck` проходит
+- [x] 6.1 Run the scenarios in a browser: hero button → recipient selection → success; rejection of a third-party email; rejection of `1e3` and a negative amount; saving the admin amount; calendar and "birthday people today"; mobile header
+- [x] 6.2 Verify that the console contains no errors on the `/`, `/calendar`, `/faq`, `/admin` pages and that `npm run typecheck` passes

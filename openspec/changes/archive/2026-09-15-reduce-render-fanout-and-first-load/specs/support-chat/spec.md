@@ -1,35 +1,35 @@
 ## MODIFIED Requirements
 
-### Requirement: Переход к вкладке переписки из шапки
+### Requirement: Transition to the correspondence tab from the header
 
-Переход по индикатору непрочитанных сообщений в шапке ДОЛЖЕН (MUST) открывать раздел частых вопросов с активной вкладкой переписки. Активная вкладка ДОЛЖНА соответствовать адресу страницы при любом способе перехода, включая переход с уже открытой страницы раздела без полной перезагрузки. Переключение вкладки самим пользователем НЕ ДОЛЖНО (MUST NOT) вызывать запрос серверного рендеринга маршрута и НЕ ДОЛЖНО показывать пустую заглушку содержимого: активная вкладка ДОЛЖНА меняться сразу, без ожидания ответа сервера, а адрес страницы ДОЛЖЕН обновляться, чтобы прямая ссылка и перезагрузка открывали ту же вкладку.
+A click on the unread messages indicator in the header (MUST) open the frequently asked questions section with the correspondence tab active. The active tab MUST correspond to the page address in any way of navigation, including a transition from an already open section page without a full reload. Switching the tab by the user themselves (MUST NOT) cause a server rendering request for the route and (MUST NOT) show an empty content placeholder: the active tab MUST change immediately, without waiting for the server response, and the page address MUST update so that a direct link and a reload open the same tab.
 
-#### Scenario: Переход из шапки открывает переписку
+#### Scenario: Navigation from the header opens the correspondence
 
-- **WHEN** администратор нажимает индикатор непрочитанных сообщений в шапке
-- **THEN** открывается вкладка переписки, и администратор может выбрать ветку и ответить
+- **WHEN** the administrator clicks the unread messages indicator in the header
+- **THEN** the correspondence tab opens, and the administrator can select a thread and reply
 
-#### Scenario: Переход с уже открытой страницы раздела
+#### Scenario: Transition from an already open section page
 
-- **WHEN** администратор уже находится на странице раздела частых вопросов на вкладке вопросов и нажимает индикатор в шапке
-- **THEN** активной становится вкладка переписки без перезагрузки страницы
+- **WHEN** the administrator is already on the frequently asked questions section page on the questions tab and clicks the indicator in the header
+- **THEN** the correspondence tab becomes active without reloading the page
 
-#### Scenario: Прямая ссылка на вкладку переписки
+#### Scenario: A direct link to the correspondence tab
 
-- **WHEN** пользователь открывает адрес вкладки переписки напрямую
-- **THEN** отображается вкладка переписки
+- **WHEN** the user opens the correspondence tab address directly
+- **THEN** the correspondence tab is displayed
 
-#### Scenario: Переключение вкладки без обращения к серверу
+#### Scenario: Switching the tab without contacting the server
 
-- **WHEN** пользователь переключает вкладку на странице частых вопросов
-- **THEN** активная вкладка меняется сразу, заглушка содержимого не показывается, а запрос серверного рендеринга маршрута не выполняется
+- **WHEN** the user switches the tab on the frequently asked questions page
+- **THEN** the active tab changes immediately, the content placeholder is not shown, and no server rendering request for the route is performed
 
-#### Scenario: Адрес отражает активную вкладку
+#### Scenario: The address reflects the active tab
 
-- **WHEN** пользователь переключает вкладку
-- **THEN** адрес страницы соответствует активной вкладке и после перезагрузки открывается та же вкладка
+- **WHEN** the user switches the tab
+- **THEN** the page address corresponds to the active tab and the same tab opens after a reload
 
-#### Scenario: Возврат по истории не теряет вкладку
+#### Scenario: Going back through history does not lose the tab
 
-- **WHEN** пользователь переключает вкладку и возвращается на страницу частых вопросов
-- **THEN** активная вкладка соответствует адресу страницы
+- **WHEN** the user switches the tab and returns to the frequently asked questions page
+- **THEN** the active tab corresponds to the page address

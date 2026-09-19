@@ -1,19 +1,19 @@
 ## Purpose
 
-Обеспечивает доступность интерактивных элементов шапки на всех размерах экрана, включая мобильную вёрстку, где текстовые подписи скрыты.
+Ensures the accessibility of the interactive header elements at all screen sizes, including the mobile layout where the text labels are hidden.
 
 ## ADDED Requirements
 
-### Requirement: Доступные имена элементов шапки
+### Requirement: Accessible names of header elements
 
-Интерактивные элементы шапки ДОЛЖНЫ иметь доступное имя, не зависящее от видимости текстовой подписи. Переключатель темы и меню пользователя ДОЛЖНЫ сохранять осмысленное доступное имя на мобильном размере экрана, когда текстовая подпись скрыта. Элементы ДОЛЖНЫ быть доступны и активируемы с клавиатуры.
+The interactive header elements MUST have an accessible name that does not depend on the visibility of the text label. The theme switcher and the user menu MUST retain a meaningful accessible name at the mobile screen size when the text label is hidden. The elements MUST be accessible and activatable from the keyboard.
 
-#### Scenario: Мобильная шапка
+#### Scenario: Mobile header
 
-- **WHEN** приложение открыто на узком экране, где текст подписи скрыт
-- **THEN** переключатель темы и меню пользователя имеют доступное имя, а не только эмодзи или изображение
+- **WHEN** the application is open on a narrow screen where the text label is hidden
+- **THEN** the theme switcher and the user menu have an accessible name, not just an emoji or an image
 
-#### Scenario: Активация с клавиатуры
+#### Scenario: Keyboard activation
 
-- **WHEN** пользователь переходит по элементам шапки клавишей Tab
-- **THEN** элемент получает фокус и активируется клавишами Enter или Space
+- **WHEN** the user navigates through the header elements with the Tab key
+- **THEN** the element receives focus and is activated with the Enter or Space keys

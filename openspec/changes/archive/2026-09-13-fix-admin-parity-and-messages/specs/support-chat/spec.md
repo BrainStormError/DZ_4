@@ -1,44 +1,44 @@
 ## ADDED Requirements
 
-### Requirement: Раздел сообщений администратора
+### Requirement: Administrator messages section
 
-В разделе частых вопросов вкладка переписки ДОЛЖНА отображаться для администратора под названием «Сообщения», а для сотрудника — под названием «Написать админу». Описание раздела ДОЛЖНО соответствовать роли: сотрудник видит личную ветку переписки, администратор — обращения сотрудников. Администратор ДОЛЖЕН отвечать в этой вкладке.
+In the FAQ section, the chat tab MUST be displayed as "Messages" for the administrator and as "Write to admin" for the employee. The section description MUST match the role: the employee sees a personal chat thread, the administrator sees employee requests. The administrator MUST reply in this tab.
 
-#### Scenario: Вкладка администратора
+#### Scenario: Administrator tab
 
-- **WHEN** пользователь с ролью `admin` открывает раздел частых вопросов
-- **THEN** вкладка переписки называется «Сообщения» и позволяет отвечать в ветках сотрудников
+- **WHEN** a user with the `admin` role opens the FAQ section
+- **THEN** the chat tab is named "Messages" and allows replying in employee threads
 
-#### Scenario: Вкладка сотрудника
+#### Scenario: Employee tab
 
-- **WHEN** пользователь с ролью `employee` открывает раздел частых вопросов
-- **THEN** вкладка переписки называется «Написать админу»
+- **WHEN** a user with the `employee` role opens the FAQ section
+- **THEN** the chat tab is named "Write to admin"
 
-#### Scenario: Ответ администратора из вкладки сообщений
+#### Scenario: Administrator reply from the messages tab
 
-- **WHEN** администратор выбирает ветку сотрудника и отправляет ответ во вкладке «Сообщения»
-- **THEN** ответ добавляется в ветку выбранного сотрудника
+- **WHEN** the administrator selects an employee's thread and sends a reply in the "Messages" tab
+- **THEN** the reply is added to the selected employee's thread
 
-### Requirement: Индикация непрочитанных сообщений
+### Requirement: Unread message indication
 
-Система ДОЛЖНА отмечать администратору ветки, содержащие сообщения сотрудников, которые он ещё не прочитал. Признак непрочитанных сообщений ДОЛЖЕН отображаться на вкладке «Сообщения» и в шапке приложения. Отметка «прочитано» ДОЛЖНА сниматься, когда администратор открывает соответствующую ветку.
+The system MUST mark for the administrator the threads containing employee messages that they have not yet read. The unread message indicator MUST be displayed on the "Messages" tab and in the application header. The "read" mark MUST be cleared when the administrator opens the corresponding thread.
 
-#### Scenario: Бейдж на вкладке сообщений
+#### Scenario: Badge on the messages tab
 
-- **WHEN** у администратора есть ветка с непрочитанными сообщениями
-- **THEN** на вкладке «Сообщения» отображается признак непрочитанных сообщений
+- **WHEN** the administrator has a thread with unread messages
+- **THEN** the unread message indicator is displayed on the "Messages" tab
 
-#### Scenario: Индикатор в шапке
+#### Scenario: Indicator in the header
 
-- **WHEN** у администратора есть непрочитанные сообщения
-- **THEN** в шапке приложения отображается индикатор непрочитанных сообщений
+- **WHEN** the administrator has unread messages
+- **THEN** the unread message indicator is displayed in the application header
 
-#### Scenario: Снятие отметки при открытии ветки
+#### Scenario: Clearing the mark when opening a thread
 
-- **WHEN** администратор открывает ветку с непрочитанными сообщениями
-- **THEN** признак непрочитанных для этой ветки снимается на вкладке и в шапке
+- **WHEN** the administrator opens a thread with unread messages
+- **THEN** the unread indicator for this thread is cleared on the tab and in the header
 
-#### Scenario: Нет непрочитанных сообщений
+#### Scenario: No unread messages
 
-- **WHEN** все ветки администратора прочитаны
-- **THEN** признак непрочитанных сообщений не отображается
+- **WHEN** all the administrator's threads are read
+- **THEN** the unread message indicator is not displayed

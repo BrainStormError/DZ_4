@@ -1,53 +1,53 @@
 ## MODIFIED Requirements
 
-### Requirement: Участие сотрудника в сборе
+### Requirement: Employee participation in the collection
 
-Сотрудник ДОЛЖЕН иметь возможность указать положительную сумму своего участия при подтверждении корпоративной почты. Указанная сумма ДОЛЖНА добавляться к общему сбору выбранного получателя, при этом итоговая собранная сумма сотруднику НЕ ДОЛЖНА показываться: отображается только его собственный вклад и пояснение о скрытии. **На всех шагах диалога участие ДОЛЖНО показывать состояния загрузки (disabled кнопки со спиннером), ошибки (Alert с «Повторить»), успех (тост и переход к следующему шагу или экран успеха).**
+An employee MUST be able to specify a positive amount of their participation when confirming the corporate email. The specified amount MUST be added to the total collection of the selected recipient, while the final collected amount MUST NOT be shown to the employee: only their own contribution and an explanation about hiding are displayed. **At all steps of the dialog, participation MUST show loading states (a disabled button with a spinner), errors (an Alert with "Retry"), success (a toast and a transition to the next step or the success screen).**
 
-#### Scenario: Сотрудник указывает сумму участия
-- **WHEN** сотрудник вводит положительную сумму и подтверждает отправку
-- **THEN** сумма добавляется к общему сбору выбранного получателя
+#### Scenario: An employee specifies the participation amount
+- **WHEN** an employee enters a positive amount and confirms the submission
+- **THEN** the amount is added to the total collection of the selected recipient
 
-#### Scenario: Итоговая сумма остаётся скрытой
-- **WHEN** сотрудник проходит шаги участия
-- **THEN** отображается только введённая им сумма, а итоговая собранная сумма не показывается
+#### Scenario: The final amount remains hidden
+- **WHEN** an employee goes through the participation steps
+- **THEN** only the amount they entered is displayed, and the final collected amount is not shown
 
-#### Scenario: Состояние загрузки на шаге суммы
-- **WHEN** пользователь нажимает «Продолжить» на шаге ввода суммы
-- **THEN** кнопка становится `disabled` с `Loader2`, после успеха — переход к шагу сообщения, после ошибки — `Alert` с кнопкой «Повторить»
+#### Scenario: Loading state at the amount step
+- **WHEN** the user clicks "Continue" at the amount entry step
+- **THEN** the button becomes `disabled` with `Loader2`, after success — a transition to the message step, after error — an `Alert` with a "Retry" button
 
-#### Scenario: Состояние загрузки на шаге подтверждения
-- **WHEN** пользователь нажимает «Поздравить» / «Отправить средства» на шаге подтверждения
-- **THEN** кнопка становится `disabled` с `Loader2`, после успеха — экран `success` с тостом, после ошибки — `Alert` с кнопкой «Повторить»
+#### Scenario: Loading state at the confirmation step
+- **WHEN** the user clicks "Congratulate" / "Send funds" at the confirmation step
+- **THEN** the button becomes `disabled` with `Loader2`, after success — the `success` screen with a toast, after error — an `Alert` with a "Retry" button
 
-### Requirement: Учёт участия администратором
+### Requirement: Recording participation by the administrator
 
-Администратор ДОЛЖЕН иметь возможность указать сумму участия, и указанная сумма ДОЛЖНА добавляться к общему сбору выбранного сотрудника. Введённая сумма ДОЛЖНА быть положительной. **Состояния загрузки/ошибки/успеха аналогичны сотруднику.**
+The administrator MUST be able to specify a participation amount, and the specified amount MUST be added to the total collection of the selected employee. The entered amount MUST be positive. **The loading/error/success states are similar to those of an employee.**
 
-#### Scenario: Добавление суммы администратором
-- **WHEN** администратор вводит положительную сумму и подтверждает отправку
-- **THEN** сумма добавляется к общему сбору выбранного получателя
+#### Scenario: The administrator adds an amount
+- **WHEN** the administrator enters a positive amount and confirms the submission
+- **THEN** the amount is added to the total collection of the selected recipient
 
-#### Scenario: Некорректная сумма
-- **WHEN** администратор вводит нулевую, отрицательную или пустую сумму
-- **THEN** продолжение сценария недоступно
+#### Scenario: Invalid amount
+- **WHEN** the administrator enters a zero, negative, or empty amount
+- **THEN** continuing the scenario is unavailable
 
-#### Scenario: Состояние загрузки при участии администратора
-- **WHEN** администратор подтверждает отправку на любом шаге
-- **THEN** кнопка показывает `Loader2` и `disabled`, результат — тост/успех/ошибка как у сотрудника
+#### Scenario: Loading state when the administrator participates
+- **WHEN** the administrator confirms the submission at any step
+- **THEN** the button shows `Loader2` and `disabled`, the result is a toast/success/error as for an employee
 
-### Requirement: Понятный результат участия
+### Requirement: Clear participation result
 
-После подтверждения система ДОЛЖНА показывать результат участия, одинаковый для обеих ролей: подтверждение отправки поздравления получателю. Экран результата НЕ ДОЛЖЕН различаться по роли и НЕ ДОЛЖЕН показывать сумму сбора сотруднику. **На экране успеха показывается тост-уведомление, закрытие завершает сценарий.**
+After confirmation, the system MUST show the participation result, the same for both roles: confirmation that the congratulation was sent to the recipient. The result screen MUST NOT differ by role and MUST NOT show the collection amount to the employee. **The success screen shows a toast notification; closing ends the scenario.**
 
-#### Scenario: Результат для сотрудника
-- **WHEN** сотрудник завершает участие
-- **THEN** система показывает подтверждение отправки поздравления получателю
+#### Scenario: Result for an employee
+- **WHEN** an employee completes participation
+- **THEN** the system shows confirmation that the congratulation was sent to the recipient
 
-#### Scenario: Результат для администратора
-- **WHEN** администратор завершает участие
-- **THEN** система показывает то же подтверждение отправки поздравления получателю, что и у сотрудника
+#### Scenario: Result for the administrator
+- **WHEN** the administrator completes participation
+- **THEN** the system shows the same confirmation that the congratulation was sent to the recipient as for an employee
 
-#### Scenario: Экран успеха с тостом
-- **WHEN** мутация доната успешно завершается
-- **THEN** отображается шаг `success` с иконкой, текстом и тост-уведомлением «Средства добавлены к сбору» / «Поздравление отправлено»
+#### Scenario: Success screen with a toast
+- **WHEN** the donation mutation completes successfully
+- **THEN** the `success` step is displayed with an icon, text, and a toast notification "Funds added to the collection" / "Congratulation sent"

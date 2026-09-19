@@ -1,31 +1,31 @@
 ## Why
 
-Главная страница показывает поздравления для ближайшей прошедшей даты дня рождения, даже когда сегодня именинников нет: сейчас такая заглушка была добавлена «чтобы страница не пустовала», но она вводит в заблуждение — пользователь видит поздравления человеку, чей день рождения уже прошёл. Одновременно на узких разрешениях ломаются подпись футера и сетка ближайших именинников (имена обрезаются до одной-двух букв), а на широких экранах доска пожеланий использует лишь около четверти доступной ширины, оставляя большое пустое поле.
+The home page shows congratulations for the nearest past birthday date even when there are no birthday people today: currently such a placeholder was added "so the page would not be empty", but it is misleading — the user sees congratulations for a person whose birthday has already passed. At the same time, at narrow resolutions the footer caption and the upcoming birthdays grid break (names are truncated to one or two letters), while on wide screens the wish board uses only about a quarter of the available width, leaving a large empty field.
 
 ## What Changes
 
-- **Поздравления показываются только в день рождения.** Доска пожеланий строится только от сегодняшних именинников; fallback на ближайшую прошедшую дату удаляется. Если сегодня именинников нет или для них ещё нет пожеланий, доска остаётся на месте с пустым состоянием, а текст пустого состояния перестаёт ссылаться на прошедшие даты.
-- **Доска пожеланий занимает доступную ширину.** Карточки пожеланий растягиваются от текущего минимума до читаемого максимума, а полоса центрируется, когда карточки не заполняют ряд. Одна лента, ручная прокрутка и подсказка о прокрутке сохраняются; сетка карточек не вводится.
-- **Подпись футера переносится аккуратно на узких экранах.** На малых ширинах бренд и подпись «— сбор на подарки коллегам» встают столбиком по центру вместо переноса, при котором подпись начинается с тире на новой строке.
-- **Ближайшие дни рождения не обрезают имена на мобильном.** Сетка блока «Скоро день рождения» переходит на одну колонку на узких экранах; имена перестают обрезаться на 320–414px.
-- **BREAKING** для поведения доски: пожелания для прошедшей даты дня рождения больше не отображаются, а требование «Прошедший день рождения только для чтения» удаляется из спеки.
+- **Congratulations are shown only on the birthday.** The wish board is built only from today's birthday people; the fallback to the nearest past date is removed. If there are no birthday people today, or there are no wishes for them yet, the board stays in place with an empty state, and the empty-state text stops referring to past dates.
+- **The wish board uses the available width.** Wish cards stretch from the current minimum to the readable maximum, and the strip is centered when the cards do not fill the row. One strip, manual scrolling, and the scrolling hint are preserved; a grid of cards is not introduced.
+- **The footer caption wraps neatly on narrow screens.** At small widths the brand and the caption "— collection for gifts to colleagues" stack centered instead of wrapping in a way where the caption begins with a dash on a new line.
+- **Upcoming birthdays do not truncate names on mobile.** The grid of the "Birthday soon" block switches to one column on narrow screens; names stop being truncated at 320–414px.
+- **BREAKING** for board behavior: wishes for a past birthday date are no longer displayed, and the requirement "Past birthday read-only" is removed from the spec.
 
 ## Capabilities
 
 ### New Capabilities
 
-- нет
+- none
 
 ### Modified Capabilities
 
-- `wishes`: правило показа поздравлений ограничивается сегодняшним днём рождения; требование «Прошедший день рождения только для чтения» удаляется; добавляется поведение пустого состояния доски и растяжение карточек ленты под доступную ширину.
-- `birthdays`: требование к сетке блока «Скоро день рождения» усиливается — имена не обрезаются на всех ширинах от 320px, на узких экранах карточки располагаются друг под другом.
-- `responsive-layout`: добавляется требование к переносу подписи футера на узком вьюпорте (без висячего тире и рассинхронизации с иконкой).
+- `wishes`: the rule for showing congratulations is limited to today's birthday; the requirement "Past birthday read-only" is removed; the empty-state behavior of the board and the stretching of strip cards to the available width are added.
+- `birthdays`: the requirement for the grid of the "Birthday soon" block is strengthened — names are not truncated at any width from 320px, and on narrow screens the cards are placed one below another.
+- `responsive-layout`: a requirement is added for wrapping the footer caption at a narrow viewport (without a hanging dash and without desynchronization with the icon).
 
 ## Impact
 
-- Компоненты: `components/features/WishBoard.tsx` (отбор пожеланий доски, пустое состояние, ширины карточек и центрирование ленты), `components/layout/Footer.tsx` (раскладка подписи), `app/(app)/page.tsx` (колонки сетки «Скоро день рождения»).
-- Логика: `lib/birthdays.ts` — `getBoardDate` теряет fallback на ближайшую прошедшую дату и неиспользуемое поле `date`.
-- Спецификации: дельты `wishes`, `birthdays`, `responsive-layout`.
-- Тесты: unit-тест на отбор пожеланий доски (в проекте есть vitest, покрытие доски сейчас отсутствует).
-- Не меняются: данные и мок-набор, правила денежного участия и получателей взноса, скрытие сумм, роли, авторизация, предпросмотр даты администратором.
+- Components: `components/features/WishBoard.tsx` (selection of board wishes, empty state, card widths and strip centering), `components/layout/Footer.tsx` (caption layout), `app/(app)/page.tsx` (columns of the "Birthday soon" grid).
+- Logic: `lib/birthdays.ts` — `getBoardDate` loses the fallback to the nearest past date and the unused `date` field.
+- Specifications: the deltas `wishes`, `birthdays`, `responsive-layout`.
+- Tests: a unit test for the selection of board wishes (the project has vitest; board coverage is currently absent).
+- Not changing: the data and mock set, the rules of monetary participation and contribution recipients, the hiding of amounts, roles, authorization, the administrator's date preview.

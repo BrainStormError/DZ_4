@@ -1,94 +1,94 @@
 ## RENAMED Requirements
 
-- FROM: `### Requirement: Автор пожелания отображается под корпоративным ником`
-- TO: `### Requirement: Отображение автора и получателя пожелания`
+- FROM: `### Requirement: The wish author is displayed under the corporate nick`
+- TO: `### Requirement: Display of the wish author and recipient`
 
 ## ADDED Requirements
 
-### Requirement: Показ поздравлений по дню рождения
+### Requirement: Showing congratulations by birthday
 
-Доска пожеланий ДОЛЖНА показывать поздравления только для сотрудников, у которых день рождения совпадает с текущей датой. Администратор ДОЛЖЕН учитываться как сотрудник наравне с остальными. Если сегодня именинников нет, доска ДОЛЖНА показывать поздравления для ближайшей прошедшей даты дня рождения — всех сотрудников, родившихся в этот день. Поздравления для будущих дней рождения НЕ ДОЛЖНЫ показываться никогда.
+The wish board MUST show congratulations only for employees whose birthday matches the current date. An administrator MUST be counted as an employee on par with the others. If there are no birthday people today, the board MUST show congratulations for the nearest past birthday date — all employees born on that day. Congratulations for future birthdays MUST NOT ever be shown.
 
-#### Scenario: Сегодня есть именинник
+#### Scenario: There is a birthday person today
 
-- **WHEN** у одного или нескольких сотрудников день рождения совпадает с текущей датой
-- **THEN** доска показывает пожелания только для этих сотрудников
+- **WHEN** one or more employees have a birthday matching the current date
+- **THEN** the board shows wishes only for those employees
 
-#### Scenario: Сегодня именинников нет
+#### Scenario: There are no birthday people today
 
-- **WHEN** ни у одного сотрудника день рождения не совпадает с текущей датой
-- **THEN** доска показывает пожелания для ближайшей прошедшей даты дня рождения, включая всех сотрудников, родившихся в этот день
+- **WHEN** no employee's birthday matches the current date
+- **THEN** the board shows wishes for the nearest past birthday date, including all employees born on that day
 
-#### Scenario: Нет пожеланий для ближайшего именинника
+#### Scenario: No wishes for the nearest birthday person
 
-- **WHEN** для выбранной даты дня рождения нет ни одного пожелания
-- **THEN** система показывает пустое состояние и не переходит к более ранним датам
+- **WHEN** there is no wish for the selected birthday date
+- **THEN** the system shows an empty state and does not fall through to earlier dates
 
-#### Scenario: Будущие поздравления скрыты
+#### Scenario: Future congratulations are hidden
 
-- **WHEN** пожелание адресовано сотруднику, чей день рождения ещё не наступил
-- **THEN** это пожелание не отображается на доске
+- **WHEN** a wish is addressed to an employee whose birthday has not yet arrived
+- **THEN** this wish is not displayed on the board
 
-#### Scenario: Администратор показан как именинник
+#### Scenario: Administrator shown as a birthday person
 
-- **WHEN** день рождения администратора совпадает с текущей датой
-- **THEN** поздравления для администратора отображаются на доске так же, как для любого сотрудника
+- **WHEN** the administrator's birthday matches the current date
+- **THEN** congratulations for the administrator are displayed on the board just as for any other employee
 
-### Requirement: Лента поздравлений для именинников дня
+### Requirement: Congratulation strip for the day's birthday people
 
-Все поздравления для именинников текущего дня ДОЛЖНЫ отображаться одной зацикленной лентой, а не разрастающейся сеткой. Лента ДОЛЖНА плавно автоматически прокручиваться по кругу, а карточки ДОЛЖНЫ иметь цветовую подсветку, закреплённую за именинником. Та же лента ДОЛЖНА использоваться для ближайшей прошедшей даты дня рождения. Автопрокрутка ДОЛЖНА приостанавливаться при наведении или фокусе и отключаться при `prefers-reduced-motion`, оставляя доступный вручную список.
+All congratulations for the current day's birthday people MUST be displayed as a single looping strip, not a growing grid. The strip MUST smoothly auto-scroll in a loop, and the cards MUST have color highlighting tied to the birthday person. The same strip MUST be used for the nearest past birthday date. Auto-scroll MUST pause on hover or focus and be disabled under `prefers-reduced-motion`, leaving a manually accessible list.
 
-#### Scenario: Одна общая лента
+#### Scenario: One shared strip
 
-- **WHEN** именинников текущего дня несколько
-- **THEN** все их поздравления показываются в одной зацикленной ленте
+- **WHEN** there are several birthday people for the current day
+- **THEN** all their congratulations are shown in one looping strip
 
-#### Scenario: Цветовая подсветка по имениннику
+#### Scenario: Color highlighting per birthday person
 
-- **WHEN** поздравления принадлежат разным именинникам
-- **THEN** карточки каждого именинника подсвечены закреплённым за ним цветом
+- **WHEN** the congratulations belong to different birthday people
+- **THEN** each birthday person's cards are highlighted with the color assigned to them
 
-#### Scenario: Доступность автопрокрутки
+#### Scenario: Auto-scroll accessibility
 
-- **WHEN** пользователь наводит курсор или ставит фокус на ленту, либо в системе включён `prefers-reduced-motion`
-- **THEN** автопрокрутка приостанавливается или отключается, а содержимое остаётся доступным
+- **WHEN** the user hovers or focuses the strip, or `prefers-reduced-motion` is enabled in the system
+- **THEN** auto-scroll pauses or is disabled, and the content remains accessible
 
 ## MODIFIED Requirements
 
-### Requirement: Отображение автора и получателя пожелания
+### Requirement: Display of the wish author and recipient
 
-Система ДОЛЖНА отображать на доске автора пожелания настоящим именем с корпоративным ником в скобках и НЕ ДОЛЖНА раскрывать полный адрес почты. Получатель ДОЛЖЕН отображаться фамилией и именем. Карточка ДОЛЖНА явно показывать направление «От … → Кому …». Пожелания ДОЛЖНЫ отображаться от новых к старым в пределах действующего правила показа.
+The system MUST display the wish author on the board by real name with the corporate nick in parentheses and MUST NOT disclose the full email address. The recipient MUST be displayed by last name and first name. The card MUST explicitly show the direction "From … → To …". Wishes MUST be displayed from newest to oldest within the active display rule.
 
-#### Scenario: Отображение автора под ником
+#### Scenario: Author displayed under the nick
 
-- **WHEN** пожелание оставлено от `dmitry.volkov@company.com` (Дмитрий Волков)
-- **THEN** на доске автор показан как `Дмитрий Волков (dmitry.volkov)`, а полный адрес не раскрывается
+- **WHEN** a wish is left by `dmitry.volkov@company.com` (Dmitry Volkov)
+- **THEN** on the board the author is shown as `Dmitry Volkov (dmitry.volkov)`, and the full address is not disclosed
 
-#### Scenario: Получатель показан фамилией и именем
+#### Scenario: Recipient displayed by last name and first name
 
-- **WHEN** пожелание адресовано Анне Смирновой
-- **THEN** карточка показывает `Кому: Анна Смирнова` и явное направление от автора к получателю
+- **WHEN** a wish is addressed to Anna Smirnova
+- **THEN** the card shows `To: Anna Smirnova` and an explicit direction from the author to the recipient
 
-#### Scenario: Пустая доска
+#### Scenario: Empty board
 
-- **WHEN** пожеланий нет
-- **THEN** система показывает пустое состояние с предложением оставить первое пожелание
+- **WHEN** there are no wishes
+- **THEN** the system shows an empty state suggesting leaving the first wish
 
-### Requirement: Создание пожелания из формы
+### Requirement: Creating a wish from the form
 
-Система ДОЛЖНА позволять авторизованному пользователю создать пожелание, выбрав получателя из числа сотрудников (кроме себя) и введя текст. Форма ДОЛЖНА явно показывать отправителя (текущего пользователя) и понятно обозначать выбор получателя. Созданное пожелание ДОЛЖНО сохранять автора, получателя и время создания. Отправка ДОЛЖНА блокироваться, пока получатель не выбран или текст пуст.
+The system MUST allow an authenticated user to create a wish by selecting a recipient from among the employees (other than themselves) and entering text. The form MUST explicitly show the sender (the current user) and clearly indicate the recipient selection. The created wish MUST store the author, recipient and creation time. Submission MUST be blocked while the recipient is not selected or the text is empty.
 
-#### Scenario: Успешное создание пожелания
+#### Scenario: Successful wish creation
 
-- **WHEN** пользователь выбирает получателя и вводит непустой текст, затем отправляет форму
-- **THEN** пожелание сохраняется с автором, получателем и временем создания и отображается по правилу показа дня рождения
+- **WHEN** the user selects a recipient and enters non-empty text, then submits the form
+- **THEN** the wish is saved with the author, recipient and creation time and is displayed according to the birthday display rule
 
-#### Scenario: Неполные данные
+#### Scenario: Incomplete data
 
-- **WHEN** получатель не выбран или текст пуст
-- **THEN** отправка недоступна
+- **WHEN** the recipient is not selected or the text is empty
+- **THEN** submission is unavailable
 
-#### Scenario: Форма показывает отправителя и получателя
+#### Scenario: The form shows the sender and recipient
 
-- **WHEN** пользователь открывает форму пожелания
-- **THEN** форма показывает текущего пользователя как отправителя и содержит понятный выбор получателя
+- **WHEN** the user opens the wish form
+- **THEN** the form shows the current user as the sender and contains a clear recipient selection

@@ -1,30 +1,30 @@
 ## MODIFIED Requirements
 
-### Requirement: Статус отправки подарка
+### Requirement: Gift sending status
 
-Админ-панель ДОЛЖНА (MUST) показывать для каждого сотрудника статус подарка: «Не выслано», «Выслано» или «Отказ». Для сотрудников без отказа администратор ДОЛЖЕН иметь возможность изменить статус вручную между «Не выслано» и «Выслано», и изменение ДОЛЖНО сразу отражаться в таблице. Для сотрудника, отказавшегося от подарка, статус ДОЛЖЕН отображаться как «Отказ» и НЕ ДОЛЖЕН изменяться вручную.
+The admin panel (MUST) show a gift status for each employee: "Not sent", "Sent", or "Declined". For employees without a decline, the administrator (MUST) be able to change the status manually between "Not sent" and "Sent", and the change (MUST) be immediately reflected in the table. For an employee who declined the gift, the status (MUST) be displayed as "Declined" and (MUST NOT) change manually.
 
-#### Scenario: Статус по умолчанию
+#### Scenario: Default status
 
-- **WHEN** администратор открывает таблицу и для сотрудника подарок ещё не отмечен
-- **THEN** для этого сотрудника отображается статус «Не выслано»
+- **WHEN** the administrator opens the table and the gift has not yet been marked for an employee
+- **THEN** the status "Not sent" is displayed for this employee
 
-#### Scenario: Администратор отмечает подарок высланным
+#### Scenario: The administrator marks the gift as sent
 
-- **WHEN** администратор вручную меняет статус сотрудника на «Выслано»
-- **THEN** в таблице для этого сотрудника отображается «Выслано»
+- **WHEN** the administrator manually changes an employee's status to "Sent"
+- **THEN** "Sent" is displayed for this employee in the table
 
-#### Scenario: Администратор снимает статус
+#### Scenario: The administrator clears the status
 
-- **WHEN** администратор вручную возвращает статус сотрудника в «Не выслано»
-- **THEN** в таблице для этого сотрудника отображается «Не выслано»
+- **WHEN** the administrator manually returns an employee's status to "Not sent"
+- **THEN** "Not sent" is displayed for this employee in the table
 
-#### Scenario: Отказ отражается отдельным статусом
+#### Scenario: A decline is reflected as a separate status
 
-- **WHEN** сотрудник отказался от подарка
-- **THEN** в таблице для этого сотрудника отображается статус «Отказ»
+- **WHEN** an employee has declined the gift
+- **THEN** the status "Declined" is displayed for this employee in the table
 
-#### Scenario: Статус отказа не изменяется вручную
+#### Scenario: The decline status does not change manually
 
-- **WHEN** администратор просматривает строку отказавшегося от подарка сотрудника
-- **THEN** элементы изменения статуса для этого сотрудника недоступны, а статус остаётся «Отказ»
+- **WHEN** the administrator views the row of an employee who declined the gift
+- **THEN** the status-change controls for this employee are unavailable, and the status remains "Declined"

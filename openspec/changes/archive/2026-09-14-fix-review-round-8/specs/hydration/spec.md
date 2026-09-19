@@ -1,33 +1,33 @@
 ## Purpose
 
-Гарантирует согласованное первое отображение приложения: браузеро-зависимые значения (текущая дата и тема) не расходятся между серверным рендером и клиентской гидратацией, а интерфейс не переключается целиком на клиентский рендеринг.
+Guarantees a consistent first render of the application: browser-dependent values (the current date and theme) do not diverge between server-side rendering and client-side hydration, and the interface does not switch entirely to client-side rendering.
 
 ## ADDED Requirements
 
-### Requirement: Согласованная текущая дата при первой отрисовке
+### Requirement: Consistent current date on first render
 
-Система ДОЛЖНА (MUST) вычислять текущую дату согласованно на сервере и клиенте так, чтобы при гидратации не возникало расхождения текста даты и принудительного перехода всего дерева на клиентский рендеринг. Зависимые от даты блоки (именинники, доска пожеланий, календарь) ДОЛЖНЫ показывать одну и ту же текущую дату сразу после загрузки.
+The system MUST compute the current date consistently on the server and client so that during hydration there is no date text mismatch and no forced switch of the entire tree to client-side rendering. Date-dependent blocks (birthday people, wish board, calendar) MUST show the same current date immediately after loading.
 
-#### Scenario: Одинаковая дата на сервере и клиенте
+#### Scenario: Same date on the server and client
 
-- **WHEN** страница загружается около полуночи или при разнице часовых поясов сервера и браузера
-- **THEN** после гидратации не возникает расхождения текста даты, и приложение не переключается целиком на клиентский рендеринг
+- **WHEN** the page loads around midnight or when the server and browser time zones differ
+- **THEN** after hydration there is no date text mismatch, and the application does not switch entirely to client-side rendering
 
-#### Scenario: Дата стабильна после загрузки
+#### Scenario: The date is stable after loading
 
-- **WHEN** страница полностью загружена
-- **THEN** зависимые от даты блоки показывают одну и ту же текущую дату без «мигания» между серверным и клиентским значением
+- **WHEN** the page is fully loaded
+- **THEN** date-dependent blocks show the same current date without "flashing" between the server and client value
 
-### Requirement: Согласованная тема при первой отрисовке
+### Requirement: Consistent theme on first render
 
-Система ДОЛЖНА (MUST) восстанавливать тему так, чтобы подпись активной темы соответствовала фактически применённой теме после загрузки. Расхождение между серверной разметкой и состоянием на клиенте НЕ ДОЛЖНО приводить к тому, что подпись темы остаётся неверной.
+The system MUST restore the theme so that the active theme label matches the actually applied theme after loading. A mismatch between the server markup and the client state MUST NOT result in the theme label remaining incorrect.
 
-#### Scenario: Подпись соответствует применённой теме
+#### Scenario: The label matches the applied theme
 
-- **WHEN** в локальном хранилище сохранена тема, отличная от темы по умолчанию, и страница загружается
-- **THEN** применённая тема и подпись переключателя темы совпадают без остаточной неверной подписи
+- **WHEN** a theme other than the default theme is saved in local storage, and the page loads
+- **THEN** the applied theme and the theme switcher label match without a residual incorrect label
 
-#### Scenario: Тема без сохранённого значения
+#### Scenario: Theme without a saved value
 
-- **WHEN** в локальном хранилище не задана тема
-- **THEN** применяется тема по умолчанию, и её подпись соответствует применённой теме
+- **WHEN** no theme is set in local storage
+- **THEN** the default theme is applied, and its label matches the applied theme

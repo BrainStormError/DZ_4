@@ -1,30 +1,30 @@
-## 1. Поле ответа администратора
+## 1. Administrator reply field
 
-- [x] 1.1 В `components/features/ChatThread.tsx` задать карточке чата определённую высоту на десктопе (`md:h-[600px]` вместо `max-h-[600px]`) и добавить `min-h-0` внутреннему ряду и колонкам; проверка — `npm run typecheck` проходит, а поле ответа видно при 11 сотрудниках на ширине ≥768px
-- [x] 1.2 Убедиться, что список обращений прокручивается в своей области независимо от блока сообщений, а поле «Ответить сотруднику...» остаётся внизу; проверка — на десктопе список скроллится, поле не обрезается; на мобильной раскладке (`max-h-44`) поведение не меняется
+- [x] 1.1 In `components/features/ChatThread.tsx`, give the chat card a definite height on desktop (`md:h-[600px]` instead of `max-h-[600px]`) and add `min-h-0` to the inner row and columns; check — `npm run typecheck` passes, and the reply field is visible with 11 employees at a width ≥768px
+- [x] 1.2 Ensure that the request list scrolls within its own area independently of the message block, and that the "Reply to employee..." field stays at the bottom; check — on desktop the list scrolls, the field is not clipped; on the mobile layout (`max-h-44`) the behavior does not change
 
-## 2. Согласованная текущая дата
+## 2. Consistent current date
 
-- [x] 2.1 В `lib/date-context.tsx` инициализировать `realToday` стабильным значением, одинаковым для сервера и клиента, и устанавливать реальную дату в `useEffect` после монтирования; проверка — `npm run build` и `npm run typecheck` проходят, в консоли при загрузке нет расхождения текста даты и нет перехода всего дерева на клиентский рендеринг
-- [x] 2.2 Проверить, что зависимые от даты блоки (именинники, доска пожеланий, календарь) показывают одну и ту же текущую дату сразу после загрузки; проверка — ручной прогон главной страницы и календаря без «мигания» даты
+- [x] 2.1 In `lib/date-context.tsx`, initialize `realToday` with a stable value, the same for the server and client, and set the real date in `useEffect` after mounting; check — `npm run build` and `npm run typecheck` pass, there is no date text mismatch in the console during loading and no switch of the entire tree to client-side rendering
+- [x] 2.2 Check that date-dependent blocks (birthday people, wish board, calendar) show the same current date immediately after loading; check — a manual run of the home page and the calendar without the date "flashing"
 
-## 3. Согласованная тема
+## 3. Consistent theme
 
-- [x] 3.1 В `lib/theme-context.tsx` инициализировать тему значением по умолчанию (совпадает с SSR) и восстанавливать реальную тему из `data-theme` в `useEffect`; проверка — `npm run typecheck` проходит, а подпись темы в `ThemeSwitcher` соответствует применённой теме
-- [x] 3.2 Проверить восстановление темы с сохранённым значением `festival` и без сохранённого значения; проверка — при `localStorage='festival'` подпись и `data-theme` оба `festival`; при отсутствии значения применяется тема по умолчанию с корректной подписью
+- [x] 3.1 In `lib/theme-context.tsx`, initialize the theme with the default value (matching SSR) and restore the real theme from `data-theme` in `useEffect`; check — `npm run typecheck` passes, and the theme label in `ThemeSwitcher` matches the applied theme
+- [x] 3.2 Check theme restoration with a saved `festival` value and without a saved value; check — with `localStorage='festival'`, the label and `data-theme` are both `festival`; when there is no value, the default theme is applied with a correct label
 
-## 4. Лента поздравлений без зацикливания
+## 4. Congratulations strip without looping
 
-- [x] 4.1 Воспроизвести риск зацикливания: изменять число карточек так, чтобы лента переходила между статичным состоянием и автопрокруткой; проверка — зафиксирован ли `Maximum update depth exceeded` в консоли
-- [x] 4.2 В `components/features/WishBoard.tsx` стабилизировать измерение переполнения: функциональное обновление с явным сравнением, объединение через `requestAnimationFrame`, наблюдение только за контейнером; проверка — переходы между состояниями не дают ошибки превышения глубины обновления, приложение остаётся отзывчивым
+- [x] 4.1 Reproduce the looping risk: change the number of cards so that the strip transitions between the static state and auto-scroll; check — whether `Maximum update depth exceeded` was recorded in the console
+- [x] 4.2 In `components/features/WishBoard.tsx`, stabilize overflow measurement: functional update with an explicit comparison, batching via `requestAnimationFrame`, observing only the container; check — transitions between states do not produce an update depth exceeded error, and the application remains responsive
 
-## 5. Модальные диалоги при переходе
+## 5. Modal dialogs during navigation
 
-- [x] 5.1 В `components/features/DonateDialog.tsx` закрывать диалог при смене маршрута (`usePathname`); проверка — переход с открытым диалогом участия оставляет страницу прокручиваемой без перезагрузки
-- [x] 5.2 Распространить закрытие по смене маршрута на диалог «Изменить сумму» в `components/features/AdminTable.tsx` и диалог «Изменить пожелание» в `components/features/WishBoard.tsx`; проверка — после перехода с любым открытым диалогом страница интерактивна
-- [x] 5.3 Убедиться, что после перехода на `<body>` не остаётся `pointer-events: none` и `data-scroll-locked`; проверка — `document.body` чист после навигации, прокрутка и клики работают
+- [x] 5.1 In `components/features/DonateDialog.tsx`, close the dialog on route change (`usePathname`); check — navigating with an open participation dialog leaves the page scrollable without a reload
+- [x] 5.2 Extend closing on route change to the "Change amount" dialog in `components/features/AdminTable.tsx` and the "Change wish" dialog in `components/features/WishBoard.tsx`; check — after navigating with any open dialog, the page is interactive
+- [x] 5.3 Ensure that after navigation, `<body>` does not retain `pointer-events: none` and `data-scroll-locked`; check — `document.body` is clean after navigation, scrolling and clicks work
 
-## 6. Проверка и финализация
+## 6. Verification and finalization
 
-- [x] 6.1 Прогнать `npm run typecheck`, `npm run lint` и `npm run build` без ошибок
-- [x] 6.2 Выполнить `openspec validate fix-review-round-8 --strict` и убедиться в отсутствии ошибок
+- [x] 6.1 Run `npm run typecheck`, `npm run lint`, and `npm run build` without errors
+- [x] 6.2 Run `openspec validate fix-review-round-8 --strict` and ensure there are no errors

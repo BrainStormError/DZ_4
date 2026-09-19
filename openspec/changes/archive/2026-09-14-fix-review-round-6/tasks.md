@@ -1,43 +1,43 @@
-## 1. Диалог денежного поздравления
+## 1. Money congratulation dialog
 
-- [x] 1.1 В `components/features/DonateDialog.tsx` удалить кнопку «Без пожелания» на шаге `message`, оставив «Назад» и «Продолжить»; проверить, что при пустом поле «Продолжить» ведёт к подтверждению
-- [x] 1.2 В `components/features/DonateDialog.tsx` удалить блок с иконкой `Lock` и текстом о скрытии суммы на шаге `confirm` и убрать неиспользуемый импорт `Lock`; проверить, что шаг подтверждения показывает только отправителя, получателя, сумму и текст пожелания
-- [x] 1.3 В `components/features/DonateDialog.tsx` показывать корпоративную почту получателя в опциях `Select` выбора получателя; проверить, что для каждой опции видны имя, отдел и почта
+- [x] 1.1 In `components/features/DonateDialog.tsx`, remove the "Without a wish" button at the `message` step, keeping "Back" and "Continue"; verify that with an empty field "Continue" leads to confirmation
+- [x] 1.2 In `components/features/DonateDialog.tsx`, remove the block with the `Lock` icon and the text about hiding the amount at the `confirm` step and remove the unused `Lock` import; verify that the confirmation step shows only the sender, recipient, amount, and wish text
+- [x] 1.3 In `components/features/DonateDialog.tsx`, show the recipient's corporate email in the `Select` options of the recipient selection; verify that the name, department, and email are visible for each option
 
-## 2. Карточки пожеланий
+## 2. Wish cards
 
-- [x] 2.1 В `components/features/WishBoard.tsx` в `renderCard` выводить дату создания без времени (`d MMM` вместо `d MMM, HH:mm`); проверить, что в карточке нет времени, а `createdAt` по-прежнему сохраняется
+- [x] 2.1 In `components/features/WishBoard.tsx`, in `renderCard` output the creation date without time (`d MMM` instead of `d MMM, HH:mm`); verify that there is no time on the card, while `createdAt` is still stored
 
-## 3. Непрочитанные сообщения администратора
+## 3. Administrator unread messages
 
-- [x] 3.1 В `lib/data-store.ts` заменить подсчёт по веткам на подсчёт по сообщениям: добавить `countUnreadMessages(threads)` и `countUnreadInThread(thread)`, сохранив `markThreadRead`; проверить `npm run typecheck`
-- [x] 3.2 Обновить `components/layout/Header.tsx` и `app/(app)/faq/page.tsx` на `countUnreadMessages`; проверить, что бейдж в шапке и на вкладке «Сообщения» показывает суммарное число непрочитанных сообщений
-- [x] 3.3 В `components/features/ChatThread.tsx` добавить в список веток пометку с количеством непрочитанных (`countUnreadInThread`) и визуальное выделение; проверить, что пометка исчезает после открытия ветки и общий счётчик уменьшается на её вклад
+- [x] 3.1 In `lib/data-store.ts`, replace counting by threads with counting by messages: add `countUnreadMessages(threads)` and `countUnreadInThread(thread)`, keeping `markThreadRead`; verify with `npm run typecheck`
+- [x] 3.2 Update `components/layout/Header.tsx` and `app/(app)/faq/page.tsx` to `countUnreadMessages`; verify that the badge in the header and on the "Messages" tab shows the total number of unread messages
+- [x] 3.3 In `components/features/ChatThread.tsx`, add to the thread list a marker with the number of unread (`countUnreadInThread`) and a visual highlight; verify that the marker disappears after opening the thread and the total counter decreases by its contribution
 
-## 4. Возврат при отказе обнуляет сумму
+## 4. A refund on decline zeroes the amount
 
-- [x] 4.1 В `components/features/AdminTable.tsx` при выборе причины `refund_declined` принудительно устанавливать `editAmount = '0'` и блокировать поле; `canSave` требует `0` для этой причины; проверить, что сохранение отказа фиксирует `0 ₽`
-- [x] 4.2 В `lib/mock-data.ts` исправить `mockDonationHistory[0]` на `previousAmount: 15600, newAmount: 0` и сумму `u3` в `mockDonations` на `0`; проверить, что таблица показывает `0 ₽`, а журнал — изменение `15600 → 0 ₽`
+- [x] 4.1 In `components/features/AdminTable.tsx`, when selecting the reason `refund_declined`, forcibly set `editAmount = '0'` and disable the field; `canSave` requires `0` for this reason; verify that saving a decline records `0 ₽`
+- [x] 4.2 In `lib/mock-data.ts`, fix `mockDonationHistory[0]` to `previousAmount: 15600, newAmount: 0` and the amount of `u3` in `mockDonations` to `0`; verify that the table shows `0 ₽`, and the log shows the change `15600 → 0 ₽`
 
-## 5. Явная навигация журнала
+## 5. Explicit log navigation
 
-- [x] 5.1 В `components/features/AdminTable.tsx` заменить булев `showHistory` на вкладки `Tabs` со значениями `table` и `history` и подписями «Таблица сборов» / «Журнал изменений»; проверить переключение в обе стороны без повторного нажатия одной кнопки
-- [x] 5.2 Проверить, что блок предпросмотра даты остаётся вне вкладок, а сотруднику вкладки и журнал недоступны
+- [x] 5.1 In `components/features/AdminTable.tsx`, replace the boolean `showHistory` with `Tabs` tabs with values `table` and `history` and labels "Collection table" / "Change log"; verify switching in both directions without pressing the same button again
+- [x] 5.2 Verify that the date preview block remains outside the tabs, and that the tabs and the log are unavailable to the employee
 
-## 6. Календарь дней рождений
+## 6. Birthday calendar
 
-- [x] 6.1 В `app/(app)/calendar/page.tsx` навесить `key={`${year}-${month}`}` на контейнер сетки; проверить, что при быстрой смене месяца и года подсветка дат не перетекает из предыдущего периода
+- [x] 6.1 In `app/(app)/calendar/page.tsx`, attach `key={`${year}-${month}`}` to the grid container; verify that with fast switching of the month and year the date highlighting does not bleed from the previous period
 
-## 7. Производительность (Core Web Vitals)
+## 7. Performance (Core Web Vitals)
 
-- [x] 7.1 Заменить `@import` Google Fonts в `app/globals.css` на `next/font/google` в `app/layout.tsx`, подключив используемые семейства как CSS-переменные и привязав `--font-heading`/`--font-body` по темам; проверить, что в CSS нет внешнего блокирующего `@import`, а все три темы отображаются корректным шрифтом
-- [x] 7.2 Убрать возврат `null` из `lib/theme-context.tsx` и `lib/auth-context.tsx`, добавить ранний инлайн-скрипт установки `data-theme` и инициализацию состояния из DOM-атрибута; проверить, что серверный HTML страниц содержит основной контент (просмотр исходника страницы до JS)
-- [x] 7.3 Собрать и запустить продакшен (`npm run build && npm start`), измерить Lighthouse (mobile) для `/`, `/calendar`, `/faq`, `/admin` и зафиксировать LCP и CLS; проверить значения против бюджетов 2,5 с и 0,1
-- [x] 7.4 Измерить INP трассировкой взаимодействия (открытие и отправка диалога участия, переключение вкладок и месяцев) и зафиксировать значение; проверить, что оно не превышает 200 мс
-- [x] 7.5 При выходе показателей за бюджет устранить конкретную причину и переизмерить; признак завершения — LCP ≤ 2,5 с, INP ≤ 200 мс, CLS ≤ 0,1 на всех проверяемых страницах
+- [x] 7.1 Replace the Google Fonts `@import` in `app/globals.css` with `next/font/google` in `app/layout.tsx`, connecting the used families as CSS variables and binding `--font-heading`/`--font-body` per theme; verify that the CSS has no external blocking `@import`, and that all three themes are displayed with the correct font
+- [x] 7.2 Remove the `null` return from `lib/theme-context.tsx` and `lib/auth-context.tsx`, add an early inline script for setting `data-theme` and initialize the state from the DOM attribute; verify that the server HTML of the pages contains the main content (view the page source before JS)
+- [x] 7.3 Build and run production (`npm run build && npm start`), measure Lighthouse (mobile) for `/`, `/calendar`, `/faq`, `/admin`, and record LCP and CLS; verify the values against the budgets of 2.5 s and 0.1
+- [x] 7.4 Measure INP by interaction tracing (opening and sending the participation dialog, switching tabs and months) and record the value; verify that it does not exceed 200 ms
+- [x] 7.5 If the metrics exceed the budget, eliminate the specific cause and re-measure; the completion criterion is LCP ≤ 2.5 s, INP ≤ 200 ms, CLS ≤ 0.1 on all checked pages
 
-## 8. Проверка и финализация
+## 8. Verification and finalization
 
-- [x] 8.1 Прогнать `npm run typecheck` и `npm run lint` без ошибок
-- [x] 8.2 Прогнать ручные сценарии: отправка средств без текста; отсутствие пояснения о скрытии на подтверждении; почта в выборе получателя; карточка без времени; пометки непрочитанных по веткам и счёт по сообщениям; отказ обнуляет сумму; переключение вкладок журнала; быстрая смена месяца календаря
-- [x] 8.3 Выполнить `openspec validate "fix-review-round-6" --strict` и убедиться в отсутствии ошибок
+- [x] 8.1 Run `npm run typecheck` and `npm run lint` without errors
+- [x] 8.2 Run the manual scenarios: sending money without text; absence of an explanation about hiding at confirmation; email in the recipient selection; card without time; unread markers by thread and counting by messages; decline zeroes the amount; switching the log tabs; fast switching of the calendar month
+- [x] 8.3 Run `openspec validate "fix-review-round-6" --strict` and make sure there are no errors

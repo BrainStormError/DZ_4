@@ -1,25 +1,25 @@
 ## MODIFIED Requirements
 
-### Requirement: Серверный контент при первой отрисовке
+### Requirement: Server content on first render
 
-Приложение ДОЛЖНО (MUST) отдавать серверную разметку со значимым содержимым при первой отрисовке, а не пустой документ, ожидающий клиентской гидратации и чтения локального хранилища. Сессия ДОЛЖНА (MUST) быть известна серверу до отдачи разметки страницы, чтобы содержимое не зависело от момента выполнения клиентского JavaScript. Восстановление темы и сессии НЕ ДОЛЖНО приводить к исчезновению основного содержимого страницы до гидратации.
+The application MUST send server markup with meaningful content on the first render, rather than an empty document waiting for client-side hydration and reading of local storage. The session MUST be known to the server before the page markup is sent, so that the content does not depend on the moment client JavaScript executes. Theme and session restoration MUST NOT cause the main page content to disappear before hydration.
 
-#### Scenario: Первая отрисовка содержит содержимое
+#### Scenario: The first render contains content
 
-- **WHEN** браузер получает HTML страницы до выполнения клиентского JavaScript
-- **THEN** документ содержит основное содержимое страницы, а не пустое дерево
+- **WHEN** the browser receives the page HTML before client JavaScript execution
+- **THEN** the document contains the main page content, not an empty tree
 
-#### Scenario: Восстановление темы и сессии не скрывает страницу
+#### Scenario: Theme and session restoration does not hide the page
 
-- **WHEN** у пользователя сохранены тема и активный вход
-- **THEN** основное содержимое остаётся видимым на протяжении восстановления, без перехода через полностью пустой экран
+- **WHEN** the user has a saved theme and an active login
+- **THEN** the main content remains visible throughout restoration, without passing through a completely empty screen
 
-#### Scenario: Крупнейший текстовый блок приходит с сервера
+#### Scenario: The largest text block arrives from the server
 
-- **WHEN** измеряется LCP ключевой страницы до гидратации
-- **THEN** крупнейший текстовый блок уже присутствует в отданной разметке и его отрисовка не ожидает клиентского JavaScript
+- **WHEN** the LCP of the key page is measured before hydration
+- **THEN** the largest text block is already present in the sent markup and its rendering does not wait for client JavaScript
 
-#### Scenario: Сессия известна до отдачи разметки
+#### Scenario: The session is known before the markup is sent
 
-- **WHEN** браузер запрашивает страницу с действующей сессией
-- **THEN** серверная разметка содержит содержимое этой страницы, а не заполнитель, заменяемый после гидратации
+- **WHEN** the browser requests a page with an active session
+- **THEN** the server markup contains the content of that page, not a placeholder replaced after hydration

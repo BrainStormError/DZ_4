@@ -1,42 +1,42 @@
 ## REMOVED Requirements
 
-### Requirement: Поздравление сотрудника создаёт пожелание
+### Requirement: An employee's congratulation creates a wish
 
-**Reason**: Сценарий участия стал единым для администратора и сотрудника, поэтому создание пожелания из формы участия больше не ограничено ролью `employee`.
+**Reason**: The participation scenario has become unified for the administrator and the employee, so creating a wish from the participation form is no longer restricted to the `employee` role.
 
-**Migration**: Используйте требование «Поздравление из формы участия создаёт пожелание», которое описывает создание пожелания для обеих ролей.
+**Migration**: Use the requirement "A congratulation from the participation form creates a wish", which describes wish creation for both roles.
 
 ## ADDED Requirements
 
-### Requirement: Поздравление из формы участия создаёт пожелание
+### Requirement: A congratulation from the participation form creates a wish
 
-Когда пользователь поздравляет коллегу через форму участия и подтверждает отправку, система ДОЛЖНА создать пожелание от его имени на доске независимо от роли — и для сотрудника, и для администратора. Создание пожелания ДОЛЖНО происходить без раскрытия суммы сбора сотруднику.
+When a user congratulates a colleague through the participation form and confirms sending, the system MUST create a wish in their name on the board regardless of role — both for the employee and for the administrator. Wish creation MUST occur without disclosing the collection amount to the employee.
 
-#### Scenario: Сотрудник поздравляет и добавляет запись на доску
+#### Scenario: An employee congratulates and adds an entry to the board
 
-- **WHEN** сотрудник завершает сценарий поздравления и подтверждает отправку
-- **THEN** на доске появляется пожелание от имени этого сотрудника для выбранного получателя
+- **WHEN** the employee completes the congratulation scenario and confirms sending
+- **THEN** a wish in the name of this employee appears on the board for the selected recipient
 
-#### Scenario: Администратор поздравляет и добавляет запись на доску
+#### Scenario: The administrator congratulates and adds an entry to the board
 
-- **WHEN** администратор завершает сценарий поздравления и подтверждает отправку
-- **THEN** на доске появляется пожелание от имени администратора для выбранного получателя
+- **WHEN** the administrator completes the congratulation scenario and confirms sending
+- **THEN** a wish in the administrator's name appears on the board for the selected recipient
 
-#### Scenario: Сумма не раскрывается при поздравлении
+#### Scenario: The amount is not disclosed during congratulation
 
-- **WHEN** пользователь подтверждает поздравление
-- **THEN** на экране успеха и на доске не отображается сумма сбора
+- **WHEN** the user confirms the congratulation
+- **THEN** the collection amount is not displayed on the success screen or on the board
 
-### Requirement: Редактирование пожелания администратором
+### Requirement: Wish editing by the administrator
 
-Администратор ДОЛЖЕН иметь возможность изменять текст любого пожелания на доске для модерации недобросовестных записей. Отредактированное пожелание ДОЛЖНО сразу отображаться с новым текстом; автор, получатель и время создания НЕ ДОЛЖНЫ изменяться. Возможность редактирования НЕ ДОЛЖНА предоставляться сотрудникам.
+The administrator MUST be able to change the text of any wish on the board to moderate bad-faith entries. The edited wish MUST be displayed immediately with the new text; the author, recipient, and creation time MUST NOT change. The editing capability MUST NOT be provided to employees.
 
-#### Scenario: Администратор исправляет текст пожелания
+#### Scenario: The administrator corrects the wish text
 
-- **WHEN** администратор изменяет текст пожелания и сохраняет
-- **THEN** на доске отображается обновлённый текст, а автор, получатель и время создания остаются прежними
+- **WHEN** the administrator changes the wish text and saves
+- **THEN** the updated text is displayed on the board, while the author, recipient, and creation time remain the same
 
-#### Scenario: Сотрудник не редактирует пожелания
+#### Scenario: The employee does not edit wishes
 
-- **WHEN** доску пожеланий просматривает пользователь с ролью `employee`
-- **THEN** элементы управления редактированием не отображаются
+- **WHEN** a user with the `employee` role views the wish board
+- **THEN** the edit controls are not displayed

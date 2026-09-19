@@ -1,49 +1,49 @@
 ## MODIFIED Requirements
 
-### Requirement: Создание пожелания из формы
+### Requirement: Creating a wish from the form
 
-Система ДОЛЖНА (MUST) позволять авторизованному пользователю создать пожелание, выбрав получателя только из числа сегодняшних именинников (кроме себя) и введя текст. Форма ДОЛЖНА явно показывать отправителя (текущего пользователя) и понятно обозначать выбор получателя. Если сегодня именинник ровно один, форма ДОЛЖНА автоматически подставлять его в выбор получателя при открытии. Созданное пожелание ДОЛЖНО сохранять автора, получателя и время создания. Отправка ДОЛЖНА блокироваться, пока получатель не выбран или текст пуст. **Во время отправки форма ДОЛЖНА показывать состояние загрузки (disabled кнопка со спиннером), при ошибке — инлайн-уведомление с кнопкой «Повторить», при успехе — тост-уведомление и сброс формы.**
+The system (MUST) allow an authorized user to create a wish by selecting a recipient only from among today's birthday people (except themselves) and entering text. The form MUST explicitly show the sender (the current user) and clearly indicate the choice of recipient. If there is exactly one birthday person today, the form MUST automatically substitute them into the recipient selection when opened. The created wish MUST save the author, the recipient, and the creation time. Submission MUST be blocked until a recipient is selected and the text is non-empty. **While sending, the form MUST show a loading state (a disabled button with a spinner), on error — an inline notification with a "Retry" button, on success — a toast notification and a reset of the form.**
 
-#### Scenario: Успешное создание пожелания
-- **WHEN** пользователь выбирает получателя из сегодняшних именинников и вводит непустой текст, затем отправляет форму
-- **THEN** пожелание сохраняется с автором, получателем и временем создания и отображается по правилу показа дня рождения
+#### Scenario: Successfully creating a wish
+- **WHEN** the user selects a recipient from today's birthday people and enters non-empty text, then submits the form
+- **THEN** the wish is saved with the author, the recipient, and the creation time and is displayed according to the birthday display rule
 
-#### Scenario: Неполные данные
-- **WHEN** получатель не выбран или текст пуст
-- **THEN** отправка недоступна
+#### Scenario: Incomplete data
+- **WHEN** the recipient is not selected or the text is empty
+- **THEN** submission is unavailable
 
-#### Scenario: Форма показывает отправителя и получателя
-- **WHEN** пользователь открывает форму пожелания
-- **THEN** форма показывает текущего пользователя как отправителя и содержит понятный выбор получателя
+#### Scenario: The form shows the sender and the recipient
+- **WHEN** the user opens the wish form
+- **THEN** the form shows the current user as the sender and contains a clear recipient selection
 
-#### Scenario: Список получателей ограничен сегодняшними именинниками
-- **WHEN** пользователь открывает выбор получателя в форме пожелания
-- **THEN** в списке доступны только сотрудники, чей день рождения совпадает с текущей датой, а сам пользователь в списке отсутствует
+#### Scenario: The recipient list is limited to today's birthday people
+- **WHEN** the user opens the recipient selection in the wish form
+- **THEN** only employees whose birthday matches the current date are available in the list, and the user themselves is absent from the list
 
-#### Scenario: Автовыбор единственного именинника
-- **WHEN** сегодня именинник ровно один и пользователь открывает форму пожелания
-- **THEN** этот именинник уже выбран получателем, и пользователю остаётся ввести только текст
+#### Scenario: Auto-selection of the only birthday person
+- **WHEN** there is exactly one birthday person today and the user opens the wish form
+- **THEN** that birthday person is already selected as the recipient, and the user only needs to enter text
 
-#### Scenario: Несколько именинников — выбор за пользователем
-- **WHEN** сегодня несколько именинников и пользователь открывает форму пожелания
-- **THEN** получатель не выбран автоматически, и выбор остаётся за пользователем
+#### Scenario: Multiple birthday people — the choice is up to the user
+- **WHEN** there are several birthday people today and the user opens the wish form
+- **THEN** the recipient is not selected automatically, and the choice remains with the user
 
-#### Scenario: Состояние загрузки при создании пожелания
-- **WHEN** пользователь нажимает «Отправить» с валидными данными
-- **THEN** кнопка становится `disabled`, показывает `Loader2`, после успеха — тост «Пожелание добавлено», форма сбрасывается, после ошибки — `Alert` с текстом ошибки и кнопкой «Повторить»
+#### Scenario: Loading state when creating a wish
+- **WHEN** the user clicks "Send" with valid data
+- **THEN** the button becomes `disabled`, shows `Loader2`, after success — the "Wish added" toast, the form is reset, after error — an `Alert` with the error text and a "Retry" button
 
-### Requirement: Редактирование пожелания администратором
+### Requirement: Editing a wish by the administrator
 
-Администратор ДОЛЖЕН иметь возможность изменять текст любого пожелания на доске для модерации недобросовестных записей. Отредактированное пожелание ДОЛЖНО сразу отображаться с новым текстом; автор, получатель и время создания НЕ ДОЛЖНЫ изменяться. Возможность редактирования НЕ ДОЛЖНА предоставляться сотрудникам. **Во время сохранения модалка ДОЛЖНА показывать состояние загрузки, при ошибке — уведомление с «Повторить», при успехе — тост и закрытие модалки.**
+The administrator MUST be able to change the text of any wish on the board to moderate bad-faith entries. The edited wish MUST immediately be displayed with the new text; the author, the recipient, and the creation time MUST NOT change. The editing capability MUST NOT be provided to employees. **While saving, the modal MUST show a loading state, on error — a notification with "Retry", on success — a toast and closing of the modal.**
 
-#### Scenario: Администратор исправляет текст пожелания
-- **WHEN** администратор изменяет текст пожелания и сохраняет
-- **THEN** на доске отображается обновлённый текст, а автор, получатель и время создания остаются прежними
+#### Scenario: The administrator corrects the text of a wish
+- **WHEN** the administrator changes the text of a wish and saves
+- **THEN** the updated text is displayed on the board, while the author, the recipient, and the creation time remain the same
 
-#### Scenario: Сотрудник не редактирует пожелания
-- **WHEN** доску пожеланий просматривает пользователь с ролью `employee`
-- **THEN** элементы управления редактированием не отображаются
+#### Scenario: An employee does not edit wishes
+- **WHEN** a user with the `employee` role views the wish board
+- **THEN** the editing controls are not displayed
 
-#### Scenario: Состояние загрузки при редактировании пожелания
-- **WHEN** администратор нажимает «Сохранить» в модалке редактирования
-- **THEN** кнопка становится `disabled` с `Loader2`, после успеха — тост «Пожелание обновлено», модалка закрывается, после ошибки — `Alert` с кнопкой «Повторить»
+#### Scenario: Loading state when editing a wish
+- **WHEN** the administrator clicks "Save" in the edit modal
+- **THEN** the button becomes `disabled` with `Loader2`, after success — the "Wish updated" toast, the modal closes, after error — an `Alert` with a "Retry" button

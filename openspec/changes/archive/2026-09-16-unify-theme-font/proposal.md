@@ -1,29 +1,29 @@
 ## Why
 
-Типографика распределена между пятью семействами (`Nunito`, `Bricolage Grotesque`, `Manrope`, `Fraunces`, `Inter`) по трём темам, поэтому каждый стиль требует своей загрузки и сопровождения, а `Bricolage Grotesque` и `Fraunces` объявлены только с латиницей и уже приводят к подмене шрифта на кириллических заголовках. Единый шрифт для всех тем убирает эту развилку, гарантирует корректную кириллицу и сокращает число шрифтовых файлов.
+Typography is distributed across five families (`Nunito`, `Bricolage Grotesque`, `Manrope`, `Fraunces`, `Inter`) across three themes, so each style requires its own loading and maintenance, and `Bricolage Grotesque` and `Fraunces` are declared with Latin only and already lead to font substitution on Cyrillic headings. A single font for all themes removes this fork, guarantees correct Cyrillic, and reduces the number of font files.
 
 ## What Changes
 
-- Все темы (`warm`, `festival`, `premium`) используют единственное семейство `Manrope` для заголовков и основного текста.
-- `app/layout.tsx` подключает только `Manrope`; импорты и переменные `Nunito`, `Bricolage Grotesque`, `Fraunces`, `Inter` удаляются.
-- `lib/theme.ts` — метаданные темы больше не задают пару `fonts { heading, body }`.
-- `app/globals.css` — `--font-heading` и `--font-body` определяются один раз и не переопределяются внутри `[data-theme]`.
-- Тема перестаёт влиять на типографику; визуальное различие тем сохраняется за счёт палитры, радиусов и декора.
-- **BREAKING** (визуальный): заголовки тем `festival` и `premium` теряют акцидентные семейства, заголовок и текст больше не различаются семейством.
+- All themes (`warm`, `festival`, `premium`) use the single `Manrope` family for headings and body text.
+- `app/layout.tsx` includes only `Manrope`; the imports and variables of `Nunito`, `Bricolage Grotesque`, `Fraunces`, `Inter` are removed.
+- `lib/theme.ts` — the theme metadata no longer defines the `fonts { heading, body }` pair.
+- `app/globals.css` — `--font-heading` and `--font-body` are defined once and are not overridden inside `[data-theme]`.
+- The theme stops influencing typography; the visual distinction of themes is preserved through the palette, radii, and decoration.
+- **BREAKING** (visual): the headings of the `festival` and `premium` themes lose the display families, the heading and text are no longer distinguished by family.
 
 ## Capabilities
 
 ### New Capabilities
 
-- `theming`: правила системы тем — единая типографика всех тем и состав типографических токенов темы.
+- `theming`: rules of the theme system — unified typography of all themes and the composition of the theme's typographic tokens.
 
 ### Modified Capabilities
 
-<!-- Нет: требования существующих спеков (hydration, performance, ui-consistency) не меняются. -->
+<!-- None: the requirements of the existing specs (hydration, performance, ui-consistency) do not change. -->
 
 ## Impact
 
-- Код: `app/layout.tsx` (импорты `next/font`), `lib/theme.ts` (модель `ThemeMeta.fonts`), `app/globals.css` (токены `--font-*`), `tailwind.config.ts` (маппинг `fontFamily` остаётся на переменные).
-- Производительность: число запрашиваемых шрифтовых файлов снижается с 8 до 2 (`Manrope` latin + cyrillic); требование `performance` о загрузке шрифтов только активной темы остаётся выполнимым.
-- Документация: `InitialSpec.md:56-69` уже приведён в соответствие (единый `Manrope` для всех концепций).
-- Тесты: компонентных проверок типографики нет; существующие тесты темы и гидратации не затрагиваются.
+- Code: `app/layout.tsx` (`next/font` imports), `lib/theme.ts` (the `ThemeMeta.fonts` model), `app/globals.css` (the `--font-*` tokens), `tailwind.config.ts` (the `fontFamily` mapping remains on the variables).
+- Performance: the number of requested font files decreases from 8 to 2 (`Manrope` latin + cyrillic); the `performance` requirement about loading only the active theme's fonts remains satisfiable.
+- Documentation: `InitialSpec.md:56-69` has already been brought into compliance (a single `Manrope` for all concepts).
+- Tests: there are no component typography checks; the existing theme and hydration tests are not affected.

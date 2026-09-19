@@ -1,37 +1,37 @@
 ## Purpose
 
-Определяет требования к типографике системы тем: все визуальные темы используют единое семейство шрифтов, а тема не влияет на выбор шрифта.
+Defines the typography requirements of the theme system: all visual themes use a single font family, and the theme does not influence the font choice.
 
 ## ADDED Requirements
 
-### Requirement: Единое семейство шрифтов во всех темах
+### Requirement: A single font family in all themes
 
-Система ДОЛЖНА (MUST) применять одно и то же семейство шрифтов к заголовкам и основному тексту во всех темах. Оформление темы НЕ ДОЛЖНО (MUST NOT) задавать собственные семейства шрифтов.
+The system MUST apply the same font family to headings and body text in all themes. The theme styling MUST NOT define its own font families.
 
-#### Scenario: Смена темы не меняет шрифт
+#### Scenario: Changing the theme does not change the font
 
-- **WHEN** пользователь переключает визуальную тему
-- **THEN** семейство шрифтов заголовков и основного текста остаётся неизменным
+- **WHEN** the user switches the visual theme
+- **THEN** the font family of the headings and body text remains unchanged
 
-#### Scenario: Заголовок и текст совпадают по семейству
+#### Scenario: The heading and text match by family
 
-- **WHEN** отображается страница с заголовками и основным текстом
-- **THEN** заголовки и текст используют одно и то же семейство шрифтов
+- **WHEN** a page with headings and body text is displayed
+- **THEN** the headings and text use the same font family
 
-### Requirement: Единственное шрифтовое семейство в приложении
+### Requirement: A single font family in the application
 
-Приложение ДОЛЖНО (MUST) подключать не более одного семейства шрифтов на все темы. Дополнительные шрифтовые семейства НЕ ДОЛЖНЫ (MUST NOT) подключаться.
+The application MUST include no more than one font family for all themes. Additional font families MUST NOT be included.
 
-#### Scenario: Подключается только одно семейство
+#### Scenario: Only one family is included
 
-- **WHEN** приложение загружает шрифты
-- **THEN** запрашиваются файлы только одного семейства шрифтов
+- **WHEN** the application loads fonts
+- **THEN** only files of a single font family are requested
 
-### Requirement: Кириллица отображается единым шрифтом
+### Requirement: Cyrillic is displayed with the single font
 
-Единое семейство шрифтов ДОЛЖНО (MUST) содержать кириллические глифы, чтобы русский текст отображался этим семейством без подмены на резервный системный шрифт.
+The single font family MUST contain Cyrillic glyphs so that Russian text is displayed with this family without substitution with a fallback system font.
 
-#### Scenario: Русский заголовок без подмены шрифта
+#### Scenario: Russian heading without font substitution
 
-- **WHEN** отображается русскоязычный заголовок или текст
-- **THEN** он отрисован единым семейством шрифтов, а не резервным системным шрифтом
+- **WHEN** a Russian-language heading or text is displayed
+- **THEN** it is rendered with the single font family, not a fallback system font

@@ -1,45 +1,45 @@
-## 1. Состояние отказа
+## 1. Decline state
 
-- [x] 1.1 В `lib/data-store.ts` добавить helper `isGiftDeclined(userId, history)` (есть ли запись с причиной `refund_declined`) и экспортировать его; проверка — `npm run typecheck` проходит без ошибок
-- [x] 1.2 В `lib/data-store.ts` защитить `setGiftSent`: для отказавшегося сотрудника вызов не меняет статус; проверка — `npm run typecheck` и ручная проверка, что статус отказа не переключается
-- [x] 1.3 Убедиться, что существующая запись журнала `mockDonationHistory` (`refund_declined`, сотрудник `u3`) делает `u3` отказавшимся без правки `Donation`; проверка — `isGiftDeclined('u3', mockDonationHistory)` возвращает `true`
+- [x] 1.1 In `lib/data-store.ts`, add the helper `isGiftDeclined(userId, history)` (whether there is an entry with the reason `refund_declined`) and export it; check — `npm run typecheck` passes without errors
+- [x] 1.2 In `lib/data-store.ts`, protect `setGiftSent`: for a declined employee, the call does not change the status; check — `npm run typecheck` and a manual check that the decline status does not toggle
+- [x] 1.3 Make sure that the existing log entry `mockDonationHistory` (`refund_declined`, employee `u3`) makes `u3` declined without editing `Donation`; check — `isGiftDeclined('u3', mockDonationHistory)` returns `true`
 
-## 2. Админ-панель: статус «Отказ»
+## 2. Admin panel: "Declined" status
 
-- [x] 2.1 В `components/features/AdminTable.tsx` для отказавшегося сотрудника показывать неизменяемый бейдж «Отказ» вместо кнопки-переключателя статуса; проверка — в строке `u3` отображается «Отказ»
-- [x] 2.2 В `components/features/AdminTable.tsx` сделать недоступной кнопку «Изменить» для отказавшегося сотрудника (кнопка неактивна, диалог не открывается); проверка — у `u3` изменение суммы недоступно, сумма остаётся `0 ₽`
-- [x] 2.3 Проверить, что для сотрудников без отказа переключение «Не выслано» ↔ «Выслано» и изменение суммы работают как раньше; проверка — ручной прогон на любом другом сотруднике
+- [x] 2.1 In `components/features/AdminTable.tsx`, for a declined employee show a non-editable "Declined" badge instead of the status toggle button; check — the row `u3` shows "Declined"
+- [x] 2.2 In `components/features/AdminTable.tsx`, make the "Edit" button unavailable for a declined employee (the button is inactive, the dialog does not open); check — for `u3` the amount change is unavailable, and the amount remains `0 ₽`
+- [x] 2.3 Verify that for employees without a decline, the "Not sent" ↔ "Sent" toggle and amount changes work as before; check — a manual run on any other employee
 
-## 3. Запрет денежных подарков отказавшимся
+## 3. Prohibition of money gifts to those who declined
 
-- [x] 3.1 В `components/features/DonateDialog.tsx` вычислять множество отказавшихся из `history` и помечать их записи в списке получателей: `SelectItem` неактивен, с пометкой «отказался от подарка»; проверка — у `u3` запись неактивна и подписана
-- [x] 3.2 Убедиться, что неактивную запись нельзя выбрать и что подтверждение с ней невозможно; проверка — выбор `u3` не устанавливает получателя, дальнейшие шаги недоступны
-- [x] 3.3 Проверить, что текстовое поздравление отказавшемуся остаётся доступным через форму на доске пожеланий в день его рождения; проверка — ручной прогон с датой, когда отказавшийся является именинником
+- [x] 3.1 In `components/features/DonateDialog.tsx`, compute the set of declined persons from `history` and mark their entries in the recipient list: `SelectItem` is inactive, with the note "declined the gift"; check — the `u3` entry is inactive and labeled
+- [x] 3.2 Make sure that an inactive entry cannot be selected and that confirmation with it is impossible; check — selecting `u3` does not set the recipient, and subsequent steps are unavailable
+- [x] 3.3 Verify that a text congratulation to a declined person remains available via the form on the wish board on their birthday; check — a manual run with a date when the declined person is the birthday person
 
-## 4. Карточка пожелания без даты
+## 4. Wish card without a date
 
-- [x] 4.1 В `components/features/WishBoard.tsx` удалить блок с `format(wish.createdAt, …)` из `renderCard` и неиспользуемые импорты `format`/`ru`, если они больше не нужны; проверка — `npm run lint` не сообщает о неиспользуемых импортах
-- [x] 4.2 Проверить, что дата не отображается в карточке, а `createdAt` продолжает храниться и сортировка ленты «от новых к старым» не изменилась; проверка — визуальный осмотр карточек и порядка ленты
+- [x] 4.1 In `components/features/WishBoard.tsx`, remove the block with `format(wish.createdAt, …)` from `renderCard` and the unused imports `format`/`ru`, if they are no longer needed; check — `npm run lint` does not report unused imports
+- [x] 4.2 Verify that the date is not displayed on the card, while `createdAt` continues to be stored and the sorting of the strip "from new to old" has not changed; check — a visual inspection of the cards and the order of the strip
 
-## 5. Автовыбор единственного именинника
+## 5. Auto-selection of the only birthday person
 
-- [x] 5.1 В `components/features/WishBoard.tsx` при открытии формы подставлять получателя, если `wishRecipients` содержит ровно одного сотрудника; проверка — при единственном имениннике поле «Кого поздравляем» уже заполнено
-- [x] 5.2 Проверить, что при нескольких именинниках автовыбор не срабатывает, а при единственном имениннике — самом пользователе — форма остаётся без получателя; проверка — ручной прогон обоих случаев
+- [x] 5.1 In `components/features/WishBoard.tsx`, when the form is opened, fill in the recipient if `wishRecipients` contains exactly one employee; check — with a single birthday person the "Whom are we congratulating" field is already filled
+- [x] 5.2 Verify that with several birthday persons auto-selection does not trigger, and with a single birthday person — the user themselves — the form remains without a recipient; check — a manual run of both cases
 
-## 6. Устранение зависания меню шапки
+## 6. Elimination of the header menu freeze
 
-- [x] 6.1 В `components/layout/ThemeSwitcher.tsx` задать корневому `DropdownMenu` `modal={false}`; проверка — открытие меню больше не выставляет `pointer-events: none` на `<body>`
-- [x] 6.2 В `components/layout/Header.tsx` задать корневому `DropdownMenu` меню пользователя `modal={false}`; проверка — открытие меню не выставляет блокировку на `<body>`
-- [x] 6.3 Воспроизвести исходный дефект и убедиться в его отсутствии: открыть меню шапки, нажать «назад»/«вперёд» браузера, затем проверить, что страница прокручивается и элементы реагируют на клики без перезагрузки; проверка — `document.body` не сохраняет `pointer-events: none` и `data-scroll-locked`
-- [x] 6.4 Проверить отзывчивость при быстром переключении разделов верхней навигации; проверка — приложение остаётся интерактивным, перезагрузка не требуется
+- [x] 6.1 In `components/layout/ThemeSwitcher.tsx`, set `modal={false}` on the root `DropdownMenu`; check — opening the menu no longer sets `pointer-events: none` on `<body>`
+- [x] 6.2 In `components/layout/Header.tsx`, set `modal={false}` on the root `DropdownMenu` of the user menu; check — opening the menu does not set a lock on `<body>`
+- [x] 6.3 Reproduce the original defect and make sure it is absent: open the header menu, press the browser "back"/"forward", then check that the page scrolls and elements respond to clicks without a reload; check — `document.body` does not retain `pointer-events: none` and `data-scroll-locked`
+- [x] 6.4 Verify responsiveness during fast switching of the top navigation sections; check — the application remains interactive, and a reload is not required
 
-## 7. Вкладка переписки из адреса
+## 7. Correspondence tab from the address
 
-- [x] 7.1 В `app/(app)/faq/page.tsx` определять активную вкладку из `useSearchParams()` и обернуть компонент, использующий `useSearchParams`, в `<Suspense>`; проверка — `npm run typecheck` и `npm run build` проходят
-- [x] 7.2 Проверить, что нажатие индикатора непрочитанных в шапке открывает вкладку переписки как с уже открытой страницы `/faq`, так и при прямом переходе на `/faq?tab=messages`; проверка — вкладка переписки активна, администратор может выбрать ветку и ответить
+- [x] 7.1 In `app/(app)/faq/page.tsx`, determine the active tab from `useSearchParams()` and wrap the component that uses `useSearchParams` in `<Suspense>`; check — `npm run typecheck` and `npm run build` pass
+- [x] 7.2 Verify that pressing the unread indicator in the header opens the correspondence tab both from an already open page `/faq` and on direct navigation to `/faq?tab=messages`; check — the correspondence tab is active, and the administrator can select a thread and reply
 
-## 8. Проверка и финализация
+## 8. Verification and finalization
 
-- [x] 8.1 Прогнать `npm run typecheck`, `npm run lint` и `npm run build` без ошибок
-- [x] 8.2 Прогнать интеграционные сценарии: статус «Отказ» и блокировка управления; недоступность денежного подарка отказавшемуся и доступность текстового; отсутствие даты в карточке; автовыбор единственного именинника; отсутствие зависания при переходах; открытие вкладки переписки из шапки; проверить консоль на отсутствие ошибок
-- [x] 8.3 Выполнить `openspec validate fix-review-round-7 --strict` и убедиться в отсутствии ошибок
+- [x] 8.1 Run `npm run typecheck`, `npm run lint` and `npm run build` without errors
+- [x] 8.2 Run the integration scenarios: the "Declined" status and locked management; unavailability of a money gift to a declined person and availability of a text one; absence of the date on the card; auto-selection of the only birthday person; absence of freezes during navigation; opening the correspondence tab from the header; check the console for errors
+- [x] 8.3 Run `openspec validate fix-review-round-7 --strict` and make sure there are no errors

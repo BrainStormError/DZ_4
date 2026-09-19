@@ -1,24 +1,24 @@
 ## ADDED Requirements
 
-### Requirement: Выбор получателя различим на узком экране
+### Requirement: Recipient selection is distinguishable on a narrow screen
 
-Форма выбора получателя денежного поздравления ДОЛЖНА (MUST) оставаться пригодной на узких экранах. Длинные подписи получателей НЕ ДОЛЖНЫ обрезаться без возможности прочитать полный текст: подпись ДОЛЖНА усекаться аккуратно с доступным полным значением, а список выбора НЕ ДОЛЖЕН выходить за пределы вьюпорта.
+The recipient selection form for a monetary congratulation MUST remain usable on narrow screens. Long recipient labels MUST NOT be clipped without the ability to read the full text: the label MUST be truncated neatly with the full value accessible, and the selection list MUST NOT go outside the viewport.
 
-#### Scenario: Длинная подпись получателя
+#### Scenario: Long recipient label
 
-- **WHEN** пользователь открывает список получателей на узком экране
-- **THEN** подпись получателя усекается предсказуемо, а полное значение остаётся доступным пользователю
+- **WHEN** the user opens the recipient list on a narrow screen
+- **THEN** the recipient label is truncated predictably, and the full value remains available to the user
 
-#### Scenario: Список не выходит за экран
+#### Scenario: The list does not go outside the screen
 
-- **WHEN** пользователь раскрывает список выбора получателя на ширине 320px
-- **THEN** список укладывается в ширину вьюпорта и не обрезается по краям
+- **WHEN** the user expands the recipient selection list at a width of 320px
+- **THEN** the list fits within the viewport width and is not clipped at the edges
 
-### Requirement: Диалог участия вписывается во вьюпорт
+### Requirement: The participation dialog fits within the viewport
 
-Диалог участия ДОЛЖЕН (MUST) сохранять боковые отступы и ограничение высоты, чтобы ни один шаг, включая заголовок и кнопки действий, не оказывался недоступным на узком или низком экране.
+The participation dialog MUST preserve side margins and a height limit so that no step, including the header and the action buttons, becomes unreachable on a narrow or short screen.
 
-#### Scenario: Шаги участия на мобильном
+#### Scenario: Participation steps on mobile
 
-- **WHEN** пользователь проходит шаги участия на узком экране
-- **THEN** заголовок, содержимое шага и кнопки действий остаются внутри вьюпорта и достижимы
+- **WHEN** the user goes through the participation steps on a narrow screen
+- **THEN** the header, the step content, and the action buttons remain inside the viewport and are reachable

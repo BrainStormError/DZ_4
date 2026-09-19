@@ -1,49 +1,49 @@
 ## MODIFIED Requirements
 
-### Requirement: Приватность переписки сотрудника
+### Requirement: Privacy of an employee's correspondence
 
-Сотрудник ДОЛЖЕН видеть только собственную ветку переписки с администратором и НЕ ДОЛЖЕН иметь доступа к перепискам других сотрудников или к списку чужих обращений. **Отправка сообщения ДОЛЖНА показывать состояние загрузки на кнопке, при ошибке — инлайн-уведомление с «Повторить», при успехе — сообщение появляется в ленте.**
+An employee MUST see only their own correspondence thread with the administrator and MUST NOT have access to the correspondence of other employees or to the list of others' requests. **Sending a message MUST show a loading state on the button, on error — an inline notification with "Retry", on success — the message appears in the strip.**
 
-#### Scenario: Сотрудник видит только свою ветку
-- **WHEN** сотрудник открывает раздел переписки
-- **THEN** отображаются сообщения только его собственной ветки
+#### Scenario: An employee sees only their own thread
+- **WHEN** an employee opens the correspondence section
+- **THEN** only the messages of their own thread are displayed
 
-#### Scenario: Сообщение сотрудника попадает в его ветку
-- **WHEN** сотрудник отправляет сообщение администратору
-- **THEN** сообщение сохраняется в ветке этого сотрудника и отображается в его переписке
+#### Scenario: An employee's message goes into their thread
+- **WHEN** an employee sends a message to the administrator
+- **THEN** the message is saved in this employee's thread and displayed in their correspondence
 
-#### Scenario: Состояние загрузки при отправке сообщения сотрудником
-- **WHEN** сотрудник нажимает «Отправить» с непустым текстом
-- **THEN** кнопка становится `disabled` с `Loader2`, после успеха — сообщение появляется в ленте, поле очищается, после ошибки — `Alert` с кнопкой «Повторить»
+#### Scenario: Loading state when an employee sends a message
+- **WHEN** an employee clicks "Send" with non-empty text
+- **THEN** the button becomes `disabled` with `Loader2`, after success — the message appears in the strip, the field is cleared, after error — an `Alert` with a "Retry" button
 
-### Requirement: Администратор видит обращения сотрудников и может отвечать
+### Requirement: The administrator sees employees' requests and can reply
 
-Администратор ДОЛЖЕН видеть список всех веток обращений сотрудников и ДОЛЖЕН иметь возможность открыть любую ветку и ответить в ней. Ответ администратора ДОЛЖЕН добавляться в ветку выбранного сотрудника и ДОЛЖЕН быть виден этому сотруднику в его переписке. **Отправка ответа администратором ДОЛЖНА показывать состояние загрузки, ошибку и успех аналогично сотруднику.**
+The administrator MUST see the list of all employees' request threads and MUST be able to open any thread and reply in it. The administrator's reply MUST be added to the selected employee's thread and MUST be visible to that employee in their correspondence. **Sending a reply by the administrator MUST show a loading state, error, and success similarly to an employee.**
 
-#### Scenario: Просмотр списка обращений
-- **WHEN** администратор открывает раздел переписки
-- **THEN** он видит обращения сотрудников, включая ветки, созданные сотрудниками
+#### Scenario: Viewing the list of requests
+- **WHEN** the administrator opens the correspondence section
+- **THEN** they see employees' requests, including threads created by employees
 
-#### Scenario: Ответ в ветку сотрудника
-- **WHEN** администратор выбирает ветку сотрудника и отправляет ответ
-- **THEN** ответ добавляется в эту ветку и становится виден соответствующему сотруднику
+#### Scenario: A reply in an employee's thread
+- **WHEN** the administrator selects an employee's thread and sends a reply
+- **THEN** the reply is added to this thread and becomes visible to the corresponding employee
 
-#### Scenario: Ветка без сообщений
-- **WHEN** администратор выбирает сотрудника без переписки
-- **THEN** система показывает пустое состояние ветки и позволяет отправить первое сообщение
+#### Scenario: A thread without messages
+- **WHEN** the administrator selects an employee without correspondence
+- **THEN** the system shows the empty state of the thread and allows sending the first message
 
-#### Scenario: Состояние загрузки при ответе администратора
-- **WHEN** администратор нажимает «Ответить» с непустым текстом
-- **THEN** кнопка становится `disabled` с `Loader2`, после успеха — ответ появляется в ленте ветки, поле очищается, после ошибки — `Alert` с кнопкой «Повторить»
+#### Scenario: Loading state when the administrator replies
+- **WHEN** the administrator clicks "Reply" with non-empty text
+- **THEN** the button becomes `disabled` with `Loader2`, after success — the reply appears in the thread strip, the field is cleared, after error — an `Alert` with a "Retry" button
 
-### Requirement: Корректное авторство сообщений
+### Requirement: Correct message authorship
 
-Система ДОЛЖНА проставлять признак администратора для сообщений, отправленных администратором, и для сообщений сотрудника — соответственно, без жёстко заданного значения. Автор сообщения ДОЛЖЕН совпадать с отправившим его пользователем.
+The system MUST set the administrator flag for messages sent by the administrator, and correspondingly for an employee's messages, without a hardcoded value. The author of a message MUST match the user who sent it.
 
-#### Scenario: Сообщение администратора помечено как административное
-- **WHEN** администратор отправляет сообщение
-- **THEN** сообщение сохраняется как административное и атрибутируется администратору
+#### Scenario: An administrator's message is marked as administrative
+- **WHEN** the administrator sends a message
+- **THEN** the message is saved as administrative and attributed to the administrator
 
-#### Scenario: Сообщение сотрудника не помечено как административное
-- **WHEN** сотрудник отправляет сообщение
-- **THEN** сообщение сохраняется как сообщение сотрудника и атрибутируется ему
+#### Scenario: An employee's message is not marked as administrative
+- **WHEN** an employee sends a message
+- **THEN** the message is saved as an employee's message and attributed to them

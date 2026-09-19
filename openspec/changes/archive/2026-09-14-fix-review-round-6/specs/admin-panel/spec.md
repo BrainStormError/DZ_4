@@ -1,39 +1,39 @@
 ## ADDED Requirements
 
-### Requirement: Журнал изменений суммы сбора
+### Requirement: Change log of collection amounts
 
-Админ-панель ДОЛЖНА (MUST) предоставлять журнал изменений сумм сбора. Каждая запись ДОЛЖНА показывать сотрудника, администратора, причину, предыдущую и новую сумму, комментарий и дату. Для причины «Возврат (отказ от подарка)» новая сумма ДОЛЖНА отображаться равной `0`, поскольку отказ от подарка возвращает весь сбор. Экстренный возврат МОЖЕТ показывать ненулевую новую сумму.
+The admin panel (MUST) provide a change log of collection amounts. Each entry (MUST) show the employee, the administrator, the reason, the previous and new amount, the comment, and the date. For the reason "Refund (gift declined)", the new amount (MUST) be displayed as `0`, since declining a gift refunds the entire collection. An emergency refund MAY show a non-zero new amount.
 
-#### Scenario: Отказ от подарка обнуляет сумму в журнале
+#### Scenario: Declining a gift zeroes the amount in the log
 
-- **WHEN** администратор оформляет возврат с причиной «Возврат (отказ от подарка)»
-- **THEN** запись журнала показывает изменение с прежней суммы на `0 ₽`
+- **WHEN** an administrator processes a refund with the reason "Refund (gift declined)"
+- **THEN** the log entry shows a change from the previous amount to `0 ₽`
 
-#### Scenario: Экстренный возврат может быть частичным
+#### Scenario: An emergency refund may be partial
 
-- **WHEN** администратор оформляет экстренный возврат на меньшую ненулевую сумму
-- **THEN** запись журнала показывает прежнюю и новую сумму как есть
+- **WHEN** an administrator processes an emergency refund for a smaller non-zero amount
+- **THEN** the log entry shows the previous and new amount as they are
 
-#### Scenario: Пустой журнал
+#### Scenario: Empty log
 
-- **WHEN** изменений сумм ещё не было
-- **THEN** журнал показывает пустое состояние
+- **WHEN** there have been no amount changes yet
+- **THEN** the log shows an empty state
 
-### Requirement: Явное переключение таблицы и журнала
+### Requirement: Explicit switching between the table and the log
 
-Переключение между таблицей сборов и журналом изменений ДОЛЖНО (MUST) быть явным. Элементы управления ДОЛЖНЫ показывать оба доступных представления и текущее состояние. Возврат к таблице НЕ ДОЛЖЕН требовать повторного нажатия того же элемента, который открыл журнал.
+Switching between the collection table and the change log (MUST) be explicit. The controls (MUST) show both available views and the current state. Returning to the table (MUST NOT) require pressing the same control that opened the log again.
 
-#### Scenario: Переключение на журнал
+#### Scenario: Switching to the log
 
-- **WHEN** администратор выбирает представление «Журнал изменений»
-- **THEN** отображается журнал, а активное представление явно обозначено
+- **WHEN** the administrator selects the "Change log" view
+- **THEN** the log is displayed, and the active view is explicitly indicated
 
-#### Scenario: Возврат к таблице сборов
+#### Scenario: Returning to the collection table
 
-- **WHEN** администратор выбирает представление «Таблица сборов»
-- **THEN** отображается таблица сотрудников, и возврат выполняется отдельным выбором представления, а не повторным нажатием кнопки журнала
+- **WHEN** the administrator selects the "Collection table" view
+- **THEN** the employee table is displayed, and returning is done by a separate view selection, not by pressing the log button again
 
-#### Scenario: Доступность только администратору
+#### Scenario: Available only to the administrator
 
-- **WHEN** пользователь с ролью `employee` просматривает доступные ему страницы
-- **THEN** элементы переключения таблицы и журнала и сам журнал не отображаются
+- **WHEN** a user with the `employee` role browses the pages available to them
+- **THEN** the controls for switching the table and the log, as well as the log itself, are not displayed

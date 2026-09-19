@@ -1,79 +1,79 @@
 ## MODIFIED Requirements
 
-### Requirement: Создание пожелания из формы
+### Requirement: Creating a wish from the form
 
-Система ДОЛЖНА позволять авторизованному пользователю создать пожелание, выбрав получателя только из числа сегодняшних именинников (кроме себя) и введя текст. Форма ДОЛЖНА явно показывать отправителя (текущего пользователя) и понятно обозначать выбор получателя. Созданное пожелание ДОЛЖНО сохранять автора, получателя и время создания. Отправка ДОЛЖНА блокироваться, пока получатель не выбран или текст пуст.
+The system MUST allow an authorized user to create a wish by selecting a recipient only from among today's birthday people (excluding themself) and entering text. The form MUST explicitly show the sender (the current user) and clearly indicate the recipient selection. The created wish MUST store the author, recipient, and creation time. Submission MUST be blocked while the recipient is not selected or the text is empty.
 
-#### Scenario: Успешное создание пожелания
+#### Scenario: Successful wish creation
 
-- **WHEN** пользователь выбирает получателя из сегодняшних именинников и вводит непустой текст, затем отправляет форму
-- **THEN** пожелание сохраняется с автором, получателем и временем создания и отображается по правилу показа дня рождения
+- **WHEN** the user selects a recipient from today's birthday people and enters non-empty text, then submits the form
+- **THEN** the wish is saved with the author, recipient, and creation time and is displayed according to the birthday display rule
 
-#### Scenario: Неполные данные
+#### Scenario: Incomplete data
 
-- **WHEN** получатель не выбран или текст пуст
-- **THEN** отправка недоступна
+- **WHEN** the recipient is not selected or the text is empty
+- **THEN** submission is unavailable
 
-#### Scenario: Форма показывает отправителя и получателя
+#### Scenario: The form shows the sender and recipient
 
-- **WHEN** пользователь открывает форму пожелания
-- **THEN** форма показывает текущего пользователя как отправителя и содержит понятный выбор получателя
+- **WHEN** the user opens the wish form
+- **THEN** the form shows the current user as the sender and contains a clear recipient selection
 
-#### Scenario: Список получателей ограничен сегодняшними именинниками
+#### Scenario: The recipient list is limited to today's birthday people
 
-- **WHEN** пользователь открывает выбор получателя в форме пожелания
-- **THEN** в списке доступны только сотрудники, чей день рождения совпадает с текущей датой, а сам пользователь в списке отсутствует
+- **WHEN** the user opens the recipient selection in the wish form
+- **THEN** only employees whose birthday matches the current date are available in the list, and the user themself is absent from the list
 
-### Requirement: Кнопка «Оставить пожелание» на главной странице
+### Requirement: "Leave a wish" button on the home page
 
-Кнопка «Оставить пожелание» в hero-блоке главной страницы ДОЛЖНА открывать форму создания пожелания, когда сегодня есть именинники, и ДОЛЖНА быть неактивна, когда сегодня именинников нет. Поздравить заранее без взноса невозможно — заранее доступно только денежное участие.
+The "Leave a wish" button in the hero block of the home page MUST open the wish creation form when there are birthday people today, and MUST be inactive when there are no birthday people today. Congratulating in advance without a contribution is impossible — only money participation is available in advance.
 
-#### Scenario: Открытие формы с главной страницы
+#### Scenario: Opening the form from the home page
 
-- **WHEN** сегодня есть хотя бы один именинник и пользователь нажимает «Оставить пожелание» в hero-блоке
-- **THEN** отображается форма создания пожелания
+- **WHEN** there is at least one birthday person today and the user clicks "Leave a wish" in the hero block
+- **THEN** the wish creation form is displayed
 
-#### Scenario: Сегодня именинников нет
+#### Scenario: No birthday people today
 
-- **WHEN** ни у одного сотрудника день рождения не совпадает с текущей датой
-- **THEN** кнопка «Оставить пожелание» неактивна и форма создания пожелания не открывается
+- **WHEN** no employee's birthday matches the current date
+- **THEN** the "Leave a wish" button is inactive and the wish creation form does not open
 
-### Requirement: Лента поздравлений для именинников дня
+### Requirement: Congratulations strip for the day's birthday people
 
-Все поздравления, показанные для выбранной даты дня рождения, ДОЛЖНЫ отображаться одной лентой, а не разрастающейся сеткой. Когда карточки не помещаются в доступную ширину, лента ДОЛЖНА плавно автоматически прокручиваться по кругу; когда карточки помещаются полностью, лента ДОЛЖНА отображаться статичной полосой без дублирующихся карточек. Дублирующая копия содержимого НЕ ДОЛЖНА быть видна, пока автопрокрутка не активна. Карточки ДОЛЖНЫ иметь цветовую подсветку, закреплённую за именинником. Автопрокрутка ДОЛЖНА приостанавливаться при наведении или фокусе и отключаться при `prefers-reduced-motion`, оставляя доступный вручную список без дублей.
+All congratulations shown for the selected birthday date MUST be displayed in a single strip, not a growing grid. When the cards do not fit within the available width, the strip MUST smoothly auto-scroll in a loop; when the cards fit completely, the strip MUST be displayed as a static row without duplicate cards. A duplicate copy of the content MUST NOT be visible while auto-scroll is not active. The cards MUST have a color highlight pinned to the birthday person. Auto-scroll MUST pause on hover or focus and be disabled with `prefers-reduced-motion`, leaving an accessible manual list without duplicates.
 
-#### Scenario: Одна общая лента
+#### Scenario: One common strip
 
-- **WHEN** именинников текущего дня несколько
-- **THEN** все их поздравления показываются в одной ленте
+- **WHEN** there are several birthday people on the current day
+- **THEN** all their congratulations are shown in a single strip
 
-#### Scenario: Мало поздравлений — статичная полоса
+#### Scenario: Few congratulations — static row
 
-- **WHEN** все карточки поздравлений помещаются в доступную ширину ленты
-- **THEN** лента статична, и каждая карточка отображается ровно один раз
+- **WHEN** all congratulation cards fit within the available strip width
+- **THEN** the strip is static, and each card is displayed exactly once
 
-#### Scenario: Много поздравлений — автопрокрутка
+#### Scenario: Many congratulations — auto-scroll
 
-- **WHEN** карточки поздравлений не помещаются в доступную ширину ленты
-- **THEN** лента автоматически прокручивается по кругу без видимого разрыва
+- **WHEN** the congratulation cards do not fit within the available strip width
+- **THEN** the strip automatically scrolls in a loop without a visible gap
 
-#### Scenario: Цветовая подсветка по имениннику
+#### Scenario: Color highlight per birthday person
 
-- **WHEN** поздравления принадлежат разным именинникам
-- **THEN** карточки каждого именинника подсвечены закреплённым за ним цветом
+- **WHEN** the congratulations belong to different birthday people
+- **THEN** the cards of each birthday person are highlighted with a color pinned to them
 
-#### Scenario: Доступность автопрокрутки
+#### Scenario: Auto-scroll accessibility
 
-- **WHEN** пользователь наводит курсор или ставит фокус на ленту, либо в системе включён `prefers-reduced-motion`
-- **THEN** автопрокрутка приостанавливается или отключается, содержимое остаётся доступным, а дублирующие карточки не отображаются
+- **WHEN** the user hovers the cursor or sets focus on the strip, or `prefers-reduced-motion` is enabled in the system
+- **THEN** auto-scroll pauses or is disabled, the content remains accessible, and duplicate cards are not displayed
 
 ## ADDED Requirements
 
-### Requirement: Прошедший день рождения только для чтения
+### Requirement: Past birthday read-only
 
-Когда сегодня именинников нет, доска показывает поздравления для ближайшей прошедшей даты дня рождения как заглушку, чтобы страница не пустовала. Для этой прошедшей даты система НЕ ДОЛЖНА предлагать создание новых бесплатных пожеланий и НЕ ДОЛЖНА предлагать отправку денежного поздравления.
+When there are no birthday people today, the board shows congratulations for the nearest past birthday date as a placeholder, so that the page is not empty. For this past date, the system MUST NOT offer creating new free wishes and MUST NOT offer sending a money congratulation.
 
-#### Scenario: Заглушка не принимает новых поздравлений
+#### Scenario: The placeholder does not accept new congratulations
 
-- **WHEN** доска показывает ближайшую прошедшую дату дня рождения, потому что сегодня именинников нет
-- **THEN** новые бесплатные пожелания для этой даты недоступны, а получатели этой даты недоступны для денежного поздравления
+- **WHEN** the board shows the nearest past birthday date because there are no birthday people today
+- **THEN** new free wishes for this date are unavailable, and the recipients of this date are unavailable for a money congratulation

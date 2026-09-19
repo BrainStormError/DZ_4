@@ -1,15 +1,15 @@
 ## ADDED Requirements
 
-### Requirement: Лента поздравлений не зацикливает рендеринг
+### Requirement: The congratulations strip does not loop rendering
 
-Определение переполнения ленты поздравлений и запуск автопрокрутки НЕ ДОЛЖНЫ (MUST NOT) приводить к повторным циклам обновления состояния или зависанию главного потока. Лента ДОЛЖНА оставаться отзывчивой при изменении числа карточек.
+Detecting the overflow of the congratulations strip and starting auto-scroll MUST NOT lead to repeated state update loops or main thread freezes. The strip MUST remain responsive when the number of cards changes.
 
-#### Scenario: Переход между статичной полосой и автопрокруткой
+#### Scenario: Transition between the static strip and auto-scroll
 
-- **WHEN** количество карточек изменяется так, что лента переходит из статичного состояния в прокручиваемое и обратно
-- **THEN** переполнение определяется без зацикливания рендеринга, и приложение остаётся отзывчивым
+- **WHEN** the number of cards changes so that the strip transitions from the static state to scrolling and back
+- **THEN** overflow is detected without looping rendering, and the application remains responsive
 
-#### Scenario: Нет ошибки превышения глубины обновления
+#### Scenario: No update depth exceeded error
 
-- **WHEN** лента отображается и наблюдатель размеров измеряет переполнение
-- **THEN** в консоли не возникает ошибки превышения максимальной глубины обновления, и главный поток не зависает
+- **WHEN** the strip is displayed and the size observer measures overflow
+- **THEN** no maximum update depth exceeded error occurs in the console, and the main thread does not freeze

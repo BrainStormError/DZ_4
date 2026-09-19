@@ -1,15 +1,15 @@
 ## ADDED Requirements
 
-### Requirement: Доступность поля ответа администратору
+### Requirement: Accessibility of the administrator reply field
 
-Поле ответа администратора в ветке переписки ДОЛЖНО (MUST) оставаться видимым и пригодным для ввода при любом количестве обращений сотрудников, в том числе на десктопной раскладке, когда список обращений длинный.
+The administrator reply field in a conversation thread MUST remain visible and usable for input with any number of employee requests, including in the desktop layout when the request list is long.
 
-#### Scenario: Много обращений на десктопе
+#### Scenario: Many requests on desktop
 
-- **WHEN** администратор открывает переписку, а список сотрудников содержит столько веток, что не помещается в область чата
-- **THEN** поле «Ответить сотруднику...» видно и доступно для ввода, не обрезаясь за нижним краем
+- **WHEN** the administrator opens a conversation, and the employee list contains so many threads that it does not fit in the chat area
+- **THEN** the "Reply to employee..." field is visible and available for input, without being clipped past the bottom edge
 
-#### Scenario: Список обращений прокручивается независимо
+#### Scenario: The request list scrolls independently
 
-- **WHEN** список обращений длинный
-- **THEN** список прокручивается в своей области, а поле ответа остаётся на месте и остаётся доступным
+- **WHEN** the request list is long
+- **THEN** the list scrolls within its own area, and the reply field stays in place and remains available

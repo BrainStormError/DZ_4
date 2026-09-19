@@ -1,57 +1,57 @@
 ## MODIFIED Requirements
 
-### Requirement: Статус отправки подарка
+### Requirement: Gift sending status
 
-Админ-панель ДОЛЖНА (MUST) показывать для каждого сотрудника статус подарка: «Не выслано», «Выслано» или «Отказ». Для сотрудников без отказа администратор ДОЛЖЕН иметь возможность изменить статус вручную между «Не выслано» и «Выслано», и изменение ДОЛЖНО сразу отражаться в таблице. Для сотрудника, отказавшегося от подарка, статус ДОЛЖЕН отображаться как «Отказ» и НЕ ДОЛЖЕН изменяться вручную. **Переключение статуса ДОЛЖНО показывать состояние загрузки на кнопке, при ошибке — тост/уведомление с «Повторить», при успехе — тост «Статус обновлён».**
+The admin panel (MUST) show the gift status for each employee: "Not sent", "Sent", or "Declined". For employees without a decline, the administrator MUST be able to change the status manually between "Not sent" and "Sent", and the change MUST be immediately reflected in the table. For an employee who has declined the gift, the status MUST be displayed as "Declined" and MUST NOT be changed manually. **Toggling the status MUST show a loading state on the button, on error — a toast/notification with "Retry", on success — the "Status updated" toast.**
 
-#### Scenario: Статус по умолчанию
-- **WHEN** администратор открывает таблицу и для сотрудника подарок ещё не отмечен
-- **THEN** для этого сотрудника отображается статус «Не выслано»
+#### Scenario: Default status
+- **WHEN** the administrator opens the table and the gift has not yet been marked for an employee
+- **THEN** the status "Not sent" is displayed for that employee
 
-#### Scenario: Администратор отмечает подарок высланным
-- **WHEN** администратор вручную меняет статус сотрудника на «Выслано»
-- **THEN** в таблице для этого сотрудника отображается «Выслано»
+#### Scenario: The administrator marks the gift as sent
+- **WHEN** the administrator manually changes an employee's status to "Sent"
+- **THEN** "Sent" is displayed in the table for that employee
 
-#### Scenario: Администратор снимает статус
-- **WHEN** администратор вручную возвращает статус сотрудника в «Не выслано»
-- **THEN** в таблице для этого сотрудника отображается «Не выслано»
+#### Scenario: The administrator clears the status
+- **WHEN** the administrator manually returns an employee's status to "Not sent"
+- **THEN** "Not sent" is displayed in the table for that employee
 
-#### Scenario: Отказ отражается отдельным статусом
-- **WHEN** сотрудник отказался от подарка
-- **THEN** в таблице для этого сотрудника отображается статус «Отказ»
+#### Scenario: A decline is reflected as a separate status
+- **WHEN** an employee has declined the gift
+- **THEN** the status "Declined" is displayed in the table for that employee
 
-#### Scenario: Статус отказа не изменяется вручную
-- **WHEN** администратор просматривает строку отказавшегося от подарка сотрудника
-- **THEN** элементы изменения статуса для этого сотрудника недоступны, а статус остаётся «Отказ»
+#### Scenario: The decline status is not changed manually
+- **WHEN** the administrator views the row of an employee who has declined the gift
+- **THEN** the status change controls for that employee are unavailable, and the status remains "Declined"
 
-#### Scenario: Состояние загрузки при изменении статуса подарка
-- **WHEN** администратор нажимает кнопку переключения статуса (Не выслано ↔ Выслано)
-- **THEN** кнопка показывает `Loader2` и `disabled`, после успеха — тост «Статус обновлён», после ошибки — тост с ошибкой и кнопкой «Повторить»
+#### Scenario: Loading state when changing the gift status
+- **WHEN** the administrator clicks the status toggle button (Not sent ↔ Sent)
+- **THEN** the button shows `Loader2` and `disabled`, after success — the "Status updated" toast, after error — a toast with the error and a "Retry" button
 
-### Requirement: Журнал изменений суммы сбора
+### Requirement: Collection amount change log
 
-Админ-панель ДОЛЖНА (MUST) предоставлять журнал изменений сумм сбора. Каждая запись ДОЛЖНА показывать сотрудника, администратора, причину, предыдущую и новую сумму, комментарий и дату. Для причины «Возврат (отказ от подарка)» новая сумма ДОЛЖНА отображаться равной `0`, поскольку отказ от подарка возвращает весь сбор. Экстренный возврат МОЖЕТ показывать ненулевую новую сумму. **Сохранение изменения суммы в модалке ДОЛЖНО показывать загрузку, ошибку и успех.**
+The admin panel (MUST) provide a log of collection amount changes. Each entry MUST show the employee, the administrator, the reason, the previous and new amount, the comment, and the date. For the reason "Refund (gift declined)", the new amount MUST be displayed as equal to `0`, since declining the gift refunds the entire collection. An emergency refund MAY show a non-zero new amount. **Saving an amount change in the modal MUST show loading, error, and success.**
 
-#### Scenario: Отказ от подарка обнуляет сумму в журнале
-- **WHEN** администратор оформляет возврат с причиной «Возврат (отказ от подарка)»
-- **THEN** запись журнала показывает изменение с прежней суммы на `0 ₽`
+#### Scenario: Declining the gift zeroes the amount in the log
+- **WHEN** the administrator processes a refund with the reason "Refund (gift declined)"
+- **THEN** the log entry shows the change from the previous amount to `0 ₽`
 
-#### Scenario: Экстренный возврат может быть частичным
-- **WHEN** администратор оформляет экстренный возврат на меньшую ненулевую сумму
-- **THEN** запись журнала показывает прежнюю и новую сумму как есть
+#### Scenario: An emergency refund may be partial
+- **WHEN** the administrator processes an emergency refund to a smaller non-zero amount
+- **THEN** the log entry shows the previous and new amount as they are
 
-#### Scenario: Пустой журнал
-- **WHEN** изменений сумм ещё не было
-- **THEN** журнал показывает пустое состояние
+#### Scenario: Empty log
+- **WHEN** there have been no amount changes yet
+- **THEN** the log shows an empty state
 
-#### Scenario: Состояние загрузки при сохранении изменения суммы
-- **WHEN** администратор нажимает «Сохранить» в модалке изменения суммы
-- **THEN** кнопка становится `disabled` с `Loader2`, после успеха — тост «Сумма обновлена», модалка закрывается, журнал обновляется, после ошибки — `Alert` с кнопкой «Повторить»
+#### Scenario: Loading state when saving an amount change
+- **WHEN** the administrator clicks "Save" in the amount change modal
+- **THEN** the button becomes `disabled` with `Loader2`, after success — the "Amount updated" toast, the modal closes, the log refreshes, after error — an `Alert` with a "Retry" button
 
-### Requirement: Статус подарка доступен только администратору
+### Requirement: Gift status is available only to the administrator
 
-Статус отправки подарка ДОЛЖЕН отображаться и изменяться только для роли `admin`. Пользователи с ролью `employee` НЕ ДОЛЖНЫ видеть статус подарка и элементы его изменения.
+The gift sending status MUST be displayed and changed only for the `admin` role. Users with the `employee` role MUST NOT see the gift status or its change controls.
 
-#### Scenario: Сотрудник не видит статус подарка
-- **WHEN** пользователь с ролью `employee` просматривает доступные ему страницы
-- **THEN** статус отправки подарка и элементы его изменения не отображаются
+#### Scenario: An employee does not see the gift status
+- **WHEN** a user with the `employee` role views the pages available to them
+- **THEN** the gift sending status and its change controls are not displayed

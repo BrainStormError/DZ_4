@@ -2,113 +2,113 @@
 
 ## Purpose
 
-Даёт администратору таблицу сотрудников с датой рождения и статусом отправки подарка, чтобы контролировать, кому подарок уже выслан.
+Gives the administrator a table of employees with their birthday date and gift-sending status, so that they can control who has already been sent a gift.
 
 ## Requirements
 
-### Requirement: Дата рождения в таблице сотрудников
+### Requirement: Birthday date in the employee table
 
-Админ-панель ДОЛЖНА показывать в таблице сотрудников дату рождения каждого сотрудника. Дата ДОЛЖНА отображаться в читаемом виде и позволять администратору быстро оценить ближайшие дни рождения.
+The admin panel MUST show the birthday date of each employee in the employee table. The date MUST be displayed in a readable form and allow the administrator to quickly assess the upcoming birthdays.
 
-#### Scenario: Дата рождения отображается
+#### Scenario: Birthday date is displayed
 
-- **WHEN** администратор открывает админ-панель
-- **THEN** в таблице сотрудников для каждой строки отображается дата рождения этого сотрудника
+- **WHEN** the administrator opens the admin panel
+- **THEN** the employee table displays the birthday date of that employee for each row
 
-### Requirement: Статус отправки подарка
+### Requirement: Gift-sending status
 
-Админ-панель ДОЛЖНА (MUST) показывать для каждого сотрудника статус подарка: «Не выслано», «Выслано» или «Отказ». Для сотрудников без отказа администратор ДОЛЖЕН иметь возможность изменить статус вручную между «Не выслано» и «Выслано», и изменение ДОЛЖНО сразу отражаться в таблице. Для сотрудника, отказавшегося от подарка, статус ДОЛЖЕН отображаться как «Отказ» и НЕ ДОЛЖЕН изменяться вручную. **Переключение статуса ДОЛЖНО показывать состояние загрузки на кнопке, при ошибке — тост/уведомление с «Повторить», при успехе — тост «Статус обновлён».**
+The admin panel MUST show a gift status for each employee: "Not sent", "Sent", or "Declined". For employees who have not declined, the administrator MUST be able to change the status manually between "Not sent" and "Sent", and the change MUST be immediately reflected in the table. For an employee who declined the gift, the status MUST be displayed as "Declined" and MUST NOT be changed manually. **Toggling the status MUST show a loading state on the button, on error — a toast/notification with "Retry", on success — a toast "Status updated".**
 
-#### Scenario: Статус по умолчанию
-- **WHEN** администратор открывает таблицу и для сотрудника подарок ещё не отмечен
-- **THEN** для этого сотрудника отображается статус «Не выслано»
+#### Scenario: Default status
+- **WHEN** the administrator opens the table and the gift has not yet been marked for an employee
+- **THEN** the status "Not sent" is displayed for that employee
 
-#### Scenario: Администратор отмечает подарок высланным
-- **WHEN** администратор вручную меняет статус сотрудника на «Выслано»
-- **THEN** в таблице для этого сотрудника отображается «Выслано»
+#### Scenario: Administrator marks the gift as sent
+- **WHEN** the administrator manually changes the employee's status to "Sent"
+- **THEN** "Sent" is displayed in the table for that employee
 
-#### Scenario: Администратор снимает статус
-- **WHEN** администратор вручную возвращает статус сотрудника в «Не выслано»
-- **THEN** в таблице для этого сотрудника отображается «Не выслано»
+#### Scenario: Administrator clears the status
+- **WHEN** the administrator manually returns the employee's status to "Not sent"
+- **THEN** "Not sent" is displayed in the table for that employee
 
-#### Scenario: Отказ отражается отдельным статусом
-- **WHEN** сотрудник отказался от подарка
-- **THEN** в таблице для этого сотрудника отображается статус «Отказ»
+#### Scenario: Decline is reflected as a separate status
+- **WHEN** an employee declined the gift
+- **THEN** the status "Declined" is displayed in the table for that employee
 
-#### Scenario: Статус отказа не изменяется вручную
-- **WHEN** администратор просматривает строку отказавшегося от подарка сотрудника
-- **THEN** элементы изменения статуса для этого сотрудника недоступны, а статус остаётся «Отказ»
+#### Scenario: Decline status is not changed manually
+- **WHEN** the administrator views the row of an employee who declined the gift
+- **THEN** the status-change controls for that employee are unavailable, and the status remains "Declined"
 
-#### Scenario: Состояние загрузки при изменении статуса подарка
-- **WHEN** администратор нажимает кнопку переключения статуса (Не выслано ↔ Выслано)
-- **THEN** кнопка показывает `Loader2` и `disabled`, после успеха — тост «Статус обновлён», после ошибки — тост с ошибкой и кнопкой «Повторить»
+#### Scenario: Loading state when changing the gift status
+- **WHEN** the administrator clicks the status toggle button (Not sent ↔ Sent)
+- **THEN** the button shows `Loader2` and `disabled`, after success — the toast "Status updated", after error — an error toast with a "Retry" button
 
-### Requirement: Статус подарка доступен только администратору
+### Requirement: Gift status is available only to the administrator
 
-Статус отправки подарка ДОЛЖЕН отображаться и изменяться только для роли `admin`. Пользователи с ролью `employee` НЕ ДОЛЖНЫ видеть статус подарка и элементы его изменения.
+The gift-sending status MUST be displayed and changed only for the `admin` role. Users with the `employee` role MUST NOT see the gift status or its change controls.
 
-#### Scenario: Сотрудник не видит статус подарка
-- **WHEN** пользователь с ролью `employee` просматривает доступные ему страницы
-- **THEN** статус отправки подарка и элементы его изменения не отображаются
+#### Scenario: Employee does not see the gift status
+- **WHEN** a user with the `employee` role views the pages available to them
+- **THEN** the gift-sending status and its change controls are not displayed
 
-### Requirement: Журнал изменений суммы сбора
+### Requirement: Collection amount change log
 
-Админ-панель ДОЛЖНА (MUST) предоставлять журнал изменений сумм сбора. Каждая запись ДОЛЖНА показывать сотрудника, администратора, причину, предыдущую и новую сумму, комментарий и дату. Для причины «Возврат (отказ от подарка)» новая сумма ДОЛЖНА отображаться равной `0`, поскольку отказ от подарка возвращает весь сбор. Экстренный возврат МОЖЕТ показывать ненулевую новую сумму. **Сохранение изменения суммы в модалке ДОЛЖНО показывать загрузку, ошибку и успех.**
+The admin panel MUST provide a log of collection amount changes. Each entry MUST show the employee, the administrator, the reason, the previous and new amount, the comment, and the date. For the reason "Refund (gift declined)" the new amount MUST be displayed as `0`, since declining the gift returns the entire collection. An emergency refund MAY show a non-zero new amount. **Saving an amount change in the modal MUST show loading, error, and success.**
 
-#### Scenario: Отказ от подарка обнуляет сумму в журнале
-- **WHEN** администратор оформляет возврат с причиной «Возврат (отказ от подарка)»
-- **THEN** запись журнала показывает изменение с прежней суммы на `0 ₽`
+#### Scenario: Declining the gift zeroes the amount in the log
+- **WHEN** the administrator processes a refund with the reason "Refund (gift declined)"
+- **THEN** the log entry shows a change from the previous amount to `0 ₽`
 
-#### Scenario: Экстренный возврат может быть частичным
-- **WHEN** администратор оформляет экстренный возврат на меньшую ненулевую сумму
-- **THEN** запись журнала показывает прежнюю и новую сумму как есть
+#### Scenario: An emergency refund may be partial
+- **WHEN** the administrator processes an emergency refund for a smaller non-zero amount
+- **THEN** the log entry shows the previous and the new amount as they are
 
-#### Scenario: Пустой журнал
-- **WHEN** изменений сумм ещё не было
-- **THEN** журнал показывает пустое состояние
+#### Scenario: Empty log
+- **WHEN** no amount changes have occurred yet
+- **THEN** the log shows an empty state
 
-#### Scenario: Состояние загрузки при сохранении изменения суммы
-- **WHEN** администратор нажимает «Сохранить» в модалке изменения суммы
-- **THEN** кнопка становится `disabled` с `Loader2`, после успеха — тост «Сумма обновлена», модалка закрывается, журнал обновляется, после ошибки — `Alert` с кнопкой «Повторить»
+#### Scenario: Loading state when saving an amount change
+- **WHEN** the administrator clicks "Save" in the amount change modal
+- **THEN** the button becomes `disabled` with `Loader2`, after success — the toast "Amount updated", the modal closes, the log is refreshed, after error — an `Alert` with a "Retry" button
 
-### Requirement: Явное переключение таблицы и журнала
+### Requirement: Explicit switching between the table and the log
 
-Переключение между таблицей сборов и журналом изменений ДОЛЖНО (MUST) быть явным. Элементы управления ДОЛЖНЫ показывать оба доступных представления и текущее состояние. Возврат к таблице НЕ ДОЛЖЕН требовать повторного нажатия того же элемента, который открыл журнал.
+Switching between the collection table and the change log MUST be explicit. The controls MUST show both available views and the current state. Returning to the table MUST NOT require pressing the same control again that opened the log.
 
-#### Scenario: Переключение на журнал
+#### Scenario: Switching to the log
 
-- **WHEN** администратор выбирает представление «Журнал изменений»
-- **THEN** отображается журнал, а активное представление явно обозначено
+- **WHEN** the administrator selects the "Change log" view
+- **THEN** the log is displayed, and the active view is explicitly indicated
 
-#### Scenario: Возврат к таблице сборов
+#### Scenario: Returning to the collection table
 
-- **WHEN** администратор выбирает представление «Таблица сборов»
-- **THEN** отображается таблица сотрудников, и возврат выполняется отдельным выбором представления, а не повторным нажатием кнопки журнала
+- **WHEN** the administrator selects the "Collection table" view
+- **THEN** the employee table is displayed, and the return is performed by a separate view selection, and not by pressing the log button again
 
-#### Scenario: Доступность только администратору
+#### Scenario: Available only to the administrator
 
-- **WHEN** пользователь с ролью `employee` просматривает доступные ему страницы
-- **THEN** элементы переключения таблицы и журнала и сам журнал не отображаются
+- **WHEN** a user with the `employee` role views the pages available to them
+- **THEN** the table/log switching controls and the log itself are not displayed
 
-### Requirement: Таблица сборов пригодна на узком экране
+### Requirement: The collection table is usable on a narrow screen
 
-Таблица сборов ДОЛЖНА (MUST) оставаться пригодной для использования на узких экранах. На мобильных размерах система ДОЛЖНА либо представлять строки в виде списка карточек, либо скрывать второстепенные колонки так, чтобы ключевая информация и действие оставались видимыми. Горизонтальная прокрутка ДОЛЖНА (MUST) быть только внутренней для области таблицы и НЕ ДОЛЖНА создавать горизонтальный скролл страницы.
+The collection table MUST remain usable on narrow screens. At mobile sizes the system MUST either present the rows as a list of cards or hide secondary columns so that the key information and the action remain visible. Horizontal scrolling MUST be internal to the table area only and MUST NOT create horizontal scrolling of the page.
 
-#### Scenario: Таблица на мобильном
+#### Scenario: Table on mobile
 
-- **WHEN** администратор открывает таблицу сборов на узком экране
-- **THEN** ключевая информация о сотруднике и действие доступны без горизонтальной прокрутки страницы
+- **WHEN** the administrator opens the collection table on a narrow screen
+- **THEN** the key information about the employee and the action are available without horizontal scrolling of the page
 
-#### Scenario: Колонка действия достижима
+#### Scenario: Action column is reachable
 
-- **WHEN** администратор просматривает строку сотрудника на узком экране
-- **THEN** действие изменения строки достижимо, а не скрыто за краем
+- **WHEN** the administrator views an employee row on a narrow screen
+- **THEN** the row change action is reachable, and not hidden beyond the edge
 
-### Requirement: Единственный контейнер прокрутки таблицы
+### Requirement: Single table scroll container
 
-Область таблицы НЕ ДОЛЖНА (MUST NOT) содержать вложенные дублирующие контейнеры горизонтальной прокрутки. Прокрутка таблицы ДОЛЖНА выполняться в одном контейнере.
+The table area MUST NOT contain nested duplicate horizontal scroll containers. Table scrolling MUST be performed in a single container.
 
-#### Scenario: Отсутствие двойной прокрутки
+#### Scenario: No double scrolling
 
-- **WHEN** пользователь прокручивает таблицу по горизонтали
-- **THEN** прокручивается только один контейнер, без вложенной двойной прокрутки
+- **WHEN** the user scrolls the table horizontally
+- **THEN** only one container scrolls, without nested double scrolling

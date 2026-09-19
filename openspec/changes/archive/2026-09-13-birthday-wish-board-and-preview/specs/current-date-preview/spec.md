@@ -1,52 +1,52 @@
 ## Purpose
 
-Даёт администратору безопасный режим предпросмотра: посмотреть доску пожеланий и блоки именинников на выбранную дату, не изменяя реальные данные и не влияя на других пользователей.
+Gives the administrator a safe preview mode: to view the wish board and the birthday person blocks for a selected date without changing real data and without affecting other users.
 
 ## ADDED Requirements
 
-### Requirement: Выбор даты предпросмотра администратором
+### Requirement: Preview date selection by an administrator
 
-Администратор ДОЛЖЕН иметь возможность выбрать дату через календарь и включить режим предпросмотра, при котором текущей датой считается выбранный день. Выбор даты НЕ ДОЛЖЕН быть доступен пользователям без роли администратора и НЕ ДОЛЖЕН изменять реальные данные.
+An administrator MUST be able to select a date via the calendar and enable a preview mode in which the selected day counts as the current date. Date selection MUST NOT be available to users without the administrator role and MUST NOT change real data.
 
-#### Scenario: Включение предпросмотра
+#### Scenario: Enabling the preview
 
-- **WHEN** администратор выбирает в календаре дату и подтверждает предпросмотр
-- **THEN** система начинает использовать выбранный день как текущую дату
+- **WHEN** the administrator selects a date in the calendar and confirms the preview
+- **THEN** the system starts using the selected day as the current date
 
-#### Scenario: Недоступность для сотрудника
+#### Scenario: Unavailability for an employee
 
-- **WHEN** пользователь с ролью `employee` просматривает доступные ему страницы
-- **THEN** элементы управления предпросмотром даты не отображаются
+- **WHEN** a user with the `employee` role views the pages available to them
+- **THEN** the date preview controls are not displayed
 
-#### Scenario: Сброс к реальной дате
+#### Scenario: Reset to the real date
 
-- **WHEN** администратор нажимает сброс предпросмотра
-- **THEN** система возвращается к реальной текущей дате
+- **WHEN** the administrator clicks the preview reset
+- **THEN** the system returns to the real current date
 
-### Requirement: Предпросмотр только для чтения
+### Requirement: Read-only preview
 
-В режиме предпросмотра система НЕ ДОЛЖНА позволять создавать пожелания, отправлять денежные поздравления и изменять суммы сбора. Режим предпросмотра действует только в текущей сессии и сбрасывается при перезагрузке страницы.
+In preview mode the system MUST NOT allow creating wishes, sending monetary congratulations and changing collection amounts. Preview mode applies only to the current session and resets on page reload.
 
-#### Scenario: Запись недоступна
+#### Scenario: Writing is unavailable
 
-- **WHEN** в режиме предпросмотра пользователь пытается создать пожелание, отправить средства или изменить сумму
-- **THEN** действие недоступно, а реальные данные не изменяются
+- **WHEN** in preview mode a user tries to create a wish, send funds or change the amount
+- **THEN** the action is unavailable, and real data is not changed
 
-#### Scenario: Сброс при перезагрузке
+#### Scenario: Reset on reload
 
-- **WHEN** пользователь перезагружает страницу с включённым предпросмотром
-- **THEN** система использует реальную текущую дату
+- **WHEN** a user reloads the page with the preview enabled
+- **THEN** the system uses the real current date
 
-### Requirement: Единая текущая дата для зависимых блоков
+### Requirement: A single current date for dependent blocks
 
-В режиме предпросмотра выбранная дата ДОЛЖНА использоваться всеми зависимыми от даты блоками: блоки именинников главной страницы, доска пожеланий и отметка текущего дня в календаре. Пользователь ДОЛЖЕН видеть индикатор активного режима предпросмотра.
+In preview mode the selected date MUST be used by all date-dependent blocks: the home page's birthday person blocks, the wish board and the current-day marker in the calendar. The user MUST see an indicator of the active preview mode.
 
-#### Scenario: Согласованность блоков
+#### Scenario: Consistency of blocks
 
-- **WHEN** включён предпросмотр даты
-- **THEN** блоки именинников, доска пожеланий и отметка текущего дня в календаре показывают состояние на выбранную дату
+- **WHEN** the date preview is enabled
+- **THEN** the birthday person blocks, the wish board and the current-day marker in the calendar show the state for the selected date
 
-#### Scenario: Индикатор предпросмотра
+#### Scenario: Preview indicator
 
-- **WHEN** режим предпросмотра активен
-- **THEN** интерфейс показывает выбранную дату и доступный сброс к реальной дате
+- **WHEN** the preview mode is active
+- **THEN** the interface shows the selected date and an available reset to the real date

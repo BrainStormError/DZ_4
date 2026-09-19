@@ -1,48 +1,48 @@
 ## Why
 
-Первая загрузка и отзывчивость приложения тратят ресурсы впустую. `next/font` прелоадит пять семейств шрифтов на каждую загрузку, хотя активна всегда одна тема (`app/layout.tsx:10-46`). Единственный контекст данных отдаёт новый объект на каждый рендер (`lib/data-store.ts:124-139`, `lib/data-context.tsx:10`), поэтому любая мутация — пожелание, взнос, сообщение — перерисовывает `Header`, `WishBoard`, `ChatThread`, `AdminTable` и `DonateDialog` вместе с их поддеревьями. Вкладка переписки на странице FAQ ходит через `router.replace()` (`app/(app)/faq/page.tsx:64-73`), то есть каждый клик по табу — это soft-navigation с повторным запросом RSC-сегмента и пустым Suspense-фолбэком. Корневые провайдеры `auth` и `theme` создают новый `value` на каждый рендер (`lib/auth-context.tsx:47`, `lib/theme-context.tsx:36`).
+The first load and the responsiveness of the application waste resources. `next/font` preloads five font families on every load, although only one theme is ever active (`app/layout.tsx:10-46`). The single data context provides a new object on every render (`lib/data-store.ts:124-139`, `lib/data-context.tsx:10`), so any mutation — a wish, a contribution, a message — re-renders `Header`, `WishBoard`, `ChatThread`, `AdminTable`, and `DonateDialog` along with their subtrees. The correspondence tab on the FAQ page goes through `router.replace()` (`app/(app)/faq/page.tsx:64-73`), that is, every tab click is a soft navigation with a repeated request for the RSC segment and an empty Suspense fallback. The root providers `auth` and `theme` create a new `value` on every render (`lib/auth-context.tsx:47`, `lib/theme-context.tsx:36`).
 
-Целевые бюджеты Core Web Vitals уже зафиксированы в `openspec/specs/performance/spec.md`, но перечисленные места им не соответствуют. Сначала фиксируем требования к этим сценариям, затем устраняем причины.
+The target Core Web Vitals budgets are already fixed in `openspec/specs/performance/spec.md`, but the listed places do not meet them. We first fix the requirements for these scenarios, then eliminate the causes.
 
 ## What Changes
 
-- **Вкладка переписки на FAQ перестаёт быть навигацией.** Активная вкладка хранится в состоянии компонента, клик по табу вызывает `setTab` и shallow-обновление адреса через `window.history.replaceState` без обращения к роутеру. Начальное значение читается из `?tab=messages`, а внешние переходы (`Header.tsx:111`, кнопки браузера) синхронизируются со состоянием, поэтому прямая ссылка и переход с уже открытой страницы продолжают работать.
-- **`DataContext` разбивается по доменам данных.** Три контекста — `Wishes` (`wishes`, `addWish`, `updateWish`), `Donations` (`donations`, `history`, `addDonation`, `setGiftSent`, `updateDonation`), `Chats` (`chats`, `addChatMessage`, `getChatThread`, `getAllThreads`, `markThreadRead`) — и три хука `useWishes()`, `useDonations()`, `useChats()`. Каждый `value` мемоизируется по идентичностям полей стора. **BREAKING** для внутреннего API: агрегирующий `useData()` удаляется, иначе он снова подпишет всё на всё и разбиение не даст эффекта. Имя `DataProvider` и тип `DataStore` сохраняются.
-- **Корневые провайдеры `auth` и `theme` мемоизируют `value`** по полям, как это уже сделано в `lib/date-context.tsx:35-44`, чтобы ре-рендер провайдера не заражал подписчиков.
-- **Прелоад шрифтов ограничивается активной темой.** Для семейств не-дефолтных тем выставляется `preload: false`; `subsets` остаются, так как все они реально используются своей темой. Вариант с переносом темы в cookie для серверного выбора семейства — развилка в `design.md`, по умолчанию не реализуется.
-- **Тяжёлые фичи подключаются лениво (последним шагом, только если первая загрузка всё ещё медленная).** `DonateDialog` (413 строк) уходит в отдельный чанк, который загружается при первом открытии диалога, а не при монтировании главной. `AdminTable` не трогаем: маршрут `/admin` уже код-сплитится постранично, и ленивая загрузка там добавит лишний запрос.
-- **Измерение — только `npm run build && npm run start`.** Dev-режим с React 18 StrictMode удваивает коммиты и компилирует маршрут при первом переходе, поэтому картину из dev за проблему производительности не принимаем. Каждый пункт проверяется по одному сценарию в Profiler; результат по вкладке FAQ дополнительно подтверждается отсутствием запросов `?_rsc=` в Network.
-- **Вне области изменения:** `React.memo` на `Header`/`WishBoard`/`HomePage`, анимации и монтирование Radix-компонентов, легитимные сбросы состояния по `usePathname` в `WishBoard:49`, `DonateDialog:56`, `AdminTable:88`, `useAsyncAction` (искусственных задержек в `lib/` нет), перенос темы в cookie, апгрейд Next.js.
+- **The correspondence tab on FAQ stops being navigation.** The active tab is kept in component state; a tab click calls `setTab` and a shallow update of the address via `window.history.replaceState` without involving the router. The initial value is read from `?tab=messages`, and external transitions (`Header.tsx:111`, browser buttons) are synchronized with the state, so a direct link and a transition from an already open page continue to work.
+- **`DataContext` is split by data domains.** Three contexts — `Wishes` (`wishes`, `addWish`, `updateWish`), `Donations` (`donations`, `history`, `addDonation`, `setGiftSent`, `updateDonation`), `Chats` (`chats`, `addChatMessage`, `getChatThread`, `getAllThreads`, `markThreadRead`) — and three hooks `useWishes()`, `useDonations()`, `useChats()`. Each `value` is memoized by the identities of the store's fields. **BREAKING** for the internal API: the aggregating `useData()` is removed, otherwise it would again subscribe everything to everything and the split would have no effect. The name `DataProvider` and the type `DataStore` are preserved.
+- **The root providers `auth` and `theme` memoize `value`** by fields, as is already done in `lib/date-context.tsx:35-44`, so that a provider re-render does not infect its subscribers.
+- **Font preload is limited to the active theme.** `preload: false` is set for the families of non-default themes; `subsets` remain, since all of them are actually used by their theme. The option of moving the theme into a cookie for server-side family selection is a fork in `design.md` and is not implemented by default.
+- **Heavy features are connected lazily (as the last step, only if the first load is still slow).** `DonateDialog` (413 lines) goes into a separate chunk that is loaded on the first opening of the dialog, and not when the home page mounts. We do not touch `AdminTable`: the `/admin` route is already code-split per page, and lazy loading there would add an extra request.
+- **Measurement — only `npm run build && npm run start`.** Dev mode with React 18 StrictMode doubles commits and compiles the route on the first navigation, so we do not take the dev picture for a performance problem. Each item is verified against one scenario in the Profiler; the result for the FAQ tab is additionally confirmed by the absence of `?_rsc=` requests in Network.
+- **Out of scope:** `React.memo` on `Header`/`WishBoard`/`HomePage`, animations and mounting of Radix components, legitimate state resets by `usePathname` in `WishBoard:49`, `DonateDialog:56`, `AdminTable:88`, `useAsyncAction` (there are no artificial delays in `lib/`), moving the theme into a cookie, upgrading Next.js.
 
 ## Capabilities
 
 ### New Capabilities
 
-Нет. Изменение меняет поведение уже описанных возможностей, а не вводит новые.
+None. The change alters the behavior of already described capabilities rather than introducing new ones.
 
 ### Modified Capabilities
 
-- `performance`: добавляются требования об изоляции перерисовок между доменами данных, о загрузке шрифтов только активной темы и о ленивой загрузке тяжёлых фич вне критического пути; уточняется требование о шрифтах, чтобы прелоад неактивных семейств считался нарушением.
-- `support-chat`: уточняется требование «Переход к вкладке переписки из шапки» — переключение таба и переход из шапки не должны вызывать серверный запрос маршрута, при этом активная вкладка обязана соответствовать адресу при прямой ссылке и при переходе с уже открытой страницы.
+- `performance`: requirements are added about the isolation of re-renders between data domains, about loading fonts only for the active theme, and about the lazy loading of heavy features outside the critical path; the requirement about fonts is refined so that the preload of inactive families counts as a violation.
+- `support-chat`: the requirement "Transition to the correspondence tab from the header" is refined — switching the tab and navigating from the header must not cause a server request for the route, while the active tab must correspond to the address for a direct link and for a transition from an already open page.
 
 ## Impact
 
-**Код:**
+**Code:**
 
-- `app/(app)/faq/page.tsx` — состояние вкладки вместо `router.replace`, синхронизация с `useSearchParams`
-- `lib/data-context.tsx` — три контекста и три хука вместо `DataContext`/`useData`
-- `lib/data-store.ts` — без изменений по сути; `DataStore` остаётся экспортируемым типом
-- `components/layout/Header.tsx`, `components/features/ChatThread.tsx` — переход на `useChats()`
-- `components/features/WishBoard.tsx` — переход на `useWishes()`
+- `app/(app)/faq/page.tsx` — tab state instead of `router.replace`, synchronization with `useSearchParams`
+- `lib/data-context.tsx` — three contexts and three hooks instead of `DataContext`/`useData`
+- `lib/data-store.ts` — essentially unchanged; `DataStore` remains an exported type
+- `components/layout/Header.tsx`, `components/features/ChatThread.tsx` — transition to `useChats()`
+- `components/features/WishBoard.tsx` — transition to `useWishes()`
 - `components/features/DonateDialog.tsx` — `useDonations()` + `useWishes()`
-- `components/features/AdminTable.tsx` — переход на `useDonations()`
-- `lib/auth-context.tsx`, `lib/theme-context.tsx` — `useMemo` на `value`
-- `app/layout.tsx` — `preload: false` для четырёх не-дефолтных семейств шрифтов
-- `app/(app)/page.tsx` — ленивый `DonateDialog` с гейтом по первому открытию (условно, шаг 5)
+- `components/features/AdminTable.tsx` — transition to `useDonations()`
+- `lib/auth-context.tsx`, `lib/theme-context.tsx` — `useMemo` on `value`
+- `app/layout.tsx` — `preload: false` for the four non-default font families
+- `app/(app)/page.tsx` — lazy `DonateDialog` with a gate on the first open (conditional, step 5)
 
-**Тесты:**
+**Tests:**
 
-- `components/features/DonateDialog.test.tsx` — мок `@/lib/data-context` обязан предоставить `useWishes` и `useDonations` вместо `useData`
-- `components/features/AdminTable.test.tsx` — не мокает `data-context`, работает через `DataProvider`; правок не требует, используется как проверка, что имя провайдера сохранено
+- `components/features/DonateDialog.test.tsx` — the `@/lib/data-context` mock is obliged to provide `useWishes` and `useDonations` instead of `useData`
+- `components/features/AdminTable.test.tsx` — does not mock `data-context`, works through `DataProvider`; requires no edits and is used as a check that the provider name is preserved
 
-**Зависимости и конфигурация:** новых зависимостей нет, `package.json` не меняется, персистентность данных и публичные URL остаются прежними.
+**Dependencies and configuration:** there are no new dependencies, `package.json` does not change, and data persistence and public URLs remain the same.

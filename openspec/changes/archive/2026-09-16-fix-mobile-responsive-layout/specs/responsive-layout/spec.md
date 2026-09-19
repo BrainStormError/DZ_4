@@ -1,65 +1,65 @@
 ## Purpose
 
-Задаёт сквозные инварианты вёрстки для узких вьюпортов: страница не получает горизонтальный скролл из-за содержимого, наложение-элементы (диалоги, поповеры, селекты) укладываются в экран, высота измеряется динамическими единицами, якорные секции не прячутся под закреплённой шапкой, а hover-эффекты не применяются на устройствах без наведения.
+Defines end-to-end layout invariants for narrow viewports: the page does not get horizontal scrolling because of the content, overlay elements (dialogs, popovers, selects) fit within the screen, height is measured in dynamic units, anchor sections do not hide under the fixed header, and hover effects are not applied on devices without hover.
 
 ## ADDED Requirements
 
-### Requirement: Отсутствие горизонтального переполнения страницы
+### Requirement: No horizontal page overflow
 
-Страница НЕ ДОЛЖНА (MUST NOT) получать горизонтальную прокрутку из-за содержимого на ширинах от 320px. Любой блок, выходящий за ширину контейнера, ДОЛЖЕН либо переноситься, либо сжиматься, либо прокручиваться внутри собственной области. Корневой контейнер ДОЛЖЕН (MUST) иметь защиту от горизонтального выхода содержимого за пределы вьюпорта.
+The page MUST NOT get horizontal scrolling because of the content at widths from 320px. Any block that exceeds the container width MUST either wrap, shrink, or scroll within its own area. The root container MUST have protection against content going horizontally outside the viewport.
 
-#### Scenario: Узкий экран без горизонтального скролла
+#### Scenario: Narrow screen without horizontal scrolling
 
-- **WHEN** страница открыта на ширине 320px или 360px
-- **THEN** ширина документа не превышает ширину вьюпорта, и горизонтальная прокрутка страницы отсутствует
+- **WHEN** the page is open at a width of 320px or 360px
+- **THEN** the document width does not exceed the viewport width, and there is no horizontal page scrolling
 
-#### Scenario: Локальная прокрутка вместо страничной
+#### Scenario: Local scrolling instead of page scrolling
 
-- **WHEN** элемент заведомо шире доступного места (например, широкая таблица)
-- **THEN** прокрутка ограничена областью этого элемента и не расширяет страницу
+- **WHEN** an element is clearly wider than the available space (for example, a wide table)
+- **THEN** scrolling is limited to the area of that element and does not expand the page
 
-### Requirement: Вписывание диалогов во вьюпорт
+### Requirement: Dialogs fitting within the viewport
 
-Модальные диалоги ДОЛЖНЫ (MUST) сохранять боковые отступы от краёв вьюпорта и НЕ ДОЛЖНЫ превышать доступную высоту экрана. Если содержимое не помещается, диалог ДОЛЖЕН прокручиваться внутри себя так, чтобы заголовок, поля и кнопки действий оставались достижимыми.
+Modal dialogs MUST preserve side margins from the viewport edges and MUST NOT exceed the available screen height. If the content does not fit, the dialog MUST scroll inside itself so that the header, fields, and action buttons remain reachable.
 
-#### Scenario: Диалог на узком экране
+#### Scenario: Dialog on a narrow screen
 
-- **WHEN** диалог открывается на ширине 320px
-- **THEN** между диалогом и краями экрана остаётся отступ, а ширина не выходит за вьюпорт
+- **WHEN** the dialog opens at a width of 320px
+- **THEN** a margin remains between the dialog and the screen edges, and the width does not go outside the viewport
 
-#### Scenario: Высокий диалог прокручивается
+#### Scenario: A tall dialog scrolls
 
-- **WHEN** содержимое диалога выше доступной высоты экрана
-- **THEN** диалог ограничен высотой вьюпорта и прокручивается внутри себя, кнопки действий достижимы
+- **WHEN** the dialog content is taller than the available screen height
+- **THEN** the dialog is limited by the viewport height and scrolls inside itself, the action buttons are reachable
 
-### Requirement: Динамическая высота вьюпорта
+### Requirement: Dynamic viewport height
 
-Элементы, растягиваемые на высоту экрана, ДОЛЖНЫ (MUST) использовать динамические единицы высоты, чтобы показ или скрытие адресной строки браузера не вызывал скачка высоты.
+Elements stretched to the screen height MUST use dynamic height units so that showing or hiding the browser address bar does not cause a height jump.
 
-#### Scenario: Показ адресной строки
+#### Scenario: Showing the address bar
 
-- **WHEN** браузер на мобильном устройстве скрывает или показывает адресную строку
-- **THEN** высота экрана приложения меняется без скачка и без обрезки содержимого
+- **WHEN** the browser on a mobile device hides or shows the address bar
+- **THEN** the application screen height changes without a jump and without clipping the content
 
-### Requirement: Отступ якорных секций под закреплённой шапкой
+### Requirement: Anchor section offset under the fixed header
 
-При переходе по внутренней ссылке к секции заголовок секции НЕ ДОЛЖЕН (MUST NOT) оказываться скрытым под закреплённой шапкой; секция ДОЛЖНА (MUST) смещать позицию прокрутки на высоту шапки.
+When following an internal link to a section, the section heading MUST NOT end up hidden under the fixed header; the section MUST offset the scroll position by the header height.
 
-#### Scenario: Переход к доске пожеланий
+#### Scenario: Navigating to the wish board
 
-- **WHEN** пользователь активирует переход к секции доски пожеланий
-- **THEN** заголовок и начало секции видны ниже шапки, а не скрыты под ней
+- **WHEN** the user activates navigation to the wish board section
+- **THEN** the heading and the beginning of the section are visible below the header, not hidden under it
 
-### Requirement: Hover-эффекты только при наличии наведения
+### Requirement: Hover effects only when hover is present
 
-Эффекты увеличения и подсветки, привязанные к наведению курсора, ДОЛЖНЫ (MUST) применяться только на устройствах, поддерживающих наведение, чтобы на сенсорных экранах эффект не залипал после касания.
+Scale and highlight effects tied to cursor hover MUST be applied only on devices that support hover, so that on touch screens the effect does not stick after a touch.
 
-#### Scenario: Касание на сенсорном экране
+#### Scenario: Touch on a touch screen
 
-- **WHEN** пользователь касается карточки с hover-эффектом на сенсорном устройстве
-- **THEN** эффект наведения не применяется и не залипает
+- **WHEN** the user touches a card with a hover effect on a touch device
+- **THEN** the hover effect is not applied and does not stick
 
-#### Scenario: Наведение курсора
+#### Scenario: Cursor hover
 
-- **WHEN** пользователь наводит курсор на карточку на устройстве с наведением
-- **THEN** эффект наведения применяется как прежде
+- **WHEN** the user hovers the cursor over the card on a device with hover
+- **THEN** the hover effect is applied as before

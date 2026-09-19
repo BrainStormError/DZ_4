@@ -1,59 +1,59 @@
 ## MODIFIED Requirements
 
-### Requirement: Валидация изменения суммы администратором
+### Requirement: Validation of amount changes by the administrator
 
-При изменении суммы сбора администратором новая сумма ДОЛЖНА (MUST) быть целым неотрицательным числом. Отрицательные, пустые и нечисловые значения НЕ ДОЛЖНЫ сохраняться и НЕ ДОЛЖНЫ попадать в журнал изменений. Причина и комментарий остаются обязательными. Для причины «Возврат (отказ от подарка)» новая сумма ДОЛЖНА быть равна нулю: выбор этой причины принудительно устанавливает нулевую сумму, поскольку отказ от подарка возвращает весь сбор. Экстренный возврат допускает любую неотрицательную сумму. Для сотрудника, отказавшегося от подарка, изменение суммы НЕ ДОЛЖНО быть доступно: сумма остаётся зафиксированной на `0`.
+When the administrator changes the collection amount, the new amount (MUST) be a non-negative integer. Negative, empty, and non-numeric values (MUST NOT) be saved and (MUST NOT) enter the change log. The reason and comment remain mandatory. For the reason "Refund (gift declined)", the new amount (MUST) equal zero: selecting this reason forcibly sets a zero amount, since declining a gift refunds the entire collection. An emergency refund allows any non-negative amount. For an employee who declined the gift, the amount change (MUST NOT) be available: the amount remains fixed at `0`.
 
-#### Scenario: Отрицательная сумма не сохраняется
+#### Scenario: A negative amount is not saved
 
-- **WHEN** администратор вводит отрицательную сумму, выбирает причину и комментарий и нажимает «Сохранить»
-- **THEN** значение не сохраняется, в таблице и журнале не появляется отрицательная сумма
+- **WHEN** the administrator enters a negative amount, selects a reason and comment, and presses "Save"
+- **THEN** the value is not saved, and a negative amount does not appear in the table or the log
 
-#### Scenario: Корректная сумма сохраняется
+#### Scenario: A valid amount is saved
 
-- **WHEN** администратор вводит неотрицательную сумму, выбирает причину и указывает комментарий
-- **THEN** сумма сохраняется, а в журнал добавляется запись с предыдущим и новым значением
+- **WHEN** the administrator enters a non-negative amount, selects a reason, and specifies a comment
+- **THEN** the amount is saved, and an entry with the previous and new value is added to the log
 
-#### Scenario: Отказ от подарка обнуляет сумму
+#### Scenario: Declining a gift zeroes the amount
 
-- **WHEN** администратор выбирает причину «Возврат (отказ от подарка)»
-- **THEN** новая сумма устанавливается равной нулю и не может быть сохранена как ненулевая
+- **WHEN** the administrator selects the reason "Refund (gift declined)"
+- **THEN** the new amount is set to zero and cannot be saved as non-zero
 
-#### Scenario: Экстренный возврат допускает частичную сумму
+#### Scenario: An emergency refund allows a partial amount
 
-- **WHEN** администратор выбирает причину «Экстренный возврат» и указывает неотрицательную сумму
-- **THEN** сумма сохраняется и попадает в журнал изменений
+- **WHEN** the administrator selects the reason "Emergency refund" and specifies a non-negative amount
+- **THEN** the amount is saved and enters the change log
 
-#### Scenario: Изменение суммы недоступно после отказа
+#### Scenario: The amount change is unavailable after a decline
 
-- **WHEN** администратор просматривает строку сотрудника, отказавшегося от подарка
-- **THEN** изменение суммы недоступно, а сумма остаётся `0 ₽`
+- **WHEN** the administrator views the row of an employee who declined the gift
+- **THEN** the amount change is unavailable, and the amount remains `0 ₽`
 
-### Requirement: Допустимые получатели денежного поздравления
+### Requirement: Eligible recipients of a money congratulation
 
-Денежное поздравление ДОЛЖНО (MUST) быть доступно только для сотрудников, чей день рождения сегодня или ещё не наступил в текущем году. Сотрудники, чей день рождения уже прошёл, НЕ ДОЛЖНЫ отображаться в списке получателей. Сам текущий пользователь в список НЕ ДОЛЖЕН попадать. Сотрудник, отказавшийся от подарка, НЕ ДОЛЖЕН быть доступен как получатель денежного поздравления: его запись ДОЛЖНА отображаться в списке выбора неактивной с пометкой «отказался от подарка», чтобы поздравление было возможно только текстом.
+A money congratulation (MUST) be available only for employees whose birthday is today or has not yet arrived in the current year. Employees whose birthday has already passed (MUST NOT) be displayed in the recipient list. The current user themselves (MUST NOT) appear in the list. An employee who declined the gift (MUST NOT) be available as a recipient of a money congratulation: their entry (MUST) be displayed in the selection list as inactive with the note "declined the gift", so that a congratulation is possible only with text.
 
-#### Scenario: Прошедший день рождения исключён из списка
+#### Scenario: A past birthday is excluded from the list
 
-- **WHEN** пользователь открывает выбор получателя для денежного поздравления
-- **THEN** сотрудники с прошедшей датой дня рождения отсутствуют в списке получателей
+- **WHEN** the user opens the recipient selection for a money congratulation
+- **THEN** employees with a past birthday date are absent from the recipient list
 
-#### Scenario: Сегодняшний именинник доступен
+#### Scenario: Today's birthday person is available
 
-- **WHEN** у сотрудника день рождения совпадает с текущей датой
-- **THEN** сотрудник доступен в списке получателей для денежного поздравления
+- **WHEN** an employee's birthday matches the current date
+- **THEN** the employee is available in the recipient list for a money congratulation
 
-#### Scenario: Будущий именинник доступен заранее
+#### Scenario: A future birthday person is available in advance
 
-- **WHEN** у сотрудника день рождения ещё не наступил в текущем году
-- **THEN** сотрудник доступен в списке получателей, и средства можно отправить заранее
+- **WHEN** an employee's birthday has not yet arrived in the current year
+- **THEN** the employee is available in the recipient list, and funds can be sent in advance
 
-#### Scenario: Отказавшийся от подарка недоступен для денег
+#### Scenario: A person who declined the gift is unavailable for money
 
-- **WHEN** пользователь открывает выбор получателя денежного поздравления
-- **THEN** сотрудник, отказавшийся от подарка, отображается неактивной записью и не может быть выбран для отправки средств
+- **WHEN** the user opens the recipient selection for a money congratulation
+- **THEN** an employee who declined the gift is displayed as an inactive entry and cannot be selected for sending funds
 
-#### Scenario: Пометка об отказе в списке
+#### Scenario: A note about the decline in the list
 
-- **WHEN** в списке получателей присутствует отказавшийся от подарка сотрудник
-- **THEN** его запись содержит пометку «отказался от подарка»
+- **WHEN** the recipient list contains an employee who declined the gift
+- **THEN** their entry contains the note "declined the gift"

@@ -1,57 +1,57 @@
 ## Purpose
 
-Показывает именинников на главной странице и предоставляет календарь дней рождения сотрудников с навигацией по месяцам и годам.
+Shows birthday people on the home page and provides a birthday calendar of employees with navigation by months and years.
 
 ## ADDED Requirements
 
-### Requirement: Именинники на главной странице
+### Requirement: Birthday people on the home page
 
-Главная страница ДОЛЖНА показывать сотрудников, чей день рождения приходится на текущую дату, и ДОЛЖНА показывать ближайшие дни рождения в пределах следующих 30 дней. Если именинников сегодня нет, система ДОЛЖНА показать соответствующее пустое состояние.
+The home page MUST show employees whose birthday falls on the current date and MUST show upcoming birthdays within the next 30 days. If there are no birthday people today, the system MUST show the corresponding empty state.
 
-#### Scenario: Есть именинник сегодня
+#### Scenario: There is a birthday person today
 
-- **WHEN** текущая дата совпадает с днём рождения сотрудника
-- **THEN** сотрудник отображается в блоке «Именинники сегодня» с отметкой о сегодняшнем празднике
+- **WHEN** the current date matches an employee's birthday
+- **THEN** the employee is displayed in the "Birthday people today" block with a mark about today's celebration
 
-#### Scenario: Сегодня именинников нет
+#### Scenario: There are no birthday people today
 
-- **WHEN** ни один день рождения не совпадает с текущей датой
-- **THEN** система показывает пустое состояние с предложением заглянуть в календарь
+- **WHEN** no birthday matches the current date
+- **THEN** the system shows an empty state suggesting to look at the calendar
 
-### Requirement: Календарь дней рождения с навигацией по месяцам и годам
+### Requirement: Birthday calendar with navigation by months and years
 
-Календарь ДОЛЖЕН отображать дни рождения сотрудников по месяцам и ДОЛЖЕН позволять переключать отображаемый месяц в пределах выбранного года. Система ДОЛЖНА позволять переключать отображаемый год вперёд и назад, по умолчанию показывая текущий год. Дни рождения ДОЛЖНЫ рассчитываться относительно выбранного года, а отметка текущего дня ДОЛЖНА отображаться только для фактического текущего года.
+The calendar MUST display employee birthdays by month and MUST allow switching the displayed month within the selected year. The system MUST allow switching the displayed year forward and backward, showing the current year by default. Birthdays MUST be calculated relative to the selected year, and the current-day mark MUST be displayed only for the actual current year.
 
-#### Scenario: Переключение месяца
+#### Scenario: Month switching
 
-- **WHEN** пользователь нажимает переход к следующему месяцу
-- **THEN** календарь показывает дни рождения следующего месяца выбранного года
+- **WHEN** the user clicks to go to the next month
+- **THEN** the calendar shows the birthdays of the next month of the selected year
 
-#### Scenario: Переключение на следующий год
+#### Scenario: Switching to the next year
 
-- **WHEN** пользователь переключает год вперёд
-- **THEN** календарь показывает выбранный год и пересчитывает дни рождения относительно него
+- **WHEN** the user switches the year forward
+- **THEN** the calendar shows the selected year and recalculates birthdays relative to it
 
-#### Scenario: Переключение на предыдущий год
+#### Scenario: Switching to the previous year
 
-- **WHEN** пользователь переключает год назад
-- **THEN** календарь показывает предыдущий год и пересчитывает дни рождения относительно него
+- **WHEN** the user switches the year backward
+- **THEN** the calendar shows the previous year and recalculates birthdays relative to it
 
-#### Scenario: Отметка текущего дня только в текущем году
+#### Scenario: The current-day mark only in the current year
 
-- **WHEN** выбран год, отличный от текущего
-- **THEN** отметка текущего дня в сетке календаря не отображается
+- **WHEN** a year other than the current one is selected
+- **THEN** the current-day mark is not displayed in the calendar grid
 
-### Requirement: Отметка дней рождения в сетке календаря
+### Requirement: Marking birthdays in the calendar grid
 
-Календарь ДОЛЖЕН помечать в сетке месяца дни, на которые приходятся дни рождения, и ДОЛЖЕН показывать список именинников выбранного месяца.
+The calendar MUST mark in the month grid the days on which birthdays fall and MUST show the list of birthday people for the selected month.
 
-#### Scenario: День с днём рождения
+#### Scenario: A day with a birthday
 
-- **WHEN** в выбранном месяце есть сотрудник с днём рождения
-- **THEN** соответствующий день в сетке помечен, а сотрудник присутствует в списке именинников месяца
+- **WHEN** there is an employee with a birthday in the selected month
+- **THEN** the corresponding day in the grid is marked, and the employee is present in the list of birthday people for the month
 
-#### Scenario: Месяц без дней рождения
+#### Scenario: A month without birthdays
 
-- **WHEN** в выбранном месяце нет дней рождения
-- **THEN** система показывает пустое состояние для этого месяца
+- **WHEN** there are no birthdays in the selected month
+- **THEN** the system shows an empty state for this month

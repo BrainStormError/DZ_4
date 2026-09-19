@@ -2,71 +2,71 @@
 
 ## Purpose
 
-Обеспечивает единообразие пользовательских формулировок и контролов: одно утверждение — один источник, одно действие — один первичный контрол, а интерактивные и справочные элементы не дублируются и не вводят в заблуждение.
+Ensures uniformity of user wording and controls: one statement — one source, one action — one primary control, and interactive and reference elements are not duplicated and do not mislead.
 
 ## Requirements
 
-### Requirement: Единый источник сообщения о добровольности участия
+### Requirement: Single source of the statement about voluntary participation
 
-Система ДОЛЖНА представлять утверждение о добровольности участия в одном каноническом месте — hero-блоке главной страницы. Футер НЕ ДОЛЖЕН содержать утверждение о добровольности участия. Утверждение о видимости сумм сбора НЕ ДОЛЖНО размещаться в футере и на главной странице. На одной странице одинаковое по смыслу утверждение о добровольности НЕ ДОЛЖНО повторяться более одного раза вне контекста конкретного шага сценария.
+The system MUST present the statement about the voluntary nature of participation in one canonical place — the hero block of the home page. The footer MUST NOT contain the statement about the voluntary nature of participation. The statement about the visibility of collection amounts MUST NOT be placed in the footer or on the home page. On one page, a statement about voluntariness that is identical in meaning MUST NOT be repeated more than once outside the context of a specific scenario step.
 
-#### Scenario: Главная страница без дублирующих блоков
+#### Scenario: Home page without duplicate blocks
 
-- **WHEN** пользователь открывает главную страницу
-- **THEN** утверждение о добровольности встречается ровно один раз в hero-блоке, а утверждение о видимости сумм сбора на странице отсутствует
+- **WHEN** the user opens the home page
+- **THEN** the statement about voluntariness occurs exactly once in the hero block, and the statement about the visibility of collection amounts is absent from the page
 
-#### Scenario: Футер без утверждения о суммах
+#### Scenario: Footer without the amounts statement
 
-- **WHEN** пользователь просматривает футер приложения
-- **THEN** футер не содержит ни утверждения о видимости сумм сбора, ни утверждения о добровольности участия
+- **WHEN** the user views the application footer
+- **THEN** the footer contains neither the statement about the visibility of collection amounts nor the statement about the voluntary nature of participation
 
-#### Scenario: Футер без утверждения о добровольности
+#### Scenario: Footer without the voluntariness statement
 
-- **WHEN** пользователь просматривает футер приложения
-- **THEN** футер не содержит утверждения о добровольности участия
+- **WHEN** the user views the application footer
+- **THEN** the footer does not contain the statement about the voluntary nature of participation
 
-#### Scenario: FAQ без дублирующих карточек
+#### Scenario: FAQ without duplicate cards
 
-- **WHEN** пользователь открывает раздел «Вопросы и ответы»
-- **THEN** quick-info карточки, повторяющие ответы Q1/Q2 и текст главной, отсутствуют, а ответы FAQ остаются единственным источником формулировок
+- **WHEN** the user opens the "Questions and answers" section
+- **THEN** the quick-info cards that repeat the answers to Q1/Q2 and the home page text are absent, and the FAQ answers remain the only source of wording
 
-### Requirement: Один первичный контроль на действие
+### Requirement: One primary control per action
 
-Каждое пользовательское действие ДОЛЖНО иметь один первичный контроль в своей области. Контролы, запускающие один и тот же сценарий с одинаковым контекстом, НЕ ДОЛЖНЫ отображаться одновременно. Разные точки входа для разных сущностей (например, карточка конкретного именинника) допускаются.
+Each user action MUST have one primary control in its area. Controls that launch the same scenario with the same context MUST NOT be displayed simultaneously. Different entry points for different entities (for example, a card of a specific birthday person) are allowed.
 
-#### Scenario: Поздравление без взноса
+#### Scenario: Congratulation without a contribution
 
-- **WHEN** пользователь находится на главной странице
-- **THEN** действие «пожелание без взноса» доступно через один первичный контроль, без одновременного дублирования отдельной кнопкой в области доски пожеланий
+- **WHEN** the user is on the home page
+- **THEN** the "wish without a contribution" action is available through one primary control, without simultaneous duplication by a separate button in the wish board area
 
-#### Scenario: Раскрытие формы пожелания
+#### Scenario: Expanding the wish form
 
-- **WHEN** пользователь активирует первичный контроль пожелания
-- **THEN** форма переходит в открытое состояние, а повторный контрол не создаёт второй независимой формы
+- **WHEN** the user activates the primary wish control
+- **THEN** the form switches to the open state, and a repeated control does not create a second independent form
 
-### Requirement: Интерактивные элементы выполняют действие
+### Requirement: Interactive elements perform an action
 
-Элементы, оформленные как команда (кнопка, пункт меню), ДОЛЖНЫ выполнять действие. Информация, не предполагающая действия, НЕ ДОЛЖНА быть представлена как интерактивная команда.
+Elements styled as a command (a button, a menu item) MUST perform an action. Information that does not imply an action MUST NOT be presented as an interactive command.
 
-#### Scenario: Меню пользователя без неинтерактивного пункта
+#### Scenario: User menu without a non-interactive item
 
-- **WHEN** пользователь открывает меню пользователя в шапке
-- **THEN** отдел отображается как неинтерактивная информация либо отсутствует, и в меню нет пункта, который выглядит кликабельным, но не выполняет действие
+- **WHEN** the user opens the user menu in the header
+- **THEN** the department is displayed as non-interactive information or is absent, and there is no item in the menu that looks clickable but does not perform an action
 
-### Requirement: Единый источник подписей причин возврата
+### Requirement: Single source of refund reason labels
 
-Подписи причин возврата ДОЛЖНЫ формироваться единым источником. Для одной и той же причины НЕ ДОЛЖНЫ существовать расходящиеся хардкод-формулировки в разных местах интерфейса.
+Refund reason labels MUST be generated from a single source. For the same reason, divergent hardcoded wordings MUST NOT exist in different places of the interface.
 
-#### Scenario: Согласованность причины в выборе и журнале
+#### Scenario: Consistency of the reason in the selection and the log
 
-- **WHEN** администратор выбирает причину изменения суммы и затем просматривает журнал изменений
-- **THEN** формулировка причины совпадает, так как берётся из единого источника
+- **WHEN** the administrator selects a reason for changing an amount and then views the change log
+- **THEN** the wording of the reason matches, since it is taken from a single source
 
-### Requirement: Отсутствие неиспользуемых UI-примитивов
+### Requirement: No unused UI primitives
 
-Проект НЕ ДОЛЖЕН содержать UI-компоненты и модули, на которые нет ссылок из достижимого кода приложения.
+The project MUST NOT contain UI components and modules that are not referenced from the application's reachable code.
 
-#### Scenario: Сборка без недостижимых модулей
+#### Scenario: Build without unreachable modules
 
-- **WHEN** выполняется сборка и проверка типов проекта
-- **THEN** отсутствуют импорты удалённых неиспользуемых UI-модулей и сборка завершается без ошибок
+- **WHEN** the project's build and type check are performed
+- **THEN** there are no imports of removed unused UI modules, and the build completes without errors

@@ -1,87 +1,87 @@
 ## Context
 
-См. `proposal.md` — Why. Ключевые ограничения текущего состояния:
+See `proposal.md` — Why. Key constraints of the current state:
 
-- Диалог участия (`components/features/DonateDialog.tsx`) — пошаговый, роли не различаются; шаг `message` содержит лишнюю кнопку, шаг `confirm` — блок с пояснением о скрытии суммы.
-- Доска пожеланий (`components/features/WishBoard.tsx`) форматирует дату карточки как `d MMM, HH:mm`.
-- Непрочитанные считаются по веткам: `countUnreadThreads` (`lib/data-store.ts`), используются в `Header.tsx` и `app/(app)/faq/page.tsx`; в списке веток `ChatThread.tsx` пометок нет.
-- Журнал изменений живёт внутри `AdminTable.tsx` и переключается булевым `showHistory` одной кнопкой.
-- `AppDate`/`ThemeProvider`/`AuthProvider`: `ThemeProvider` и `AuthProvider` возвращают `null` до гидратации, поэтому серверный HTML пуст. Шрифты подключены блокирующим `@import` в `app/globals.css`.
-- Календарь (`app/(app)/calendar/page.tsx`) — сетка из ячеек с `key={day}` и `transition-colors`.
+- The participation dialog (`components/features/DonateDialog.tsx`) is step-by-step, and roles are not distinguished; the `message` step contains an extra button, and the `confirm` step contains a block explaining that the amount is hidden.
+- The wish board (`components/features/WishBoard.tsx`) formats the card date as `d MMM, HH:mm`.
+- Unread counts are calculated by thread: `countUnreadThreads` (`lib/data-store.ts`), used in `Header.tsx` and `app/(app)/faq/page.tsx`; there are no markers in the thread list in `ChatThread.tsx`.
+- The change log lives inside `AdminTable.tsx` and is toggled by a boolean `showHistory` with a single button.
+- `AppDate`/`ThemeProvider`/`AuthProvider`: `ThemeProvider` and `AuthProvider` return `null` before hydration, so the server-side HTML is empty. Fonts are connected via a blocking `@import` in `app/globals.css`.
+- The calendar (`app/(app)/calendar/page.tsx`) is a grid of cells with `key={day}` and `transition-colors`.
 
 ## Goals / Non-Goals
 
 **Goals:**
 
-- Убрать лишние контролы и копирайт в диалоге денежного поздравления, показывать почту получателя в выборе.
-- Считать непрочитанные по сообщениям и показывать пометки по веткам.
-- Исправить пример возврата и принудительно обнулять сумму при отказе.
-- Сделать навигацию «таблица/журнал» явной.
-- Зафиксировать и выполнить бюджеты LCP/INP/CLS.
-- Убрать визуальное перетекание подсветки календаря при смене периода.
+- Remove extra controls and copy in the money congratulation dialog, and show the recipient's email in the selection.
+- Count unread by messages and show markers by thread.
+- Fix the refund example and forcibly zero the amount on decline.
+- Make the "table/journal" navigation explicit.
+- Fix and meet the LCP/INP/CLS budgets.
+- Remove the visual bleed of the calendar highlight when the period changes.
 
 **Non-Goals:**
 
-- Реальный бэкенд, БД, настоящая аутентификация и оплата — остаются моками.
-- Переработка дизайна страниц за пределами перечисленных дефектов.
-- Постоянный сбор полевых метрик (RUM) в продакшене — проверка показателей лабораторная и по трассировке взаимодействия.
-- Изменение правил видимости сумм, ролей и работы предпросмотра даты.
+- Real backend, DB, real authentication and payment — remain mocks.
+- Redesigning pages beyond the listed defects.
+- Continuous collection of field metrics (RUM) in production — the check is laboratory-based and via interaction tracing.
+- Changing the rules for visibility of amounts and roles, and the behavior of the date preview.
 
 ## Decisions
 
-### 1. Диалог участия: удаление контрола и блока, почта в выборе
+### 1. Participation dialog: removing a control and a block, email in the selection
 
-- Удалить кнопку «Без пожелания» (шаг `message`). Отправка без текста остаётся доступной: пустое поле → «Продолжить» → подтверждение.
-- Полностью удалить блок с иконкой `Lock` и текстом на шаге `confirm`; удалить неиспользуемый импорт `Lock`.
-- В `Select` выбора получателя показывать `{fullName} — {department} — {email}`.
-- Альтернатива: оставить одну строку «Итоговая сумма сбора скрыта.» — отклонена по решению пользователя (блок удаляется целиком).
+- Remove the "Without a wish" button (the `message` step). Sending without text remains available: empty field → "Continue" → confirmation.
+- Completely remove the block with the `Lock` icon and text on the `confirm` step; remove the unused `Lock` import.
+- In the recipient selection `Select`, show `{fullName} — {department} — {email}`.
+- Alternative: keep a single line "The final collection amount is hidden." — rejected by the user's decision (the block is removed entirely).
 
-### 2. Непрочитанные по сообщениям
+### 2. Unread by messages
 
-В `lib/data-store.ts` заменить `countUnreadThreads` на:
+In `lib/data-store.ts`, replace `countUnreadThreads` with:
 
-- `countUnreadMessages(threads)` — сумма сообщений с `!isAdmin && readByAdmin !== true` по всем веткам;
-- `countUnreadInThread(thread)` — количество непрочитанных в одной ветке.
+- `countUnreadMessages(threads)` — the sum of messages with `!isAdmin && readByAdmin !== true` across all threads;
+- `countUnreadInThread(thread)` — the number of unread in a single thread.
 
-`markThreadRead` остаётся без изменений (помечает все сообщения сотрудника в ветке прочитанными). Обновить `Header.tsx` (бейдж = `countUnreadMessages`), `app/(app)/faq/page.tsx` (то же), `ChatThread.tsx` — в элементе списка ветки добавить пометку с `countUnreadInThread(thread)` и выделение строки; пометка исчезает после открытия ветки.
+`markThreadRead` remains unchanged (it marks all of the employee's messages in the thread as read). Update `Header.tsx` (badge = `countUnreadMessages`), `app/(app)/faq/page.tsx` (the same), `ChatThread.tsx` — in the thread list item, add a marker with `countUnreadInThread(thread)` and highlight the row; the marker disappears after the thread is opened.
 
-Альтернатива: оставить счёт по веткам и только добавить точку — отклонено, пользователь выбрал счёт по сообщениям.
+Alternative: keep the count by thread and only add a dot — rejected, the user chose counting by messages.
 
-### 3. Возврат обнуляет сумму
+### 3. A refund zeroes the amount
 
-- В `AdminTable.handleOpenEdit` и при выборе причины: если `editReason === 'refund_declined'`, принудительно `setEditAmount('0')` и блокировать поле ввода; `canSave` дополнительно требует `parsedEditAmount === 0` для этой причины.
-- Исправить мок: `mockDonationHistory[0]` → `previousAmount: 15600, newAmount: 0`; `mockDonations` для `u3` → `totalAmount: 0`.
-- Альтернатива: только исправить мок, не менять поведение — отклонено: правило должно соблюдаться в UI, иначе ненулевой «отказ» остаётся возможным.
+- In `AdminTable.handleOpenEdit` and when selecting a reason: if `editReason === 'refund_declined'`, forcibly `setEditAmount('0')` and disable the input field; `canSave` additionally requires `parsedEditAmount === 0` for this reason.
+- Fix the mock: `mockDonationHistory[0]` → `previousAmount: 15600, newAmount: 0`; `mockDonations` for `u3` → `totalAmount: 0`.
+- Alternative: only fix the mock without changing behavior — rejected: the rule must be enforced in the UI, otherwise a non-zero "decline" remains possible.
 
-### 4. Явная навигация журнала
+### 4. Explicit log navigation
 
-- Заменить булев `showHistory` на вкладки `Tabs` (`@/components/ui/tabs`): значения `table` и `history`, подписи «Таблица сборов» и «Журнал изменений». Блок предпросмотра даты остаётся вне вкладок.
-- Альтернатива: оставить кнопку и добавить «← К таблице сборов» — менее единообразно: в `faq/page.tsx` уже используются вкладки.
+- Replace the boolean `showHistory` with `Tabs` tabs (`@/components/ui/tabs`): values `table` and `history`, labels "Collection table" and "Change log". The date preview block remains outside the tabs.
+- Alternative: keep the button and add "← Back to collection table" — less consistent: `faq/page.tsx` already uses tabs.
 
-### 5. Стабильность календаря
+### 5. Calendar stability
 
-- Навесить `key={`${year}-${month}`}` на контейнер сетки, чтобы ячейки перемонтировались при смене периода. Это исключает переход цвета из состояния прошлого месяца/года и частичное перетекание при разном числе дней.
-- Альтернатива: убрать `transition-colors` с ячеек — проще, но менее явно выражает намерение и затрагивает плавность смены темы; отклонено.
+- Attach `key={`${year}-${month}`}` to the grid container so that the cells remount when the period changes. This eliminates the color transition from the previous month's/year's state and the partial bleed when the number of days differs.
+- Alternative: remove `transition-colors` from the cells — simpler, but expresses the intent less explicitly and affects the smoothness of theme switching; rejected.
 
-### 6. Производительность
+### 6. Performance
 
-- **Шрифты:** заменить `@import` Google Fonts в `app/globals.css` на `next/font/google`. Загрузить используемые семейства (Nunito; Bricolage Grotesque + Manrope; Fraunces + Inter) как CSS-переменные, привязать `--font-heading`/`--font-body` к этим переменным по темам. `next/font` сам хостит файлы, выставляет `size-adjust` (снижает CLS) и не блокирует рендер. Ограничить начертания используемыми.
-- **Серверный контент:** убрать возврат `null` из `ThemeProvider` и `AuthProvider`. Тему применять ранним инлайн-скриптом в `<head>` (чтение `localStorage` и установка `data-theme` до гидратации), а состояние провайдера инициализировать из уже установленного атрибута. `AuthGate` рендерит оболочку и выполняет клиентский редирект при отсутствии пользователя, не скрывая дерево.
-- **Проверка:** продакшен-сборка (`npm run build && npm start`), Lighthouse в мобильном режиме для `/`, `/calendar`, `/faq`, `/admin` — LCP и CLS; INP — трассировкой взаимодействия (открытие диалога, ввод и отправка, переключение вкладок/месяцев). Значения сравнить с бюджетами 2,5 с / 200 мс / 0,1.
+- **Fonts:** replace the Google Fonts `@import` in `app/globals.css` with `next/font/google`. Load the used families (Nunito; Bricolage Grotesque + Manrope; Fraunces + Inter) as CSS variables, and bind `--font-heading`/`--font-body` to these variables per theme. `next/font` hosts the files itself, sets `size-adjust` (reducing CLS), and does not block rendering. Limit the weights to those used.
+- **Server-side content:** remove the `null` return from `ThemeProvider` and `AuthProvider`. Apply the theme with an early inline script in `<head>` (reading `localStorage` and setting `data-theme` before hydration), and initialize the provider state from the already set attribute. `AuthGate` renders the shell and performs a client-side redirect when there is no user, without hiding the tree.
+- **Verification:** production build (`npm run build && npm start`), Lighthouse in mobile mode for `/`, `/calendar`, `/faq`, `/admin` — LCP and CLS; INP — by interaction tracing (opening the dialog, entering and sending, switching tabs/months). Compare the values against the budgets of 2.5 s / 200 ms / 0.1.
 
 ## Risks / Trade-offs
 
-- [Пять семейств через `next/font` увеличивают вес сборки] → загружать только используемые начертания; шрифты инлайнятся и кэшируются, блокирующий запрос исчезает.
-- [Редирект без скрытия дерева может кратко показать защищённый контент неавторизованному пользователю] → `AuthGate` выполняет редирект сразу после гидратации; для демо-мока это приемлемо, реальная защита вне объёма.
-- [Инлайн-скрипт темы усложняет гидратацию] → `suppressHydrationWarning` на `<html>` уже стоит; инициализация темы из DOM-атрибута убирает расхождение.
-- [Счёт по сообщениям меняет число на бейдже] → ожидаемое поведение по решению пользователя; пометки по веткам сохраняют понятность.
-- [Блокировка поля суммы при отказе снижает гибкость] → экстренный возврат остаётся для частичных сумм.
-- [Lighthouse лабораторно не измеряет INP] → использовать трассировку взаимодействий и/или веб-виталы в консоли; зафиксировать методику в задачах.
+- [Five families via `next/font` increase the bundle weight] → load only the used weights; the fonts are inlined and cached, and the blocking request disappears.
+- [A redirect without hiding the tree may briefly show protected content to an unauthorized user] → `AuthGate` performs the redirect immediately after hydration; for the demo mock this is acceptable, and real protection is out of scope.
+- [The inline theme script complicates hydration] → `suppressHydrationWarning` on `<html>` is already present; initializing the theme from the DOM attribute removes the mismatch.
+- [Counting by messages changes the number on the badge] → expected behavior per the user's decision; the per-thread markers keep it understandable.
+- [Locking the amount field on decline reduces flexibility] → an emergency refund remains available for partial amounts.
+- [Lighthouse does not measure INP in the laboratory] → use interaction tracing and/or web vitals in the console; record the methodology in the tasks.
 
 ## Migration Plan
 
-Демо-приложение без персистентности и миграций данных. Изменения моков применяются при загрузке. Откат — через git. Деплой на Netlify не изменяется; после правок убедиться, что `npm run build` проходит.
+A demo application without persistence or data migrations. Mock changes are applied on load. Rollback is via git. Deployment to Netlify does not change; after the edits, make sure that `npm run build` passes.
 
 ## Open Questions
 
-Нет.
+None.

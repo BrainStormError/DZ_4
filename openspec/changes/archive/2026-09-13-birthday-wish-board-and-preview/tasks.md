@@ -1,49 +1,49 @@
-## 1. Общий источник даты
+## 1. Shared date source
 
-- [x] 1.1 Добавить `lib/birthdays.ts` с `parseIsoLocal(iso)` (разбор `yyyy-mm-dd` в локальную дату через `new Date(y, m-1, d)`) и `getBoardDate(today, users)`, возвращающей выбранную дату и список сотрудников; проверить, что дата `1990-09-13` в отрицательном смещении не сдвигается
+- [x] 1.1 Add `lib/birthdays.ts` with `parseIsoLocal(iso)` (parsing `yyyy-mm-dd` into a local date via `new Date(y, m-1, d)`) and `getBoardDate(today, users)`, which returns the selected date and the list of employees; verify that the date `1990-09-13` does not shift in a negative offset
 
-- [x] 1.2 Добавить `lib/date-context.tsx` с `DateProvider` и `useAppDate()`, отдающими `{ today, isPreview, previewDate, setPreviewDate, resetDate }`; обернуть провайдером `app/layout.tsx`; проверить, что `npm run typecheck` проходит
+- [x] 1.2 Add `lib/date-context.tsx` with `DateProvider` and `useAppDate()`, exposing `{ today, isPreview, previewDate, setPreviewDate, resetDate }`; wrap `app/layout.tsx` with the provider; verify that `npm run typecheck` passes
 
-- [x] 1.3 Перевести `app/(app)/page.tsx` и `app/(app)/calendar/page.tsx` на `useAppDate()` вместо прямого `new Date()`; проверить, что блок «Именинники сегодня», «Скоро день рождения» и отметка текущего дня в календаре используют одну и ту же дату
+- [x] 1.3 Migrate `app/(app)/page.tsx` and `app/(app)/calendar/page.tsx` to `useAppDate()` instead of a direct `new Date()`; verify that the "Birthday people today" block, "Birthday soon" and the current-day marker in the calendar use the same date
 
-## 2. Показ поздравлений по дню рождения
+## 2. Showing congratulations by birthday
 
-- [x] 2.1 В `components/features/WishBoard.tsx` заменить вывод всех пожеланий на фильтр через `getBoardDate`: сегодня — только пожелания именинников дня, иначе — ближайшая прошедшая дата (все родившиеся в этот день), при отсутствии пожеланий — пустое состояние без перехода к более ранним датам; будущие даты исключены. Проверить на мок-данных: при дате 2026-09-13 видны `w1`, `w2` (Анна Смирнова), `w3` для Дмитрия скрыт
+- [x] 2.1 In `components/features/WishBoard.tsx`, replace rendering all wishes with filtering via `getBoardDate`: today — only wishes for the day's birthday people, otherwise — the nearest past date (all born on that day), and if there are no wishes — an empty state without falling through to earlier dates; future dates are excluded. Verify against the mock data: with the date 2026-09-13, `w1`, `w2` (Anna Smirnova) are visible and `w3` for Dmitry is hidden
 
-- [x] 2.2 В карточке доски вывести `От: <Фамилия Имя> (<ник>)` и `Кому: <Фамилия Имя>` с явным направлением; в форме добавить заголовок «Кого поздравляем» и показ текущего пользователя как отправителя; проверить, что полный адрес почты нигде не отображается
+- [x] 2.2 In the board card, render `From: <Last name First name> (<nick>)` and `To: <Last name First name>` with an explicit direction; in the form, add the heading "Whom we congratulate" and show the current user as the sender; verify that the full email address is not displayed anywhere
 
-- [x] 2.3 Обновить текст hero-блока в `app/(app)/page.tsx` на «Мы собираем средства на подарки коллегам к их дню рождения. Любой сотрудник может присоединиться — это добровольно.» и убедиться, что фраза отображается ровно один раз в содержимом страницы
+- [x] 2.3 Update the hero block text in `app/(app)/page.tsx` to "We collect funds for gifts to colleagues for their birthdays. Any employee can join — participation is voluntary." and make sure the sentence is displayed exactly once in the page content
 
-## 3. Зацикленная лента
+## 3. Looping strip
 
-- [x] 3.1 Заменить сетку поздравлений в `WishBoard` на одну зацикленную ленту с плавной автоматической прокруткой (CSS-марки, дублированный трек с `aria-hidden`); проверить, что при нескольких именинниках лента одна и прокручивается по кругу
+- [x] 3.1 Replace the congratulations grid in `WishBoard` with a single looping strip with smooth automatic scrolling (CSS marquee, a duplicated track with `aria-hidden`); verify that with several birthday people there is one strip and it scrolls in a loop
 
-- [x] 3.2 Назначить каждому имениннику цвет из фиксированной палитры (детерминированно, с циклом при превышении палитры) через инлайновую CSS-переменную и подсветить карточки; проверить, что карточки разных именинников визуально различаются
+- [x] 3.2 Assign each birthday person a color from a fixed palette (deterministically, cycling when the palette is exceeded) via an inline CSS variable and highlight the cards; verify that cards of different birthday people are visually distinct
 
-- [x] 3.3 Реализовать паузу автопрокрутки при наведении/фокусе и отключение при `prefers-reduced-motion` с сохранением ручной прокрутки; проверить поведение с включённым `prefers-reduced-motion`
+- [x] 3.3 Implement pausing of auto-scroll on hover/focus and disabling under `prefers-reduced-motion` while preserving manual scrolling; verify the behavior with `prefers-reduced-motion` enabled
 
-## 4. Денежное поздравление без пожелания
+## 4. Monetary congratulation without a wish
 
-- [x] 4.1 В `components/features/DonateDialog.tsx` сделать шаг «Поздравление» необязательным (пропуск/пустой текст), создавать пожелание через `addWish` только при непустом тексте; проверить, что отправка без текста добавляет сумму и не создаёт пожелание
+- [x] 4.1 In `components/features/DonateDialog.tsx`, make the "Congratulation" step optional (skip/empty text), create a wish via `addWish` only when the text is non-empty; verify that sending without text adds the amount and does not create a wish
 
-- [x] 4.2 Развести тексты шага подтверждения и экрана результата для сценариев с пожеланием и без него; проверить, что результат без пожелания сообщает о добавлении суммы и не утверждает, что поздравление передано
+- [x] 4.2 Separate the confirmation step and result screen texts for the scenarios with and without a wish; verify that the result without a wish reports that the amount was added and does not claim that a congratulation was sent
 
-- [x] 4.3 Убедиться, что денежное поздравление можно отправить заранее, а созданное пожелание не появляется на доске до дня рождения получателя; проверить на дате до дня рождения получателя
+- [x] 4.3 Make sure a monetary congratulation can be sent in advance, and the created wish does not appear on the board until the recipient's birthday; verify on a date before the recipient's birthday
 
-## 5. Предпросмотр даты у администратора
+## 5. Administrator date preview
 
-- [x] 5.1 Добавить администратору контрол выбора даты (поповер с `react-day-picker`) в `components/features/AdminTable.tsx`; проверить, что контрол не отображается для роли `employee`
+- [x] 5.1 Add a date picker control for the administrator (a popover with `react-day-picker`) in `components/features/AdminTable.tsx`; verify that the control is not displayed for the `employee` role
 
-- [x] 5.2 Добавить индикатор активного предпросмотра с выбранной датой и действием сброса, а также сброс режима при перезагрузке; проверить, что сброс возвращает реальную дату
+- [x] 5.2 Add an indicator of the active preview with the selected date and a reset action, as well as resetting the mode on reload; verify that reset returns the real date
 
-- [x] 5.3 Заблокировать запись в режиме предпросмотра в `WishBoard`, `DonateDialog` и `AdminTable` (кнопки недоступны, обработчики выходят раньше); проверить, что реальные данные не изменяются, пока предпросмотр активен
+- [x] 5.3 Block writes in preview mode in `WishBoard`, `DonateDialog` and `AdminTable` (buttons are disabled, handlers return early); verify that real data is not changed while the preview is active
 
-- [x] 5.4 Убедиться, что предпросмотр согласованно влияет на блоки именинников, доску и отметку дня в календаре; проверить, что при выборе другой даты все три представления показывают состояние на эту дату
+- [x] 5.4 Make sure the preview consistently affects the birthday person blocks, the board and the day marker in the calendar; verify that when another date is selected, all three views show the state for that date
 
-## 6. Проверка и финализация
+## 6. Verification and finalization
 
-- [x] 6.1 Прогнать `npm run typecheck` и `npm run lint` без ошибок
+- [x] 6.1 Run `npm run typecheck` and `npm run lint` without errors
 
-- [x] 6.2 Прогнать ручной сценарий: именинник сегодня; отсутствие именинников (ближайшая прошедшая дата); скрытие будущих пожеланий; именинник-администратор; отправка средств с пожеланием и без; предпросмотр даты и блокировка записи
+- [x] 6.2 Run the manual scenario: a birthday person today; no birthday people (the nearest past date); hiding future wishes; a birthday person who is an administrator; sending funds with and without a wish; date preview and write blocking
 
-- [x] 6.3 Выполнить `openspec validate "birthday-wish-board-and-preview"` и убедиться в отсутствии ошибок
+- [x] 6.3 Run `openspec validate "birthday-wish-board-and-preview"` and make sure there are no errors

@@ -1,70 +1,70 @@
 ## MODIFIED Requirements
 
-### Requirement: Шрифты не блокируют первичный рендер
+### Requirement: Fonts do not block the first render
 
-Загрузка шрифтов НЕ ДОЛЖНА (MUST NOT) блокировать первичный рендер. Внешние блокирующие запросы на таблицы стилей шрифтов ДОЛЖНЫ быть устранены в пользу способа загрузки, который не задерживает отображение текста и не вызывает заметного сдвига разметки при подмене шрифта. При первой загрузке страницы ДОЛЖНЫ (MUST) запрашиваться файлы шрифтов только той темы, которая применена к документу; шрифты остальных тем НЕ ДОЛЖНЫ (MUST NOT) запрашиваться заранее и ДОЛЖНЫ загружаться только при переключении на соответствующую тему.
+Font loading (MUST NOT) block the first render. External blocking requests for font stylesheets MUST be eliminated in favor of a loading method that does not delay text display and does not cause a noticeable layout shift when the font is swapped. On the first load of the page, only the font files of the theme that is applied to the document (MUST) be requested; fonts of other themes (MUST NOT) be requested in advance and MUST be loaded only when switching to the corresponding theme.
 
-#### Scenario: Текст отображается без ожидания внешних шрифтов
+#### Scenario: Text is displayed without waiting for external fonts
 
-- **WHEN** страница загружается на медленном соединении
-- **THEN** отображение текста не ожидает внешнего блокирующего запроса шрифтов
+- **WHEN** the page loads on a slow connection
+- **THEN** text display does not wait for an external blocking font request
 
-#### Scenario: Подмена шрифта не сдвигает разметку
+#### Scenario: A font swap does not shift the layout
 
-- **WHEN** браузер применяет загруженный шрифт вместо резервного
-- **THEN** положение текста и блоков не смещается заметным образом
+- **WHEN** the browser applies the loaded font instead of the fallback
+- **THEN** the position of text and blocks does not shift noticeably
 
-#### Scenario: Загружаются только шрифты активной темы
+#### Scenario: Only fonts of the active theme are loaded
 
-- **WHEN** документ открывается с темой по умолчанию
-- **THEN** заранее запрашиваются файлы только семейств этой темы, а файлы семейств других тем не запрашиваются
+- **WHEN** the document is opened with the default theme
+- **THEN** only the families of this theme are requested in advance, and the families of other themes are not requested
 
-#### Scenario: Сохранённая нестандартная тема не тянет чужие шрифты
+#### Scenario: A saved non-default theme does not pull foreign fonts
 
-- **WHEN** у пользователя сохранена нестандартная тема и он открывает страницу
-- **THEN** запрашиваются файлы семейств этой темы, а семейства остальных тем не запрашиваются
+- **WHEN** the user has a saved non-default theme and opens the page
+- **THEN** the families of this theme are requested, and the families of other themes are not requested
 
 ## ADDED Requirements
 
-### Requirement: Изоляция перерисовок по доменам данных
+### Requirement: Isolation of re-renders by data domains
 
-Изменение данных одного домена — пожеланий, взносов или переписки — НЕ ДОЛЖНО (MUST NOT) вызывать повторную отрисовку интерфейса, который эти данные не отображает и не изменяет. Компонент ДОЛЖЕН (MUST) отрисовываться заново только тогда, когда изменяются данные, которые он показывает или изменяет.
+A change in the data of one domain — wishes, contributions, or correspondence — (MUST NOT) cause a re-render of the interface that does not display or modify that data. A component (MUST) re-render only when the data that it displays or modifies changes.
 
-#### Scenario: Добавление пожелания не трогает остальной интерфейс
+#### Scenario: Adding a wish does not touch the rest of the interface
 
-- **WHEN** пользователь отправляет пожелание
-- **THEN** шапка приложения, лента переписки и админ-таблица не выполняют повторную отрисовку
+- **WHEN** the user submits a wish
+- **THEN** the application header, the correspondence strip, and the admin table do not re-render
 
-#### Scenario: Взнос не трогает доску пожеланий и переписку
+#### Scenario: A contribution does not touch the wish board and the correspondence
 
-- **WHEN** пользователь отправляет взнос
-- **THEN** доска пожеланий и лента переписки не выполняют повторную отрисовку
+- **WHEN** the user sends a contribution
+- **THEN** the wish board and the correspondence strip do not re-render
 
-#### Scenario: Смена статуса подарка не трогает пожелания
+#### Scenario: Changing the gift status does not touch wishes
 
-- **WHEN** администратор меняет статус подарка или сумму сбора
-- **THEN** интерфейс, работающий только с пожеланиями, не выполняет повторную отрисовку
+- **WHEN** the administrator changes the gift status or the collection amount
+- **THEN** the interface that works only with wishes does not re-render
 
-#### Scenario: Смена темы и вход не заражают подписчиков
+#### Scenario: A theme change and login do not infect subscribers
 
-- **WHEN** состояние темы или сессии не менялось
-- **THEN** повторная отрисовка поставщика темы и сессии не вызывает повторную отрисовку его подписчиков
+- **WHEN** the theme or session state has not changed
+- **THEN** a re-render of the theme and session provider does not cause a re-render of its subscribers
 
-### Requirement: Тяжёлые фичи вне критического пути первой загрузки
+### Requirement: Heavy features outside the critical path of the first load
 
-Если первая загрузка ключевой страницы не укладывается в бюджет LCP, код фич, не отображаемых при первой отрисовке, ДОЛЖЕН (MUST) подключаться отдельно от критического пути и загружаться только тогда, когда фича становится нужна пользователю. Фичи, находящиеся внутри маршрута, который уже загружается как отдельная страница, дополнительной ленивой загрузкой не дробятся.
+If the first load of a key page does not fit within the LCP budget, the code of features that are not displayed on the first render (MUST) be connected separately from the critical path and loaded only when the feature becomes needed by the user. Features located inside a route that is already loaded as a separate page are not split further by additional lazy loading.
 
-#### Scenario: Диалог участия не удлиняет критический путь главной
+#### Scenario: The participation dialog does not lengthen the critical path of the home page
 
-- **WHEN** первая загрузка главной страницы превышает бюджет LCP
-- **THEN** код диалога участия не входит в критический путь первой отрисовки и подключается при первом открытии диалога
+- **WHEN** the first load of the home page exceeds the LCP budget
+- **THEN** the participation dialog code is not part of the critical path of the first render and is connected on the first opening of the dialog
 
-#### Scenario: Загрузка ленивой фичи не сдвигает разметку
+#### Scenario: Loading a lazy feature does not shift the layout
 
-- **WHEN** лениво подключаемая фича загружается
-- **THEN** на время загрузки отображается заполнитель, не вызывающий заметного сдвига разметки
+- **WHEN** a lazily connected feature loads
+- **THEN** a placeholder is displayed during loading that does not cause a noticeable layout shift
 
-#### Scenario: Отдельная страница не дробится повторно
+#### Scenario: A separate page is not split again
 
-- **WHEN** пользователь открывает админ-панель как отдельный раздел
-- **THEN** её код загружается одним чанком раздела без дополнительной ленивой загрузки внутри страницы
+- **WHEN** the user opens the admin panel as a separate section
+- **THEN** its code is loaded as a single section chunk without additional lazy loading inside the page

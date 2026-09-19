@@ -1,97 +1,97 @@
 ## Context
 
-Мотивация — в `proposal.md`; требования к наблюдаемому поведению — в дельтах `specs/performance/spec.md` и `specs/auth/spec.md`.
+The motivation is in `proposal.md`; the requirements for observable behavior are in the deltas `specs/performance/spec.md` and `specs/auth/spec.md`.
 
-Текущее состояние по коду:
+Current state in the code:
 
-- Провайдеры живут в корневом layout: `app/layout.tsx:33-39` — `ThemeProvider` → `AuthProvider` → `DateProvider` → `DataProvider`. `AuthProvider` обязан оставаться выше обеих групп маршрутов, потому что `useAuth()` читают и страница входа (`app/(auth)/login/page.tsx:14`), и оболочка `(app)`.
-- `ready` в `lib/auth-context.tsx:20-29` означает ровно «`localStorage` прочитан», а не «данные загружены». Читают его двое: `components/layout/AuthGate.tsx:12` и `components/features/AdminTable.tsx:114`; ещё два теста мокают его значением `true` (`AdminTable.test.tsx:22`, `DonateDialog.test.tsx:35`).
-- `checkCorpEmail` (`lib/corp-email.ts:12`) — чистая функция без браузерных API, зависит только от `mockUsers` (`lib/mock-data.ts:14`), который тоже серверно-безопасен (обычные данные плюс `encodeURIComponent` в `avatarDataUri`). Проверено чтением файлов: переносить логику входа на сервер технически ничто не мешает.
-- Все пользовательские маршруты лежат внутри `(app)`: `/`, `/calendar`, `/faq`, `/admin`. Статических маршрутов, которые стоит «спасать» от динамического рендера, практически нет.
-- Данные приложения — моки без персистентности (`lib/mock-data.ts`), бэкенда нет. Next.js 13.5.1, React 18, все страницы объявлены как `'use client'`.
-- Прошлые решения, которые нужно учитывать: перенос темы в cookie отклонён (`archive/2026-09-15-reduce-render-fanout-and-first-load`, решение 4), а риск «защищённый контент кратко виден неавторизованному» осознанно принят в `archive/2026-09-14-fix-review-round-6/design.md:69` с оговоркой «реальная защита вне объёма».
-- Правило проекта: выводы о производительности делаются только на `npm run build && npm run start`; dev-режим для оценок не используется.
+- Providers live in the root layout: `app/layout.tsx:33-39` — `ThemeProvider` → `AuthProvider` → `DateProvider` → `DataProvider`. `AuthProvider` MUST remain above both route groups, because `useAuth()` is read by both the login page (`app/(auth)/login/page.tsx:14`) and the `(app)` shell.
+- `ready` in `lib/auth-context.tsx:20-29` means exactly "`localStorage` has been read", not "data has been loaded". Two consumers read it: `components/layout/AuthGate.tsx:12` and `components/features/AdminTable.tsx:114`; two more tests mock it with the value `true` (`AdminTable.test.tsx:22`, `DonateDialog.test.tsx:35`).
+- `checkCorpEmail` (`lib/corp-email.ts:12`) is a pure function without browser APIs; it depends only on `mockUsers` (`lib/mock-data.ts:14`), which is also server-safe (plain data plus `encodeURIComponent` in `avatarDataUri`). Verified by reading the files: nothing technically prevents moving the login logic to the server.
+- All user routes live inside `(app)`: `/`, `/calendar`, `/faq`, `/admin`. There are practically no static routes that would be worth "saving" from dynamic rendering.
+- The app's data is mocks without persistence (`lib/mock-data.ts`), there is no backend. Next.js 13.5.1, React 18, all pages are declared as `'use client'`.
+- Past decisions to take into account: moving the theme to a cookie was rejected (`archive/2026-09-15-reduce-render-fanout-and-first-load`, decision 4), and the risk "protected content is briefly visible to an unauthorized user" was consciously accepted in `archive/2026-09-14-fix-review-round-6/design.md:69` with the caveat "real protection is out of scope".
+- Project rule: performance conclusions are made only on `npm run build && npm run start`; dev mode is not used for measurements.
 
 ## Goals / Non-Goals
 
 **Goals:**
 
-1. Сессия известна серверу до отдачи разметки, поэтому серверный HTML ключевой страницы содержит её содержимое, а не заполнитель.
-2. Единственный источник истины для сессии; понятие «готовности» сессии перестаёт существовать.
-3. Решение о доступе к защищённому разделу принимается до отдачи разметки.
-4. Поведение входа сохраняется: успешный вход, отказ по домену и отказ по справочнику работают как раньше.
+1. The session is known to the server before the markup is sent, so the server HTML of the key page contains its content rather than a placeholder.
+2. A single source of truth for the session; the notion of session "readiness" ceases to exist.
+3. The decision about access to the protected section is made before the markup is sent.
+4. Login behavior is preserved: a successful login, rejection by domain, and rejection by the directory work as before.
 
 **Non-Goals:**
 
-- Подпись cookie, секреты, httpOnly, серверные actions, реальная аутентификация и авторизация.
-- Перенос темы в cookie (остаётся отклонённой альтернативой из решения 4 предыдущего изменения).
-- Персистентность данных, бэкенд, БД, RLS.
-- Сохранение входа между запусками браузера — наоборот, сессия завершается при закрытии.
-- Изменение внешнего вида страниц, правил сумм, ролей и предпросмотра даты.
+- Cookie signing, secrets, httpOnly, server actions, real authentication and authorization.
+- Moving the theme to a cookie (it remains the rejected alternative from decision 4 of the previous change).
+- Data persistence, backend, DB, RLS.
+- Preserving the login between browser runs — on the contrary, the session ends when the browser is closed.
+- Changing the appearance of pages, the rules for amounts, roles, and date preview.
 
 ## Decisions
 
-### 1. Сессионная cookie — единственный источник истины
+### 1. The session cookie is the single source of truth
 
-Имя `corp-gift-auth-email`, значение — введённый адрес; атрибуты `Path=/`, `SameSite=Lax`, без `Max-Age` и `Expires`, то есть сессионная cookie, которая исчезает при закрытии браузера. Ключ `corp-gift-auth-email` в `localStorage` перестаёт читаться и удаляется при входе и выходе, чтобы не осталось второго, никем не читаемого источника истины.
+The name is `corp-gift-auth-email`, the value is the entered address; the attributes are `Path=/`, `SameSite=Lax`, without `Max-Age` and `Expires`, that is, a session cookie that disappears when the browser is closed. The key `corp-gift-auth-email` in `localStorage` is no longer read and is deleted on login and logout, so that no second, unread source of truth remains.
 
-Почему cookie, а не `localStorage`: значение приходит на сервер вместе с запросом, поэтому разметка может зависеть от сессии без подмены содержимого после гидратации. Это единственный путь выполнить требование `performance` без нарушения требования `hydration`.
+Why a cookie and not `localStorage`: the value comes to the server along with the request, so the markup can depend on the session without substituting content after hydration. This is the only way to satisfy the `performance` requirement without violating the `hydration` requirement.
 
-Отклонённая альтернатива — **inline-скрипт по образцу темы** (`app/layout.tsx:19`, `lib/theme-context.tsx:23-28`). Для темы приём работает, потому что значение косметическое: серверная разметка и первый клиентский рендер совпадают, а фактическая тема досогласовывается эффектом, ничего не скрывая. Для сессии так нельзя: от неё зависит наличие имени пользователя и содержимого защищённого раздела, поэтому первый клиентский рендер разойдётся с серверным, React отбросит серверное поддерево и переключит его на клиентский рендеринг — прямое нарушение требований `hydration` и `performance`.
+Rejected alternative — **an inline script following the theme pattern** (`app/layout.tsx:19`, `lib/theme-context.tsx:23-28`). For the theme the technique works, because the value is cosmetic: the server markup and the first client render match, and the actual theme is reconciled by an effect without hiding anything. For the session this is not acceptable: the presence of the user name and the content of the protected section depend on it, so the first client render would diverge from the server render, React would discard the server subtree and switch it to client rendering — a direct violation of the `hydration` and `performance` requirements.
 
-### 2. Cookie читает корневой layout, пользователь приходит пропом
+### 2. The root layout reads the cookie, the user arrives as a prop
 
-`app/layout.tsx` уже серверный компонент: `cookies()` из `next/headers` даёт значение, `checkCorpEmail` превращает его в пользователя, результат передаётся в `AuthProvider` как начальное состояние. Флаг `ready` удаляется из интерфейса контекста целиком, а не просто перестаёт использоваться.
+`app/layout.tsx` is already a server component: `cookies()` from `next/headers` provides the value, `checkCorpEmail` turns it into a user, and the result is passed to `AuthProvider` as the initial state. The `ready` flag is removed from the context interface entirely, not merely left unused.
 
-Альтернативы:
+Alternatives:
 
-- **Читать cookie в `(app)/layout.tsx` и держать провайдер сессии на уровне группы.** Не даёт выигрыша: все значимые маршруты и так внутри `(app)`, статику это не спасает, зато расщепляет состояние сессии между группами и требует второго провайдера для страницы входа.
-- **Middleware плюс клиентское состояние.** Сессия остаётся неизвестной серверу, то есть цель 1 не достигается; middleware полезен только как турникет.
-- **Отдельный `(auth)/layout.tsx` с собственной проверкой.** Избыточен: ту же cookie видит корневой layout.
+- **Read the cookie in `(app)/layout.tsx` and keep the session provider at the group level.** Gives no gain: all meaningful routes are already inside `(app)`, this does not save static routes, but it splits the session state between groups and requires a second provider for the login page.
+- **Middleware plus client state.** The session remains unknown to the server, that is, goal 1 is not achieved; middleware is useful only as a turnstile.
+- **A separate `(auth)/layout.tsx` with its own check.** Redundant: the root layout sees the same cookie.
 
-### 3. Защита маршрута на сервере, клиентский `AuthGate` удаляется
+### 3. Route protection on the server, the client `AuthGate` is removed
 
-`app/(app)/layout.tsx` (серверный) читает cookie: нет валидного пользователя — `redirect('/login')` из `next/navigation` до отдачи разметки. Проверка роли для административного раздела выполняется там же или в серверной обёртке `/admin`: пользователь с ролью `employee` не получает админскую таблицу в разметке, а получает состояние «доступ запрещён». Клиентский `AuthGate` становится лишним и удаляется вместе с эффектом редиректа.
+`app/(app)/layout.tsx` (server) reads the cookie: no valid user — `redirect('/login')` from `next/navigation` before the markup is sent. The role check for the admin section is performed in the same place or in the server wrapper for `/admin`: a user with the `employee` role does not receive the admin table in the markup, but receives the "access denied" state. The client `AuthGate` becomes unnecessary and is removed along with the redirect effect.
 
-Это осознанно закрывает риск, принятый в раунде 6: неавторизованный пользователь больше не может увидеть защищённую разметку, потому что её просто нет в ответе.
+This consciously closes the risk accepted in round 6: an unauthorized user can no longer see the protected markup, because it is simply not in the response.
 
-Альтернатива — **оставить `AuthGate` и клиентский редирект**: проще, но требование «решение о доступе до отдачи разметки» не выполняется, а исходный дефект (контент появляется после гидратации) сохраняется на уровне раздела.
+The alternative is to **keep `AuthGate` and the client redirect**: simpler, but the requirement "the access decision before the markup is sent" is not met, and the original defect (content appears after hydration) remains at the section level.
 
-### 4. Админ-таблица рендерится без клиентского гейта
+### 4. The admin table renders without a client gate
 
-`AdminTable.tsx:114` (`if (!ready) return ...`) удаляется, заголовок и описание страницы рендерятся всегда. Скелетон не нужен и по данным: `useDonations()` отдаёт стартовые значения из мок-стора синхронно, одинаково на сервере и на клиенте, поэтому ждать нечего. Компоненты остаются `'use client'` — серверный рендер клиентских компонентов в App Router штатен, их HTML попадает в первый ответ.
+`AdminTable.tsx:114` (`if (!ready) return ...`) is removed, the page title and description render always. A skeleton is not needed for the data either: `useDonations()` returns the starting values from the mock store synchronously, identically on the server and on the client, so there is nothing to wait for. The components remain `'use client'` — server-side rendering of client components in the App Router is standard, and their HTML ends up in the first response.
 
-Ветка «Доступ запрещён» внутри компонента перестаёт быть единственной защитой: она остаётся видимым состоянием для роли `employee`, но решение принимается на сервере (решение 3).
+The "Access denied" branch inside the component ceases to be the only protection: it remains a visible state for the `employee` role, but the decision is made on the server (decision 3).
 
-### 5. Страница входа
+### 5. The login page
 
-Вошедший пользователь уходит на главную до отдачи разметки: проверка cookie вместо эффекта `app/(auth)/login/page.tsx:20-22`, который сейчас успевает показать форму. Форма остаётся клиентской: `login()` по-прежнему валидирует адрес через `checkCorpEmail`, но вместо `localStorage` пишет cookie через `document.cookie` — серверный action не нужен, бэкенда в проекте нет. `logout` удаляет cookie (`Max-Age=0`) и очищает состояние.
+A logged-in user goes to the home page before the markup is sent: a cookie check instead of the effect at `app/(auth)/login/page.tsx:20-22`, which currently manages to show the form. The form remains client-side: `login()` still validates the address via `checkCorpEmail`, but instead of `localStorage` it writes a cookie via `document.cookie` — a server action is not needed, there is no backend in the project. `logout` deletes the cookie (`Max-Age=0`) and clears the state.
 
-### 6. Динамический рендер — принятая плата
+### 6. Dynamic rendering is an accepted cost
 
-`cookies()` в корневом layout переводит все маршруты в динамический рендер: статическая отдача HTML пропадает, разметка собирается на каждый запрос. Это принимается осознанно: значимые страницы и так внутри `(app)`, экономить нечего, а внешних источников данных, ради кэша которых стоило бы держаться за статику, в демо нет. Рост времени до первого байта проверяется замером, чтобы убедиться, что бюджеты `specs/performance/spec.md` не нарушены.
+`cookies()` in the root layout turns all routes into dynamic rendering: static HTML delivery is lost, and the markup is assembled on every request. This is accepted consciously: the meaningful pages are already inside `(app)`, there is nothing to save, and there are no external data sources in the demo whose cache would justify clinging to static rendering. The increase in time to first byte is checked by measurement to make sure the budgets in `specs/performance/spec.md` are not violated.
 
-### 7. Тесты и моки
+### 7. Tests and mocks
 
-Из моков `useAuth` в `AdminTable.test.tsx:22` и `DonateDialog.test.tsx:35` убирается поле `ready`. Добавляются проверки: валидная cookie даёт пользователя на сервере; отсутствие cookie даёт редирект на вход; роль `employee` не получает админскую разметку; cookie не имеет `Max-Age`; при входе и выходе старый ключ `localStorage` не остаётся.
+The `ready` field is removed from the `useAuth` mocks in `AdminTable.test.tsx:22` and `DonateDialog.test.tsx:35`. Checks are added: a valid cookie gives a user on the server; the absence of a cookie gives a redirect to login; the `employee` role does not receive the admin markup; the cookie has no `Max-Age`; on login and logout the old `localStorage` key does not remain.
 
 ## Risks / Trade-offs
 
-- [Cookie не подписана: значение подделывается вручную] → принято как размен демо-уровня и фиксируется как известное ограничение; реальная аутентификация и защита вне объёма, как и было записано в раунде 6.
-- [Все маршруты становятся динамическими, время до первого байта растёт] → замер на `npm run build && npm run start` до и после; при выходе за бюджеты шаг откатывается ревертом коммита.
-- [Одноразовый выход для всех, кто уже вошёл] → ожидаемое следствие смены хранилища, отмечается как ожидаемое поведение, а не дефект.
-- [Вход не сохраняется после закрытия браузера] → прямое требование пользователя, зафиксировано сценарием в дельте `auth`.
-- [Два источника истины, если старый ключ `localStorage` останется] → ключ больше не читается и удаляется при входе и выходе; состояние инициализируется только значением с сервера.
-- [Серверная проверка зависит от мок-справочника] → `mockUsers` доступен на сервере (проверено), а точка замены при появлении бэкенда — единственный вызов `checkCorpEmail`.
-- [Расхождение гидратации, если cookie изменится между запросом и рендером] → состояние инициализируется тем значением, что пришло с сервера, и не перечитывается эффектом; тема остаётся единственным значением, досогласовываемым после гидратации, и она косметическая.
-- [Проверка роли на сервере может разойтись с клиентским состоянием при смене роли в моке] → справочник статичен, расхождение невозможно без правки кода; при появлении динамических ролей решение пересматривается.
+- [The cookie is not signed: the value can be forged manually] → accepted as a demo-level trade-off and recorded as a known limitation; real authentication and protection are out of scope, as was recorded in round 6.
+- [All routes become dynamic, time to first byte grows] → measurement on `npm run build && npm run start` before and after; if the budgets are exceeded, the step is rolled back by reverting the commit.
+- [A one-time logout for everyone who is already logged in] → an expected consequence of changing the storage, noted as expected behavior rather than a defect.
+- [The login is not preserved after closing the browser] → a direct user requirement, captured by a scenario in the `auth` delta.
+- [Two sources of truth if the old `localStorage` key remains] → the key is no longer read and is deleted on login and logout; the state is initialized only with the value from the server.
+- [The server check depends on the mock directory] → `mockUsers` is available on the server (verified), and the replacement point when a backend appears is the single call to `checkCorpEmail`.
+- [Hydration mismatch if the cookie changes between the request and the render] → the state is initialized with the value that came from the server and is not re-read by an effect; the theme remains the only value reconciled after hydration, and it is cosmetic.
+- [The role check on the server may diverge from the client state if the role changes in the mock] → the directory is static, divergence is impossible without editing the code; if dynamic roles appear, the decision is revisited.
 
 ## Migration Plan
 
-1. Коммит 1: чтение cookie в корневом layout, начальное значение провайдера, удаление `ready`, снятие скелетона в `AdminTable`. Проверки: `npm run lint`, `npm run typecheck`, `npm test`, затем `npm run build && npm run start` и замер LCP на `/admin` и главной.
-2. Коммит 2: серверная защита `(app)`, удаление `AuthGate`, серверный редирект на странице входа, проверка роли для `/admin`. Повторный прогон проверок и замеров.
-3. Откат — реверт соответствующего коммита. Миграций данных нет, персистентности нет, деплой не меняется по составу.
+1. Commit 1: reading the cookie in the root layout, the provider's initial value, removal of `ready`, removal of the skeleton in `AdminTable`. Checks: `npm run lint`, `npm run typecheck`, `npm test`, then `npm run build && npm run start` and LCP measurement on `/admin` and the home page.
+2. Commit 2: server protection of `(app)`, removal of `AuthGate`, the server redirect on the login page, the role check for `/admin`. Repeat the checks and measurements.
+3. Rollback — revert the corresponding commit. There are no data migrations and no persistence; the deployment does not change in composition.
 
 ## Open Questions
 
-Нет.
+None.

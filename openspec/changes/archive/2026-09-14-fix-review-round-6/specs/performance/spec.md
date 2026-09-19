@@ -1,52 +1,52 @@
 ## Purpose
 
-Фиксирует целевые бюджеты Core Web Vitals для ключевых страниц приложения и обязывает проверять фактические показатели загрузки, отзывчивости и визуальной стабильности на реальных контролах.
+Fixes target Core Web Vitals budgets for the application's key pages and requires checking the actual loading, responsiveness, and visual stability metrics on real controls.
 
 ## ADDED Requirements
 
-### Requirement: Бюджеты Core Web Vitals
+### Requirement: Core Web Vitals budgets
 
-Ключевые страницы приложения ДОЛЖНЫ (MUST) укладываться в целевые бюджеты Core Web Vitals: LCP не более 2,5 секунд, INP не более 200 миллисекунд, CLS не более 0,1. Показатели ДОЛЖНЫ проверяться на ключевых страницах и НЕ ДОЛЖНЫ превышать указанные значения.
+The application's key pages (MUST) fit within the target Core Web Vitals budgets: LCP no more than 2.5 seconds, INP no more than 200 milliseconds, CLS no more than 0.1. The metrics (MUST) be checked on the key pages and (MUST NOT) exceed the specified values.
 
-#### Scenario: LCP в пределах бюджета
+#### Scenario: LCP within budget
 
-- **WHEN** измеряется LCP ключевой страницы
-- **THEN** значение не превышает 2,5 секунд
+- **WHEN** the LCP of a key page is measured
+- **THEN** the value does not exceed 2.5 seconds
 
-#### Scenario: INP в пределах бюджета
+#### Scenario: INP within budget
 
-- **WHEN** измеряется INP при взаимодействии с ключевым контролом страницы
-- **THEN** значение не превышает 200 миллисекунд
+- **WHEN** the INP is measured during interaction with a key control of the page
+- **THEN** the value does not exceed 200 milliseconds
 
-#### Scenario: CLS в пределах бюджета
+#### Scenario: CLS within budget
 
-- **WHEN** измеряется CLS ключевой страницы при загрузке
-- **THEN** значение не превышает 0,1
+- **WHEN** the CLS of a key page is measured during loading
+- **THEN** the value does not exceed 0.1
 
-### Requirement: Шрифты не блокируют первичный рендер
+### Requirement: Fonts do not block the first render
 
-Загрузка шрифтов НЕ ДОЛЖНА (MUST NOT) блокировать первичный рендер. Внешние блокирующие запросы на таблицы стилей шрифтов ДОЛЖНЫ быть устранены в пользу способа загрузки, который не задерживает отображение текста и не вызывает заметного сдвига разметки при подмене шрифта.
+Font loading (MUST NOT) block the first render. External blocking requests for font stylesheets (MUST) be eliminated in favor of a loading method that does not delay the display of text and does not cause a noticeable layout shift when the font is substituted.
 
-#### Scenario: Текст отображается без ожидания внешних шрифтов
+#### Scenario: Text is displayed without waiting for external fonts
 
-- **WHEN** страница загружается на медленном соединении
-- **THEN** отображение текста не ожидает внешнего блокирующего запроса шрифтов
+- **WHEN** the page loads on a slow connection
+- **THEN** the display of text does not wait for an external blocking font request
 
-#### Scenario: Подмена шрифта не сдвигает разметку
+#### Scenario: Font substitution does not shift the layout
 
-- **WHEN** браузер применяет загруженный шрифт вместо резервного
-- **THEN** положение текста и блоков не смещается заметным образом
+- **WHEN** the browser applies the loaded font instead of the fallback
+- **THEN** the position of the text and blocks does not shift noticeably
 
-### Requirement: Серверный контент при первой отрисовке
+### Requirement: Server-side content on the first render
 
-Приложение ДОЛЖНО (MUST) отдавать серверную разметку со значимым содержимым при первой отрисовке, а не пустой документ, ожидающий клиентской гидратации и чтения локального хранилища. Восстановление темы и сессии НЕ ДОЛЖНО приводить к исчезновению основного содержимого страницы до гидратации.
+The application (MUST) serve server-side markup with meaningful content on the first render, rather than an empty document waiting for client-side hydration and reading of local storage. Restoring the theme and session (MUST NOT) cause the main page content to disappear before hydration.
 
-#### Scenario: Первая отрисовка содержит содержимое
+#### Scenario: The first render contains content
 
-- **WHEN** браузер получает HTML страницы до выполнения клиентского JavaScript
-- **THEN** документ содержит основное содержимое страницы, а не пустое дерево
+- **WHEN** the browser receives the page HTML before client-side JavaScript runs
+- **THEN** the document contains the main page content rather than an empty tree
 
-#### Scenario: Восстановление темы и сессии не скрывает страницу
+#### Scenario: Restoring the theme and session does not hide the page
 
-- **WHEN** в локальном хранилище сохранены тема и активная сессия
-- **THEN** основное содержимое остаётся видимым на протяжении восстановления, без перехода через полностью пустой экран
+- **WHEN** the theme and an active session are stored in local storage
+- **THEN** the main content remains visible throughout the restoration, without going through a completely empty screen

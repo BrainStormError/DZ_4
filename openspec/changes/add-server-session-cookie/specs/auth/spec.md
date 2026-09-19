@@ -1,49 +1,49 @@
 ## MODIFIED Requirements
 
-### Requirement: Вход по корпоративной почте
+### Requirement: Login by corporate email
 
-Система ДОЛЖНА разрешать вход только по адресу, который заканчивается на `@company.com` и присутствует в корпоративном справочнике. После успешного входа система ДОЛЖНА сохранять сессию, а роль пользователя ДОЛЖНА определяться по данным справочника. Сессия ДОЛЖНА (MUST) быть доступна серверу до отдачи разметки страницы. Сессия ДОЛЖНА (MUST) завершаться при закрытии браузера, не сохраняясь между запусками.
+The system MUST allow login only by an address that ends with `@company.com` and is present in the corporate directory. After a successful login the system MUST preserve the session, and the user's role MUST be determined from the directory data. The session MUST be available to the server before the page markup is sent. The session MUST end when the browser is closed, without being preserved between runs.
 
-#### Scenario: Успешный вход сотрудника
+#### Scenario: Successful employee login
 
-- **WHEN** пользователь вводит адрес `anna.smirnova@company.com` из справочника
-- **THEN** система выполняет вход и открывает главную страницу с правами роли `employee`
+- **WHEN** the user enters the address `anna.smirnova@company.com` from the directory
+- **THEN** the system logs the user in and opens the home page with the rights of the `employee` role
 
-#### Scenario: Адрес вне корпоративного домена
+#### Scenario: Address outside the corporate domain
 
-- **WHEN** пользователь вводит адрес, не заканчивающийся на `@company.com`
-- **THEN** система отклоняет вход с сообщением о необходимости использовать корпоративную почту
+- **WHEN** the user enters an address that does not end with `@company.com`
+- **THEN** the system rejects the login with a message about the need to use a corporate email
 
-#### Scenario: Неизвестный корпоративный адрес
+#### Scenario: Unknown corporate address
 
-- **WHEN** пользователь вводит адрес `unknown.user@company.com`, отсутствующий в справочнике
-- **THEN** система отклоняет вход с сообщением, что сотрудник не найден
+- **WHEN** the user enters the address `unknown.user@company.com`, which is absent from the directory
+- **THEN** the system rejects the login with a message that the employee was not found
 
-#### Scenario: Сессия завершается при закрытии браузера
+#### Scenario: The session ends when the browser is closed
 
-- **WHEN** пользователь вошёл в систему и закрыл браузер
-- **THEN** при следующем открытии приложения требуется повторный вход
+- **WHEN** the user has logged in and closed the browser
+- **THEN** the next time the app is opened a repeated login is required
 
-#### Scenario: Сервер знает сессию до отдачи страницы
+#### Scenario: The server knows the session before sending the page
 
-- **WHEN** пользователь с действующей сессией открывает страницу приложения
-- **THEN** сервер отдаёт разметку с учётом его роли, не дожидаясь выполнения клиентского JavaScript
+- **WHEN** a user with an active session opens an app page
+- **THEN** the server sends markup that takes the user's role into account, without waiting for client JavaScript execution
 
-### Requirement: Разграничение доступа по ролям
+### Requirement: Role-based access control
 
-Система ДОЛЖНА скрывать административные возможности от пользователей с ролью `employee` и ДОЛЖНА ограничивать доступ к административному разделу ролью `admin`. Решение о доступе к защищённому разделу ДОЛЖНО (MUST) приниматься до отдачи разметки раздела, чтобы защищённое содержимое не попадало в ответ неавторизованному пользователю.
+The system MUST hide administrative capabilities from users with the `employee` role and MUST restrict access to the administrative section to the `admin` role. The decision about access to a protected section MUST be made before the section markup is sent, so that protected content does not reach the response of an unauthorized user.
 
-#### Scenario: Сотрудник без административного доступа
+#### Scenario: Employee without administrative access
 
-- **WHEN** пользователь с ролью `employee` открывает административный раздел напрямую
-- **THEN** система не показывает административные данные и сообщает об отсутствии доступа
+- **WHEN** a user with the `employee` role opens the administrative section directly
+- **THEN** the system does not show administrative data and reports the lack of access
 
-#### Scenario: Скрытый административный пункт меню
+#### Scenario: Hidden administrative menu item
 
-- **WHEN** пользователь с ролью `employee` просматривает навигацию
-- **THEN** пункт перехода в административный раздел не отображается
+- **WHEN** a user with the `employee` role views the navigation
+- **THEN** the item for going to the administrative section is not displayed
 
-#### Scenario: Пользователь без сессии не получает защищённую разметку
+#### Scenario: A user without a session does not receive protected markup
 
-- **WHEN** пользователь без действующей сессии запрашивает защищённый раздел
-- **THEN** сервер не отдаёт разметку этого раздела, а перенаправляет на страницу входа
+- **WHEN** a user without an active session requests a protected section
+- **THEN** the server does not send the markup of that section, but redirects to the login page

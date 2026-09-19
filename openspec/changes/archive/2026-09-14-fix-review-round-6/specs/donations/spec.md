@@ -1,84 +1,84 @@
 ## MODIFIED Requirements
 
-### Requirement: Собранные суммы скрыты от сотрудников
+### Requirement: Collected amounts are hidden from employees
 
-Система ДОЛЖНА (MUST) скрывать от пользователей с ролью `employee` собранные суммы по получателям: ни по себе, ни по другим сотрудникам. Числовое значение собранной суммы НЕ ДОЛЖНО отображаться сотруднику ни на одном шаге участия и нигде на доступных ему страницах. На шаге подтверждения отображается только сумма, введённая самим пользователем; итоговая собранная сумма, равно как и отдельное пояснение о её скрытии, НЕ ДОЛЖНЫ показываться.
+The system (MUST) hide the collected amounts by recipient from users with the `employee` role: neither for themselves nor for other employees. The numeric value of the collected amount (MUST NOT) be displayed to the employee at any participation step or anywhere on the pages available to them. At the confirmation step, only the amount entered by the user themselves is displayed; the final collected amount, as well as a separate explanation about hiding it, (MUST NOT) be shown.
 
-#### Scenario: Сотрудник не видит собранные суммы
+#### Scenario: An employee does not see collected amounts
 
-- **WHEN** сотрудник просматривает доступные ему страницы и шаги участия
-- **THEN** нигде не отображается числовое значение собранной суммы
+- **WHEN** an employee browses the pages available to them and the participation steps
+- **THEN** the numeric value of the collected amount is not displayed anywhere
 
-#### Scenario: Скрытая сумма при подтверждении
+#### Scenario: Hidden amount at confirmation
 
-- **WHEN** сотрудник видит шаг подтверждения участия
-- **THEN** отображается только введённая им сумма, а итоговая собранная сумма и отдельное пояснение о скрытии отсутствуют
+- **WHEN** an employee sees the participation confirmation step
+- **THEN** only the amount they entered is displayed, and the final collected amount and a separate explanation about hiding are absent
 
-### Requirement: Валидация изменения суммы администратором
+### Requirement: Validation of amount changes by the administrator
 
-При изменении суммы сбора администратором новая сумма ДОЛЖНА (MUST) быть целым неотрицательным числом. Отрицательные, пустые и нечисловые значения НЕ ДОЛЖНЫ сохраняться и НЕ ДОЛЖНЫ попадать в журнал изменений. Причина и комментарий остаются обязательными. Для причины «Возврат (отказ от подарка)» новая сумма ДОЛЖНА быть равна нулю: выбор этой причины принудительно устанавливает нулевую сумму, поскольку отказ от подарка возвращает весь сбор. Экстренный возврат допускает любую неотрицательную сумму.
+When the administrator changes the collection amount, the new amount (MUST) be a non-negative integer. Negative, empty, and non-numeric values (MUST NOT) be saved and (MUST NOT) enter the change log. The reason and comment remain mandatory. For the reason "Refund (gift declined)", the new amount (MUST) equal zero: selecting this reason forcibly sets a zero amount, since declining a gift refunds the entire collection. An emergency refund allows any non-negative amount.
 
-#### Scenario: Отрицательная сумма не сохраняется
+#### Scenario: A negative amount is not saved
 
-- **WHEN** администратор вводит отрицательную сумму, выбирает причину и комментарий и нажимает «Сохранить»
-- **THEN** значение не сохраняется, в таблице и журнале не появляется отрицательная сумма
+- **WHEN** the administrator enters a negative amount, selects a reason and comment, and presses "Save"
+- **THEN** the value is not saved, and a negative amount does not appear in the table or the log
 
-#### Scenario: Корректная сумма сохраняется
+#### Scenario: A valid amount is saved
 
-- **WHEN** администратор вводит неотрицательную сумму, выбирает причину и указывает комментарий
-- **THEN** сумма сохраняется, а в журнал добавляется запись с предыдущим и новым значением
+- **WHEN** the administrator enters a non-negative amount, selects a reason, and specifies a comment
+- **THEN** the amount is saved, and an entry with the previous and new value is added to the log
 
-#### Scenario: Отказ от подарка обнуляет сумму
+#### Scenario: Declining a gift zeroes the amount
 
-- **WHEN** администратор выбирает причину «Возврат (отказ от подарка)»
-- **THEN** новая сумма устанавливается равной нулю и не может быть сохранена как ненулевая
+- **WHEN** the administrator selects the reason "Refund (gift declined)"
+- **THEN** the new amount is set to zero and cannot be saved as non-zero
 
-#### Scenario: Экстренный возврат допускает частичную сумму
+#### Scenario: An emergency refund allows a partial amount
 
-- **WHEN** администратор выбирает причину «Экстренный возврат» и указывает неотрицательную сумму
-- **THEN** сумма сохраняется и попадает в журнал изменений
+- **WHEN** the administrator selects the reason "Emergency refund" and specifies a non-negative amount
+- **THEN** the amount is saved and enters the change log
 
-### Requirement: Необязательное поздравление при отправке средств
+### Requirement: Optional congratulation when sending money
 
-При отправке денежного поздравления пользователь ДОЛЖЕН (MUST) иметь возможность приложить текст пожелания или отправить средства без него. Если текст указан, система ДОЛЖНА создать пожелание, которое показывается по правилу дня рождения получателя. Если текст не указан, система НЕ ДОЛЖНА создавать пожелание, а только добавляет сумму к сбору. Денежное поздравление ДОЛЖНО отправляться заранее, независимо от текущей даты. Диалог участия НЕ ДОЛЖЕН содержать отдельный контрол отправки без пожелания: отправка без текста выполняется продолжением сценария при пустом поле.
+When sending a money congratulation, the user (MUST) have the ability to attach wish text or send money without it. If text is specified, the system (MUST) create a wish, which is shown according to the recipient's birthday rule. If text is not specified, the system (MUST NOT) create a wish, and only adds the amount to the collection. The money congratulation (MUST) be sent in advance, regardless of the current date. The participation dialog (MUST NOT) contain a separate control for sending without a wish: sending without text is performed by continuing the scenario with an empty field.
 
-#### Scenario: Средства с пожеланием
+#### Scenario: Money with a wish
 
-- **WHEN** пользователь указывает сумму и непустой текст поздравления и подтверждает отправку
-- **THEN** сумма добавляется к сбору, а пожелание создаётся и показывается на доске по правилу дня рождения получателя
+- **WHEN** the user specifies an amount and non-empty congratulation text and confirms sending
+- **THEN** the amount is added to the collection, and the wish is created and shown on the board according to the recipient's birthday rule
 
-#### Scenario: Средства без пожелания
+#### Scenario: Money without a wish
 
-- **WHEN** пользователь указывает сумму и оставляет текст поздравления пустым, затем подтверждает отправку
-- **THEN** сумма добавляется к сбору, а пожелание не создаётся
+- **WHEN** the user specifies an amount and leaves the congratulation text empty, then confirms sending
+- **THEN** the amount is added to the collection, and no wish is created
 
-#### Scenario: Единственный контрол продолжения без текста
+#### Scenario: The only control for continuing without text
 
-- **WHEN** пользователь оставляет текст поздравления пустым
-- **THEN** продолжение сценария доступно основной кнопкой, и отдельной кнопки «отправить без пожелания» в диалоге нет
+- **WHEN** the user leaves the congratulation text empty
+- **THEN** continuing the scenario is available via the main button, and there is no separate "send without a wish" button in the dialog
 
-#### Scenario: Результат отправки без пожелания
+#### Scenario: Result of sending without a wish
 
-- **WHEN** пользователь завершает отправку средств без текста поздравления
-- **THEN** экран результата сообщает о добавлении суммы к сбору и не утверждает, что поздравление передано
+- **WHEN** the user completes sending money without congratulation text
+- **THEN** the result screen reports that the amount has been added to the collection and does not claim that the congratulation was delivered
 
-#### Scenario: Отправка заранее
+#### Scenario: Sending in advance
 
-- **WHEN** пользователь отправляет денежное поздравление до дня рождения получателя
-- **THEN** сумма добавляется к сбору, а созданное пожелание не показывается на доске до дня рождения получателя
+- **WHEN** the user sends a money congratulation before the recipient's birthday
+- **THEN** the amount is added to the collection, and the created wish is not shown on the board until the recipient's birthday
 
 ## ADDED Requirements
 
-### Requirement: Почта получателя в выборе
+### Requirement: Recipient email in the selection
 
-Форма выбора получателя денежного поздравления ДОЛЖНА (MUST) показывать корпоративную почту получателя в дополнение к его имени и отделу, чтобы пользователь мог отличить одноимённых сотрудников и убедиться в правильности адресата.
+The recipient selection form for a money congratulation (MUST) show the recipient's corporate email in addition to their name and department, so that the user can distinguish employees with the same name and make sure the addressee is correct.
 
-#### Scenario: Почта видна в списке получателей
+#### Scenario: The email is visible in the recipient list
 
-- **WHEN** пользователь открывает выбор получателя денежного поздравления
-- **THEN** для каждого доступного получателя показаны имя, отдел и корпоративная почта
+- **WHEN** the user opens the recipient selection for a money congratulation
+- **THEN** the name, department, and corporate email are shown for each available recipient
 
-#### Scenario: Почта соответствует выбранному получателю
+#### Scenario: The email matches the selected recipient
 
-- **WHEN** пользователь выбирает получателя из списка
-- **THEN** последующие шаги относятся к тому же сотруднику, чья корпоративная почта была показана в списке
+- **WHEN** the user selects a recipient from the list
+- **THEN** the subsequent steps refer to the same employee whose corporate email was shown in the list

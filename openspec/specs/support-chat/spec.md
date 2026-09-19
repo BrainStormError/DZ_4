@@ -2,206 +2,206 @@
 
 ## Purpose
 
-Отвечает на частые вопросы о сборе и обеспечивает приватную переписку сотрудника с администратором.
+Answers frequently asked questions about the collection and provides a private conversation between an employee and an administrator.
 
 ## Requirements
 
-### Requirement: Частые вопросы
+### Requirement: Frequently asked questions
 
-Раздел частых вопросов ДОЛЖЕН предоставлять ответы на типовые вопросы о добровольности участия, видимости сумм, причинах изменения суммы, отображении автора и входе в систему. Вопросы ДОЛЖНЫ раскрываться по одному, а ответы ДОЛЖНЫ быть доступны без перехода на другие страницы.
+The frequently asked questions section MUST provide answers to typical questions about the voluntary nature of participation, the visibility of amounts, the reasons for changing an amount, the display of the author, and logging into the system. Questions MUST expand one at a time, and the answers MUST be available without navigating to other pages.
 
-#### Scenario: Раскрытие вопроса
+#### Scenario: Expanding a question
 
-- **WHEN** пользователь открывает вопрос списка
-- **THEN** система показывает текст ответа на этот вопрос
+- **WHEN** the user opens a question in the list
+- **THEN** the system shows the text of the answer to that question
 
-### Requirement: Приватность переписки сотрудника
+### Requirement: Privacy of the employee's conversation
 
-Сотрудник ДОЛЖЕН видеть только собственную ветку переписки с администратором и НЕ ДОЛЖЕН иметь доступа к перепискам других сотрудников или к списку чужих обращений. **Отправка сообщения ДОЛЖНА показывать состояние загрузки на кнопке, при ошибке — инлайн-уведомление с «Повторить», при успехе — сообщение появляется в ленте.**
+An employee MUST see only their own conversation thread with the administrator and MUST NOT have access to other employees' conversations or to the list of others' requests. **Sending a message MUST show a loading state on the button, on error — an inline notification with "Retry", on success — the message appears in the strip.**
 
-#### Scenario: Сотрудник видит только свою ветку
-- **WHEN** сотрудник открывает раздел переписки
-- **THEN** отображаются сообщения только его собственной ветки
+#### Scenario: The employee sees only their own thread
+- **WHEN** the employee opens the conversation section
+- **THEN** only the messages of their own thread are displayed
 
-#### Scenario: Сообщение сотрудника попадает в его ветку
-- **WHEN** сотрудник отправляет сообщение администратору
-- **THEN** сообщение сохраняется в ветке этого сотрудника и отображается в его переписке
+#### Scenario: An employee's message goes into their thread
+- **WHEN** the employee sends a message to the administrator
+- **THEN** the message is saved in that employee's thread and displayed in their conversation
 
-#### Scenario: Состояние загрузки при отправке сообщения сотрудником
-- **WHEN** сотрудник нажимает «Отправить» с непустым текстом
-- **THEN** кнопка становится `disabled` с `Loader2`, после успеха — сообщение появляется в ленте, поле очищается, после ошибки — `Alert` с кнопкой «Повторить»
+#### Scenario: Loading state when an employee sends a message
+- **WHEN** the employee clicks "Send" with non-empty text
+- **THEN** the button becomes `disabled` with `Loader2`, after success — the message appears in the strip, the field is cleared, after error — an `Alert` with a "Retry" button
 
-### Requirement: Администратор видит обращения сотрудников и может отвечать
+### Requirement: The administrator sees employee requests and can reply
 
-Администратор ДОЛЖЕН видеть список всех веток обращений сотрудников и ДОЛЖЕН иметь возможность открыть любую ветку и ответить в ней. Ответ администратора ДОЛЖЕН добавляться в ветку выбранного сотрудника и ДОЛЖЕН быть виден этому сотруднику в его переписке. **Отправка ответа администратором ДОЛЖНА показывать состояние загрузки, ошибку и успех аналогично сотруднику.**
+The administrator MUST see the list of all employee request threads and MUST be able to open any thread and reply in it. The administrator's reply MUST be added to the selected employee's thread and MUST be visible to that employee in their conversation. **Sending a reply by the administrator MUST show the loading state, error, and success analogously to the employee.**
 
-#### Scenario: Просмотр списка обращений
-- **WHEN** администратор открывает раздел переписки
-- **THEN** он видит обращения сотрудников, включая ветки, созданные сотрудниками
+#### Scenario: Viewing the list of requests
+- **WHEN** the administrator opens the conversation section
+- **THEN** they see employee requests, including threads created by employees
 
-#### Scenario: Ответ в ветку сотрудника
-- **WHEN** администратор выбирает ветку сотрудника и отправляет ответ
-- **THEN** ответ добавляется в эту ветку и становится виден соответствующему сотруднику
+#### Scenario: Reply in an employee's thread
+- **WHEN** the administrator selects an employee's thread and sends a reply
+- **THEN** the reply is added to that thread and becomes visible to the corresponding employee
 
-#### Scenario: Ветка без сообщений
-- **WHEN** администратор выбирает сотрудника без переписки
-- **THEN** система показывает пустое состояние ветки и позволяет отправить первое сообщение
+#### Scenario: A thread without messages
+- **WHEN** the administrator selects an employee with no conversation
+- **THEN** the system shows an empty state of the thread and allows sending the first message
 
-#### Scenario: Состояние загрузки при ответе администратора
-- **WHEN** администратор нажимает «Ответить» с непустым текстом
-- **THEN** кнопка становится `disabled` с `Loader2`, после успеха — ответ появляется в ленте ветки, поле очищается, после ошибки — `Alert` с кнопкой «Повторить»
+#### Scenario: Loading state when the administrator replies
+- **WHEN** the administrator clicks "Reply" with non-empty text
+- **THEN** the button becomes `disabled` with `Loader2`, after success — the reply appears in the thread strip, the field is cleared, after error — an `Alert` with a "Retry" button
 
-### Requirement: Корректное авторство сообщений
+### Requirement: Correct message authorship
 
-Система ДОЛЖНА проставлять признак администратора для сообщений, отправленных администратором, и для сообщений сотрудника — соответственно, без жёстко заданного значения. Автор сообщения ДОЛЖЕН совпадать с отправившим его пользователем.
+The system MUST set the administrator flag for messages sent by the administrator and, accordingly, for an employee's messages, without a hardcoded value. The author of a message MUST match the user who sent it.
 
-#### Scenario: Сообщение администратора помечено как административное
-- **WHEN** администратор отправляет сообщение
-- **THEN** сообщение сохраняется как административное и атрибутируется администратору
+#### Scenario: An administrator's message is marked as administrative
+- **WHEN** the administrator sends a message
+- **THEN** the message is saved as administrative and attributed to the administrator
 
-#### Scenario: Сообщение сотрудника не помечено как административное
-- **WHEN** сотрудник отправляет сообщение
-- **THEN** сообщение сохраняется как сообщение сотрудника и атрибутируется ему
+#### Scenario: An employee's message is not marked as administrative
+- **WHEN** the employee sends a message
+- **THEN** the message is saved as the employee's message and attributed to them
 
-### Requirement: Корректность текстов частых вопросов
+### Requirement: Correctness of the FAQ texts
 
-Ответы раздела «Частые вопросы» ДОЛЖНЫ быть грамматически корректными и НЕ ДОЛЖНЫ содержать опечаток. Тексты ДОЛЖНЫ соответствовать фактическому поведению приложения (добровольность участия, скрытие сумм, изменение суммы администратором, авторство на доске пожеланий). Ответ про автора пожелания ДОЛЖЕН описывать отображение настоящим именем с корпоративным ником в скобках (`Фамилия Имя (ник)`) и НЕ ДОЛЖЕН утверждать, что автор показывается только ником.
+The answers in the "Frequently asked questions" section MUST be grammatically correct and MUST NOT contain typos. The texts MUST correspond to the actual behavior of the application (the voluntary nature of participation, the hiding of amounts, the change of an amount by the administrator, authorship on the wish board). The answer about the wish author MUST describe displaying the real name with the corporate nickname in parentheses (`Last name First name (nick)`) and MUST NOT claim that the author is shown only by nickname.
 
-#### Scenario: Чтение ответа о добровольности участия
+#### Scenario: Reading the answer about the voluntary nature of participation
 
-- **WHEN** пользователь раскрывает вопрос «Обязательно ли участвовать в сборе?»
-- **THEN** ответ не содержит опечаток, в частности отображается «тёплое внимание»
+- **WHEN** the user expands the question "Is participation in the collection mandatory?"
+- **THEN** the answer contains no typos, in particular "warm attention" is displayed
 
-#### Scenario: Соответствие ответа поведению
+#### Scenario: The answer matches the behavior
 
-- **WHEN** пользователь читает ответы FAQ
-- **THEN** описанное поведение совпадает с фактическим, включая скрытие сумм от сотрудников и порядок изменения суммы администратором
+- **WHEN** the user reads the FAQ answers
+- **THEN** the described behavior matches the actual behavior, including hiding amounts from employees and the procedure for changing an amount by the administrator
 
-#### Scenario: Ответ про автора пожелания актуален
+#### Scenario: The answer about the wish author is up to date
 
-- **WHEN** пользователь раскрывает вопрос о том, как автор отображается на доске пожеланий
-- **THEN** ответ сообщает, что автор показывается настоящим именем и ником в скобках, приводит пример вида `Фамилия Имя (ник)` и не раскрывает полный адрес почты
+- **WHEN** the user expands the question about how the author is displayed on the wish board
+- **THEN** the answer states that the author is shown by real name and nickname in parentheses, gives an example of the form `Last name First name (nick)`, and does not disclose the full email address
 
-### Requirement: Раздел сообщений администратора
+### Requirement: Administrator messages section
 
-В разделе частых вопросов вкладка переписки ДОЛЖНА отображаться для администратора под названием «Сообщения», а для сотрудника — под названием «Написать админу». Описание раздела ДОЛЖНО соответствовать роли: сотрудник видит личную ветку переписки, администратор — обращения сотрудников. Администратор ДОЛЖЕН отвечать в этой вкладке.
+In the frequently asked questions section, the conversation tab MUST be displayed for the administrator under the name "Messages", and for the employee under the name "Write to admin". The description of the section MUST correspond to the role: the employee sees a personal conversation thread, the administrator sees employee requests. The administrator MUST reply in this tab.
 
-#### Scenario: Вкладка администратора
+#### Scenario: The administrator's tab
 
-- **WHEN** пользователь с ролью `admin` открывает раздел частых вопросов
-- **THEN** вкладка переписки называется «Сообщения» и позволяет отвечать в ветках сотрудников
+- **WHEN** a user with the `admin` role opens the frequently asked questions section
+- **THEN** the conversation tab is called "Messages" and allows replying in employee threads
 
-#### Scenario: Вкладка сотрудника
+#### Scenario: The employee's tab
 
-- **WHEN** пользователь с ролью `employee` открывает раздел частых вопросов
-- **THEN** вкладка переписки называется «Написать админу»
+- **WHEN** a user with the `employee` role opens the frequently asked questions section
+- **THEN** the conversation tab is called "Write to admin"
 
-#### Scenario: Ответ администратора из вкладки сообщений
+#### Scenario: The administrator replies from the messages tab
 
-- **WHEN** администратор выбирает ветку сотрудника и отправляет ответ во вкладке «Сообщения»
-- **THEN** ответ добавляется в ветку выбранного сотрудника
+- **WHEN** the administrator selects an employee's thread and sends a reply in the "Messages" tab
+- **THEN** the reply is added to the selected employee's thread
 
-### Requirement: Индикация непрочитанных сообщений
+### Requirement: Indication of unread messages
 
-Система ДОЛЖНА (MUST) отмечать администратору ветки, содержащие сообщения сотрудников, которые он ещё не прочитал. Непрочитанные ДОЛЖНЫ считаться по отдельным сообщениям, а не по числу веток. В списке обращений у каждой ветки ДОЛЖНА отображаться пометка с количеством непрочитанных сообщений этой ветки, чтобы администратор понимал, от кого именно пришло непрочитанное сообщение. Суммарное количество непрочитанных сообщений ДОЛЖНО отображаться на вкладке «Сообщения» и в шапке приложения. Отметка «прочитано» ДОЛЖНА сниматься, когда администратор открывает соответствующую ветку.
+The system MUST mark for the administrator the threads containing employee messages that they have not yet read. Unread messages MUST be counted by individual messages, and not by the number of threads. In the list of requests, each thread MUST display a marker with the number of unread messages of that thread, so that the administrator understands from whom exactly the unread message came. The total number of unread messages MUST be displayed on the "Messages" tab and in the application header. The "read" marker MUST be cleared when the administrator opens the corresponding thread.
 
-#### Scenario: Пометка на ветке с непрочитанным сообщением
+#### Scenario: Marker on a thread with an unread message
 
-- **WHEN** в ветке сотрудника есть сообщения, которые администратор ещё не прочитал
-- **THEN** в списке обращений у этой ветки отображается пометка с количеством непрочитанных сообщений
+- **WHEN** an employee's thread contains messages that the administrator has not yet read
+- **THEN** the list of requests displays a marker with the number of unread messages for that thread
 
-#### Scenario: Бейдж на вкладке сообщений
+#### Scenario: Badge on the messages tab
 
-- **WHEN** у администратора есть непрочитанные сообщения
-- **THEN** на вкладке «Сообщения» отображается суммарное количество непрочитанных сообщений
+- **WHEN** the administrator has unread messages
+- **THEN** the total number of unread messages is displayed on the "Messages" tab
 
-#### Scenario: Индикатор в шапке
+#### Scenario: Indicator in the header
 
-- **WHEN** у администратора есть непрочитанные сообщения
-- **THEN** в шапке приложения отображается суммарное количество непрочитанных сообщений
+- **WHEN** the administrator has unread messages
+- **THEN** the total number of unread messages is displayed in the application header
 
-#### Scenario: Снятие отметки при открытии ветки
+#### Scenario: Clearing the marker when a thread is opened
 
-- **WHEN** администратор открывает ветку с непрочитанными сообщениями
-- **THEN** пометка этой ветки и её вклад в общий счётчик снимаются
+- **WHEN** the administrator opens a thread with unread messages
+- **THEN** the marker of that thread and its contribution to the total counter are cleared
 
-#### Scenario: Нет непрочитанных сообщений
+#### Scenario: No unread messages
 
-- **WHEN** все сообщения сотрудников прочитаны
-- **THEN** ни пометок в списке обращений, ни счётчика на вкладке и в шапке не отображается
+- **WHEN** all employee messages have been read
+- **THEN** neither markers in the list of requests nor a counter on the tab and in the header are displayed
 
-### Requirement: Переход к вкладке переписки из шапки
+### Requirement: Transition to the conversation tab from the header
 
-Переход по индикатору непрочитанных сообщений в шапке ДОЛЖЕН (MUST) открывать раздел частых вопросов с активной вкладкой переписки. Активная вкладка ДОЛЖНА соответствовать адресу страницы при любом способе перехода, включая переход с уже открытой страницы раздела без полной перезагрузки. Переключение вкладки самим пользователем НЕ ДОЛЖНО (MUST NOT) вызывать запрос серверного рендеринга маршрута и НЕ ДОЛЖНО показывать пустую заглушку содержимого: активная вкладка ДОЛЖНА меняться сразу, без ожидания ответа сервера, а адрес страницы ДОЛЖЕН обновляться, чтобы прямая ссылка и перезагрузка открывали ту же вкладку.
+Following the unread messages indicator in the header MUST open the frequently asked questions section with the conversation tab active. The active tab MUST correspond to the page address in any way of navigating, including navigating from an already open section page without a full reload. Switching the tab by the user themselves MUST NOT cause a server-side rendering request for the route and MUST NOT show an empty content placeholder: the active tab MUST change immediately, without waiting for a server response, and the page address MUST be updated so that a direct link and a reload open the same tab.
 
-#### Scenario: Переход из шапки открывает переписку
+#### Scenario: Navigation from the header opens the conversation
 
-- **WHEN** администратор нажимает индикатор непрочитанных сообщений в шапке
-- **THEN** открывается вкладка переписки, и администратор может выбрать ветку и ответить
+- **WHEN** the administrator clicks the unread messages indicator in the header
+- **THEN** the conversation tab opens, and the administrator can select a thread and reply
 
-#### Scenario: Переход с уже открытой страницы раздела
+#### Scenario: Navigation from an already open section page
 
-- **WHEN** администратор уже находится на странице раздела частых вопросов на вкладке вопросов и нажимает индикатор в шапке
-- **THEN** активной становится вкладка переписки без перезагрузки страницы
+- **WHEN** the administrator is already on the frequently asked questions section page on the questions tab and clicks the indicator in the header
+- **THEN** the conversation tab becomes active without reloading the page
 
-#### Scenario: Прямая ссылка на вкладку переписки
+#### Scenario: Direct link to the conversation tab
 
-- **WHEN** пользователь открывает адрес вкладки переписки напрямую
-- **THEN** отображается вкладка переписки
+- **WHEN** the user opens the conversation tab address directly
+- **THEN** the conversation tab is displayed
 
-#### Scenario: Переключение вкладки без обращения к серверу
+#### Scenario: Switching the tab without a server request
 
-- **WHEN** пользователь переключает вкладку на странице частых вопросов
-- **THEN** активная вкладка меняется сразу, заглушка содержимого не показывается, а запрос серверного рендеринга маршрута не выполняется
+- **WHEN** the user switches the tab on the frequently asked questions page
+- **THEN** the active tab changes immediately, no content placeholder is shown, and no server-side rendering request for the route is performed
 
-#### Scenario: Адрес отражает активную вкладку
+#### Scenario: The address reflects the active tab
 
-- **WHEN** пользователь переключает вкладку
-- **THEN** адрес страницы соответствует активной вкладке и после перезагрузки открывается та же вкладка
+- **WHEN** the user switches the tab
+- **THEN** the page address corresponds to the active tab and, after a reload, the same tab opens
 
-#### Scenario: Возврат по истории не теряет вкладку
+#### Scenario: History navigation does not lose the tab
 
-- **WHEN** пользователь переключает вкладку и возвращается на страницу частых вопросов
-- **THEN** активная вкладка соответствует адресу страницы
+- **WHEN** the user switches the tab and returns to the frequently asked questions page
+- **THEN** the active tab corresponds to the page address
 
-### Requirement: Доступность поля ответа администратору
+### Requirement: Availability of the administrator reply field
 
-Поле ответа администратора в ветке переписки ДОЛЖНО (MUST) оставаться видимым и пригодным для ввода при любом количестве обращений сотрудников, в том числе на десктопной раскладке, когда список обращений длинный.
+The administrator's reply field in a conversation thread MUST remain visible and usable for input with any number of employee requests, including on the desktop layout when the list of requests is long.
 
-#### Scenario: Много обращений на десктопе
+#### Scenario: Many requests on desktop
 
-- **WHEN** администратор открывает переписку, а список сотрудников содержит столько веток, что не помещается в область чата
-- **THEN** поле «Ответить сотруднику...» видно и доступно для ввода, не обрезаясь за нижним краем
+- **WHEN** the administrator opens the conversation, and the list of employees contains so many threads that it does not fit in the chat area
+- **THEN** the field "Reply to employee..." is visible and available for input, without being cut off at the bottom edge
 
-#### Scenario: Список обращений прокручивается независимо
+#### Scenario: The list of requests scrolls independently
 
-- **WHEN** список обращений длинный
-- **THEN** список прокручивается в своей области, а поле ответа остаётся на месте и остаётся доступным
+- **WHEN** the list of requests is long
+- **THEN** the list scrolls within its own area, and the reply field stays in place and remains available
 
-### Requirement: Переписка прокручивается внутри карточки
+### Requirement: The conversation scrolls inside the card
 
-Карточка переписки ДОЛЖНА (MUST) ограничивать свою высоту доступной высотой экрана, а история сообщений ДОЛЖНА прокручиваться внутри карточки. Содержимое переписки НЕ ДОЛЖНО выходить за границы карточки и НЕ ДОЛЖНО растягивать страницу при длинной истории.
+The conversation card MUST limit its height to the available screen height, and the message history MUST scroll inside the card. The conversation content MUST NOT extend beyond the card's bounds and MUST NOT stretch the page with a long history.
 
-#### Scenario: Длинная переписка
+#### Scenario: Long conversation
 
-- **WHEN** в ветке накопилось столько сообщений, что они не помещаются в карточку
-- **THEN** карточка сохраняет свою высоту, а история прокручивается внутри неё, не выходя за границы
+- **WHEN** so many messages have accumulated in the thread that they do not fit in the card
+- **THEN** the card preserves its height, and the history scrolls inside it without extending beyond its bounds
 
-#### Scenario: Содержимое не вылетает из карточки
+#### Scenario: Content does not fly out of the card
 
-- **WHEN** переписка длинная
-- **THEN** ни один элемент переписки не отображается за пределами карточки
+- **WHEN** the conversation is long
+- **THEN** not a single conversation element is displayed outside the card
 
-### Requirement: Форма отправки достижима при ограниченной высоте
+### Requirement: The send form is reachable at a limited height
 
-Форма отправки сообщения ДОЛЖНА (MUST) оставаться внутри карточки и быть достижимой при любой длине переписки и при ограниченной высоте экрана, включая мобильные устройства. Ввод текста НЕ ДОЛЖЕН требовать прокрутки страницы к форме.
+The message send form MUST remain inside the card and be reachable with any conversation length and at a limited screen height, including on mobile devices. Entering text MUST NOT require scrolling the page to the form.
 
-#### Scenario: Форма ввода на мобильном
+#### Scenario: The input form on mobile
 
-- **WHEN** пользователь открывает переписку на мобильном устройстве
-- **THEN** поле ввода и кнопка отправки видны внутри карточки и доступны без прокрутки страницы
+- **WHEN** the user opens the conversation on a mobile device
+- **THEN** the input field and the send button are visible inside the card and available without scrolling the page
 
-#### Scenario: Форма остаётся на месте при росте истории
+#### Scenario: The form stays in place as the history grows
 
-- **WHEN** в переписку добавляются новые сообщения
-- **THEN** форма отправки остаётся внутри карточки и не уезжает за её нижнюю границу
+- **WHEN** new messages are added to the conversation
+- **THEN** the send form remains inside the card and does not move beyond its bottom border

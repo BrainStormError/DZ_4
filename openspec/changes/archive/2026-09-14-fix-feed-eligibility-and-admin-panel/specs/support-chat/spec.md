@@ -1,20 +1,20 @@
 ## MODIFIED Requirements
 
-### Requirement: Корректность текстов частых вопросов
+### Requirement: Correctness of the frequently asked questions texts
 
-Ответы раздела «Частые вопросы» ДОЛЖНЫ быть грамматически корректными и НЕ ДОЛЖНЫ содержать опечаток. Тексты ДОЛЖНЫ соответствовать фактическому поведению приложения (добровольность участия, скрытие сумм, изменение суммы администратором, авторство на доске пожеланий). Ответ про автора пожелания ДОЛЖЕН описывать отображение настоящим именем с корпоративным ником в скобках (`Фамилия Имя (ник)`) и НЕ ДОЛЖЕН утверждать, что автор показывается только ником.
+The answers in the "Frequently asked questions" section MUST be grammatically correct and MUST NOT contain typos. The texts MUST correspond to the actual behavior of the application (voluntary participation, hiding of amounts, changing the amount by an administrator, authorship on the wish board). The answer about the wish author MUST describe the display with the real name and the corporate nickname in parentheses (`Last name First name (nick)`) and MUST NOT state that the author is shown by nickname only.
 
-#### Scenario: Чтение ответа о добровольности участия
+#### Scenario: Reading the answer about voluntary participation
 
-- **WHEN** пользователь раскрывает вопрос «Обязательно ли участвовать в сборе?»
-- **THEN** ответ не содержит опечаток, в частности отображается «тёплое внимание»
+- **WHEN** the user expands the question "Is participation in the collection mandatory?"
+- **THEN** the answer contains no typos; in particular, "warm attention" is displayed
 
-#### Scenario: Соответствие ответа поведению
+#### Scenario: The answer matches the behavior
 
-- **WHEN** пользователь читает ответы FAQ
-- **THEN** описанное поведение совпадает с фактическим, включая скрытие сумм от сотрудников и порядок изменения суммы администратором
+- **WHEN** the user reads the FAQ answers
+- **THEN** the described behavior matches the actual one, including the hiding of amounts from employees and the procedure for changing the amount by an administrator
 
-#### Scenario: Ответ про автора пожелания актуален
+#### Scenario: The answer about the wish author is up to date
 
-- **WHEN** пользователь раскрывает вопрос о том, как автор отображается на доске пожеланий
-- **THEN** ответ сообщает, что автор показывается настоящим именем и ником в скобках, приводит пример вида `Фамилия Имя (ник)` и не раскрывает полный адрес почты
+- **WHEN** the user expands the question about how the author is displayed on the wish board
+- **THEN** the answer states that the author is shown with their real name and nickname in parentheses, gives an example of the form `Last name First name (nick)`, and does not reveal the full email address

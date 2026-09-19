@@ -1,40 +1,40 @@
 ## Why
 
-Анализ интерфейса «Корподарки» показал, что одно и то же сообщение о добровольности участия и скрытых суммах повторяется примерно в десяти местах (главная, FAQ, диалог участия, футер, логин, метаданные), а формулировки причин возврата продублированы вне единого источника `reasonLabel`. Одновременно в проекте накопилось 30 неиспользуемых UI-примитивов и неинтерактивный пункт меню, выглядящий как действие. Это повышает риск рассинхронизации текстов и раздувает кодовую базу.
+An analysis of the "Korporpodarki" interface showed that the same message about the voluntariness of participation and hidden amounts is repeated in roughly ten places (home page, FAQ, participation dialog, footer, login, metadata), and that refund reason wordings are duplicated outside the single source `reasonLabel`. At the same time, the project had accumulated 30 unused UI primitives and a non-interactive menu item that looks like an action. This increases the risk of texts getting out of sync and bloats the codebase.
 
 ## What Changes
 
-- **Единый источник сообщения о добровольности и скрытых суммах.** Одинаковое утверждение («участие добровольное; суммы сборов видны только администратору») НЕ ДОЛЖНО дублироваться на одной странице. Каноническим местом остаётся футер; на главной, в FAQ и в диалоге участия остаётся не более одного контекстного упоминания.
-- **Убрано дублирование на главной.** Удаляются дублирующие бейдж «Участие добровольное» в hero и блок из трёх privacy-карточек, повторяющий текст hero; остаётся один согласованный блок.
-- **Убран дубль в FAQ.** Удаляются три quick-info карточки, повторяющие ответы Q1/Q2 и текст главной; раздел «Вопросы и ответы» становится единственным источником формулировок.
-- **Дедупликация диалога участия.** Убираются повторяющиеся пояснения о скрытии суммы на шагах `email`/`amount`/`confirm`; остаётся одно контекстное пояснение на релевантном шаге.
-- **Единый контроль на действие.** Действие «участие в сборе» и действие «пожелание без взноса» ДОЛЖНЫ иметь один первичный контрол; дублирующие кнопки, ведущие к тому же сценарию с той же страницы, НЕ ДОЛЖНЫ отображаться одновременно.
-- **Дедупликация навигации шапки.** Desktop- и mobile-навигация формируются из одного описания `navItems`/admin-ссылки вместо двух независимых копий разметки.
-- **Единый источник причин возврата.** Подписи причин формируются только через `reasonLabel`; дублирующие хардкод-строки причин удаляются.
-- **Устранён неинтерактивный пункт меню.** Пункт с отделом пользователя перестаёт выглядеть как команда (переводится в неинтерактивное отображение либо убирается).
-- **Удалены неиспользуемые UI-примитивы.** Удаляются 30 файлов `components/ui/*`, недостижимых из кода приложения, вместе с неиспользуемым «островом» уведомлений (`hooks/use-toast.ts`, `toast.tsx`, `toaster.tsx`, `sonner.tsx`) и `toggle.tsx`/`toggle-group.tsx`. **BREAKING** для внешних импортов этих примитивов, если такие появятся.
+- **A single source of the message about voluntariness and hidden amounts.** The same statement ("participation is voluntary; collection amounts are visible only to the administrator") MUST NOT be duplicated on one page. The footer remains the canonical place; on the home page, in the FAQ and in the participation dialog, no more than one contextual mention remains.
+- **Duplication on the home page removed.** The duplicate "Participation is voluntary" badge in the hero and the block of three privacy cards repeating the hero text are removed; one consistent block remains.
+- **Duplicate in the FAQ removed.** Three quick-info cards repeating answers Q1/Q2 and the home page text are removed; the "Questions and Answers" section becomes the only source of wording.
+- **Participation dialog deduplication.** Repeated explanations about hiding the amount at the `email`/`amount`/`confirm` steps are removed; one contextual explanation remains at the relevant step.
+- **A single control per action.** The "participation in the collection" action and the "wish without a contribution" action MUST have one primary control; duplicate buttons leading to the same scenario from the same page MUST NOT be displayed simultaneously.
+- **Header navigation deduplication.** Desktop and mobile navigation are generated from one `navItems`/admin link description instead of two independent copies of markup.
+- **A single source of refund reasons.** Reason labels are generated only via `reasonLabel`; duplicate hardcoded reason strings are removed.
+- **Non-interactive menu item eliminated.** The item with the user's department stops looking like a command (it is converted to a non-interactive display or removed).
+- **Unused UI primitives removed.** 30 files `components/ui/*` unreachable from the application code are deleted, along with the unused notification "island" (`hooks/use-toast.ts`, `toast.tsx`, `toaster.tsx`, `sonner.tsx`) and `toggle.tsx`/`toggle-group.tsx`. **BREAKING** for external imports of these primitives, if any appear.
 
-**Вне объёма:** поведение сценариев участия, правила валидации суммы, модель ролей, темы оформления и источник аватаров не меняются; персистентность не вводится.
+**Out of scope:** the behavior of participation scenarios, amount validation rules, the role model, themes and the avatar source are not changed; no persistence is introduced.
 
 ## Capabilities
 
 ### New Capabilities
 
-- `ui-consistency`: единый источник пользовательских формулировок (добровольность и скрытые суммы, причины возврата), один первичный контрол на действие, отсутствие неинтерактивных элементов в роли действий, отсутствие неиспользуемых UI-примитивов.
+- `ui-consistency`: a single source of user-facing wording (voluntariness and hidden amounts, refund reasons), one primary control per action, no non-interactive elements acting as actions, no unused UI primitives.
 
 ### Modified Capabilities
 
-<!-- Основные спецификации в openspec/specs/ пока отсутствуют: доменные delta (donations, support-chat) живут в незаархивированных изменениях fix-known-gaps и fix-qa-reported-defects и при синхронизации накладываются на новый ui-consistency/design. Отдельные MODIFIED-деltas не создаются, чтобы не конфликтовать с ними. -->
+<!-- Main specifications in openspec/specs/ are still absent: the domain deltas (donations, support-chat) live in the unarchived changes fix-known-gaps and fix-qa-reported-defects and are applied on top of the new ui-consistency/design during synchronization. Separate MODIFIED deltas are not created in order not to conflict with them. -->
 
 ## Impact
 
-- `components/layout/Footer.tsx` — каноническое сообщение о добровольности и скрытых суммах.
-- `app/(app)/page.tsx` — удаление дублирующих бейджа и privacy-карточек, единый CTA участия.
-- `app/(app)/faq/page.tsx` — удаление дублирующих quick-info карточек.
-- `components/features/DonateDialog.tsx` — одно контекстное пояснение о скрытии суммы вместо повторов.
-- `components/features/WishBoard.tsx`, `app/(app)/page.tsx` — один первичный контрол для пожелания без взноса.
-- `components/features/AdminTable.tsx`, `lib/data-store.ts` — единый источник подписей причин (`reasonLabel`).
-- `components/layout/Header.tsx` — дедупликация разметки навигации и устранение неинтерактивного пункта меню.
-- `components/ui/*` (30 файлов), `components/ui/toast.tsx`, `components/ui/toaster.tsx`, `components/ui/sonner.tsx`, `components/ui/toggle.tsx`, `components/ui/toggle-group.tsx`, `hooks/use-toast.ts` — удаление недостижимого кода.
-- `app/(auth)/login/page.tsx`, `app/layout.tsx` — выравнивание подзаголовка с единой формулировкой.
-- Внешних API, зависимостей и бэкенда изменение не добавляет; приложение остаётся клиентским демо на mock-данных.
+- `components/layout/Footer.tsx` — the canonical message about voluntariness and hidden amounts.
+- `app/(app)/page.tsx` — removal of the duplicate badge and privacy cards, a single participation CTA.
+- `app/(app)/faq/page.tsx` — removal of duplicate quick-info cards.
+- `components/features/DonateDialog.tsx` — one contextual explanation about hiding the amount instead of repetitions.
+- `components/features/WishBoard.tsx`, `app/(app)/page.tsx` — one primary control for a wish without a contribution.
+- `components/features/AdminTable.tsx`, `lib/data-store.ts` — a single source of reason labels (`reasonLabel`).
+- `components/layout/Header.tsx` — deduplication of navigation markup and elimination of the non-interactive menu item.
+- `components/ui/*` (30 files), `components/ui/toast.tsx`, `components/ui/toaster.tsx`, `components/ui/sonner.tsx`, `components/ui/toggle.tsx`, `components/ui/toggle-group.tsx`, `hooks/use-toast.ts` — removal of unreachable code.
+- `app/(auth)/login/page.tsx`, `app/layout.tsx` — aligning the subtitle with the single wording.
+- The change adds no external APIs, dependencies or backend; the application remains a client-side demo on mock data.

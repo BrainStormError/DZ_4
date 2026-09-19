@@ -2,62 +2,62 @@
 
 ## Purpose
 
-Определяет поведение оболочки приложения — шапки, меню и навигации — так, чтобы переход между разделами не блокировал взаимодействие пользователя с приложением.
+Defines the behavior of the application shell — the header, the menu, and the navigation — so that switching between sections does not block the user's interaction with the application.
 
 ## Requirements
 
-### Requirement: Меню шапки не блокирует приложение при переходе
+### Requirement: The header menu does not block the application during navigation
 
-Открытые меню шапки (переключатель темы и меню пользователя) НЕ ДОЛЖНЫ оставлять страницу заблокированной после перехода между разделами. После любой навигации прокрутка страницы и взаимодействие с интерактивными элементами ДОЛЖНЫ (MUST) оставаться доступными без перезагрузки страницы.
+Open header menus (the theme toggle and the user menu) MUST NOT leave the page locked after switching between sections. After any navigation, page scrolling and interaction with interactive elements MUST remain available without reloading the page.
 
-#### Scenario: Переход при открытом меню
+#### Scenario: Navigation with an open menu
 
-- **WHEN** пользователь открывает меню шапки и переходит на другую страницу, в том числе кнопками «назад» или «вперёд» браузера
-- **THEN** после перехода страница прокручивается, а элементы управления реагируют на клики без перезагрузки
+- **WHEN** the user opens a header menu and navigates to another page, including with the browser's "back" or "forward" buttons
+- **THEN** after the navigation the page scrolls, and the controls respond to clicks without a reload
 
-#### Scenario: Блокировка не сохраняется
+#### Scenario: The lock is not retained
 
-- **WHEN** переход между разделами происходит при открытом меню шапки
-- **THEN** признак блокировки прокрутки и указателя не остаётся на странице после завершения перехода
+- **WHEN** navigation between sections occurs with an open header menu
+- **THEN** the scroll- and pointer-lock flag does not remain on the page after the navigation completes
 
-### Requirement: Отзывчивость при быстром переключении разделов
+### Requirement: Responsiveness during rapid section switching
 
-Быстрое переключение разделов верхней навигации ДОЛЖНО (MUST) оставлять приложение отзывчивым. Прокрутка и взаимодействие с элементами НЕ ДОЛЖНЫ блокироваться, а приложение НЕ ДОЛЖНО требовать перезагрузки для восстановления работы.
+Rapid switching between the top navigation sections MUST keep the application responsive. Scrolling and interaction with elements MUST NOT be blocked, and the application MUST NOT require a reload to restore operation.
 
-#### Scenario: Быстрое переключение разделов
+#### Scenario: Rapid section switching
 
-- **WHEN** пользователь быстро переключается между разделами верхней навигации
-- **THEN** приложение остаётся отзывчивым, страницы открываются, а прокрутка и клики не блокируются
+- **WHEN** the user rapidly switches between the top navigation sections
+- **THEN** the application remains responsive, pages open, and scrolling and clicks are not blocked
 
-#### Scenario: Восстановление без перезагрузки
+#### Scenario: Recovery without a reload
 
-- **WHEN** пользователь продолжает работу после серии быстрых переходов
-- **THEN** взаимодействие остаётся доступным без перезагрузки страницы
+- **WHEN** the user continues working after a series of rapid navigations
+- **THEN** interaction remains available without reloading the page
 
-### Requirement: Модальные диалоги не блокируют приложение при переходе
+### Requirement: Modal dialogs do not block the application during navigation
 
-Модальные диалоги (участие, изменение суммы, изменение пожелания) НЕ ДОЛЖНЫ оставлять страницу заблокированной после перехода между разделами. После навигации прокрутка страницы и взаимодействие с интерактивными элементами ДОЛЖНЫ (MUST) оставаться доступными без перезагрузки.
+Modal dialogs (participation, amount change, wish change) MUST NOT leave the page locked after switching between sections. After navigation, page scrolling and interaction with interactive elements MUST remain available without a reload.
 
-#### Scenario: Переход при открытом диалоге
+#### Scenario: Navigation with an open dialog
 
-- **WHEN** пользователь переходит на другую страницу, в том числе кнопками «назад» или «вперёд» браузера, пока открыт модальный диалог
-- **THEN** после перехода страница прокручивается, а элементы управления реагируют на клики без перезагрузки
+- **WHEN** the user navigates to another page, including with the browser's "back" or "forward" buttons, while a modal dialog is open
+- **THEN** after the navigation the page scrolls, and the controls respond to clicks without a reload
 
-#### Scenario: Блокировка не сохраняется
+#### Scenario: The lock is not retained
 
-- **WHEN** переход между разделами происходит при открытом модальном диалоге
-- **THEN** признак блокировки прокрутки и указателя не остаётся на странице после завершения перехода
+- **WHEN** navigation between sections occurs with an open modal dialog
+- **THEN** the scroll- and pointer-lock flag does not remain on the page after the navigation completes
 
-### Requirement: Мобильная навигация без скрытых пунктов
+### Requirement: Mobile navigation without hidden items
 
-Мобильная навигация ДОЛЖНА (MUST) делать все доступные пользователю разделы достижимыми на узком экране. Пункты НЕ ДОЛЖНЫ пропадать за краем без признака продолжения: если пункты не помещаются, система ДОЛЖНА давать визуальную подсказку о горизонтальной прокрутке, а прокрутка ДОЛЖНА быть предсказуемой.
+Mobile navigation MUST make all sections available to the user reachable on a narrow screen. Items MUST NOT disappear beyond the edge without an indication of continuation: if the items do not fit, the system MUST give a visual hint about horizontal scrolling, and scrolling MUST be predictable.
 
-#### Scenario: Все пункты достижимы на узком экране
+#### Scenario: All items are reachable on a narrow screen
 
-- **WHEN** пользователь с ролью администратора открывает приложение на ширине 320px
-- **THEN** все пункты мобильной навигации, включая «FAQ» и «Админ», достижимы
+- **WHEN** a user with the administrator role opens the application at a width of 320px
+- **THEN** all mobile navigation items, including "FAQ" and "Admin", are reachable
 
-#### Scenario: Подсказка о продолжении списка
+#### Scenario: Hint about the list continuing
 
-- **WHEN** пункты мобильной навигации не помещаются по ширине
-- **THEN** пользователь видит признак того, что список продолжается по горизонтали, а прокрутка выполняется по одному пункту
+- **WHEN** the mobile navigation items do not fit in width
+- **THEN** the user sees an indication that the list continues horizontally, and scrolling is performed one item at a time

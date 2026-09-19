@@ -1,34 +1,34 @@
 ## Why
 
-QA нашли, что лента поздравлений дублирует карточки и не прокручивается, а правила выбора получателя позволяют «поздравить заранее» бесплатным пожеланием и отправить деньги тем, у кого день рождения уже прошёл. Дополнительно админ-панель не даёт увидеть даты рождения и не хранит признак, что подарок отправлен.
+QA found that the congratulations strip duplicates cards and does not scroll, and that the recipient selection rules allow "congratulating in advance" with a free wish and sending money to those whose birthday has already passed. Additionally, the admin panel does not allow seeing birthday dates and does not store a flag that the gift has been sent.
 
 ## What Changes
 
-- **Лента поздравлений**: одна лента; при малом числе карточек — статичная полоса без дублей, при переполнении — автоматическая зацикленная прокрутка. Дублирующая копия трека больше не показывается, когда прокрутка не активна (мало карточек или `prefers-reduced-motion`).
-- **Равенство цветов**: карточка «Именинники сегодня» использует тот же персональный цвет, что и карточки этого же сотрудника в ленте.
-- **Футер**: удалено утверждение «Участие добровольное.»; единственный источник утверждения о добровольности — hero-блок главной.
-- **FAQ**: ответ про автора обновлён на «настоящее имя + ник в скобках» (`<Фамилия Имя> (ник)`), без раскрытия полного адреса.
-- **Бесплатное пожелание**: получателя можно выбрать только среди сегодняшних именинников; если сегодня именинников нет — кнопка «Оставить пожелание» неактивна. Поздравить заранее можно только деньгами.
-- **Денежное поздравление заранее**: в списке получателей остаются только сотрудники, чей день рождения сегодня или ещё не наступил; сотрудники с прошедшим днём рождения удалены из списка.
-- **Админ-панель**: в таблицу добавлены дата рождения сотрудника и статус подарка «Выслано» / «Не выслано», который администратор выставляет вручную. Статус виден только администратору.
+- **Congratulations strip**: one strip; with few cards — a static row without duplicates, with overflow — automatic looped scrolling. The duplicate copy of the track is no longer shown when scrolling is not active (few cards or `prefers-reduced-motion`).
+- **Color equality**: the "Birthday people today" card uses the same personal color as the cards of the same employee in the strip.
+- **Footer**: the statement "Participation is voluntary." is removed; the single source of the statement about voluntariness is the home page hero block.
+- **FAQ**: the answer about the author is updated to "real name + nickname in parentheses" (`<Last name First name> (nick)`), without revealing the full address.
+- **Free wish**: the recipient can be selected only among today's birthday people; if there are no birthday people today, the "Leave a wish" button is inactive. Congratulating in advance is possible only with money.
+- **Money congratulation in advance**: the recipient list retains only employees whose birthday is today or has not yet come; employees with a past birthday are removed from the list.
+- **Admin panel**: the table has been supplemented with the employee's birthday date and the gift status "Sent" / "Not sent", which the administrator sets manually. The status is visible only to the administrator.
 
 ## Capabilities
 
 ### New Capabilities
 
-- `admin-panel`: таблица сотрудников в админ-панели с датой рождения и статусом отправки подарка, редактируемым администратором вручную.
+- `admin-panel`: the employee table in the admin panel with the birthday date and the gift sending status, manually edited by an administrator.
 
 ### Modified Capabilities
 
-- `wishes`: лента — статика при малом числе карточек и прокрутка только при переполнении; бесплатное пожелание доступно только для сегодняшних именинников, иначе контрол недоступен.
-- `donations`: допустимые получатели денежного поздравления — сегодняшние и будущие дни рождения; прошедшие исключены из выбора.
-- `birthdays`: карточка сегодняшнего именинника использует персональный цвет, совпадающий с цветом его карточек в ленте.
-- `ui-consistency`: футер не содержит утверждения о добровольности участия; единственный канонический источник — главная страница.
-- `support-chat`: ответ FAQ про автора пожелания описывает отображение «имя + ник» вместо старого правила «только ник».
+- `wishes`: the strip — static with few cards and scrolling only on overflow; a free wish is available only for today's birthday people, otherwise the control is unavailable.
+- `donations`: eligible recipients of a money congratulation — today's and future birthdays; past ones are excluded from the selection.
+- `birthdays`: the card of today's birthday person uses a personal color matching the color of its cards in the strip.
+- `ui-consistency`: the footer does not contain a statement about voluntary participation; the single canonical source is the home page.
+- `support-chat`: the FAQ answer about the wish author describes the display of "name + nickname" instead of the old "nickname only" rule.
 
 ## Impact
 
-- Компоненты: `components/features/WishBoard.tsx`, `components/features/BirthdayCard.tsx`, `components/features/DonateDialog.tsx`, `components/features/AdminTable.tsx`, `components/layout/Footer.tsx`, `app/(app)/page.tsx`, `app/(app)/faq/page.tsx`.
-- Данные и хелперы: `lib/mock-data.ts` и `lib/data-store.ts` (признак отправки подарка), `lib/birthdays.ts` / `lib/utils.ts` (выбор цвета и допустимых получателей), `lib/types.ts` (тип статуса подарка).
-- Стили: `app/globals.css` (условия анимации ленты).
-- Поведение: изменения заметны и для сотрудника (доступность пожелания и получателей), и для администратора (предпросмотр даты, таблица).
+- Components: `components/features/WishBoard.tsx`, `components/features/BirthdayCard.tsx`, `components/features/DonateDialog.tsx`, `components/features/AdminTable.tsx`, `components/layout/Footer.tsx`, `app/(app)/page.tsx`, `app/(app)/faq/page.tsx`.
+- Data and helpers: `lib/mock-data.ts` and `lib/data-store.ts` (gift sending flag), `lib/birthdays.ts` / `lib/utils.ts` (color and eligible recipient selection), `lib/types.ts` (gift status type).
+- Styles: `app/globals.css` (strip animation conditions).
+- Behavior: the changes are noticeable both to an employee (availability of the wish and recipients) and to an administrator (date preview, table).

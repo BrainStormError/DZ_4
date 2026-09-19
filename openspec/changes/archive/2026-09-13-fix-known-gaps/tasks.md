@@ -1,31 +1,31 @@
-## 1. Уточнение продуктового решения
+## 1. Clarification of the product decision
 
-- [x] 1.1 Согласовать с заказчиком способ фиксации суммы участия сотрудника (см. `design.md` → Open Questions), зафиксировать выбранный вариант в `design.md`, обновив раздел Open Questions; признак завершения — раздел не содержит открытого вопроса либо содержит только вопросы, не влияющие на форму участия
+- [x] 1.1 Agree with the customer on the method for recording the employee's participation amount (see `design.md` → Open Questions), fix the chosen option in `design.md` by updating the Open Questions section; completion criterion — the section contains no open question or contains only questions that do not affect the participation form
 
-## 2. Единая валидация корпоративной почты
+## 2. Unified corporate email validation
 
-- [x] 2.1 Вынести проверку корпоративного адреса в общий модуль `lib/` (суффикс `@company.com` и наличие в справочнике) и использовать её в `lib/auth-context.tsx`; признак завершения — `npm run typecheck` проходит, вход по `anna.smirnova@company.com` успешен, вход по `unknown.user@company.com` отклоняется
-- [x] 2.2 Подключить ту же проверку в `components/features/DonateDialog.tsx` вместо проверки только по суффиксу; признак завершения — адрес `unknown.user@company.com` отклоняется и в форме участия, существующий адрес принимается
+- [x] 2.1 Extract the corporate address validation into a shared `lib/` module (the `@company.com` suffix and presence in the directory) and use it in `lib/auth-context.tsx`; completion criterion — `npm run typecheck` passes, login with `anna.smirnova@company.com` succeeds, login with `unknown.user@company.com` is rejected
+- [x] 2.2 Wire the same validation into `components/features/DonateDialog.tsx` instead of checking only by suffix; completion criterion — the address `unknown.user@company.com` is rejected in the participation form as well, and an existing address is accepted
 
-## 3. Переписка сотрудника с администратором
+## 3. Chat between the employee and the administrator
 
-- [x] 3.1 Добавить в `lib/data-store.ts` и `lib/data-context.tsx` операции для получения всех веток и доступа к ветке по пользователю; признак завершения — `npm run typecheck` проходит и операции доступны через `useData()`
-- [x] 3.2 Реализовать в `components/features/ChatThread.tsx` режим администратора со списком обращений сотрудников и ответом в выбранную ветку; признак завершения — администратор видит ветки, созданные сотрудниками, и отправленный ответ появляется в ветке этого сотрудника
-- [x] 3.3 Вычислять признак администратора при отправке сообщения из роли текущего пользователя, убрав жёстко заданное `false`; признак завершения — сообщение администратора сохраняется как административное, сообщение сотрудника — как сообщение сотрудника
+- [x] 3.1 Add operations to `lib/data-store.ts` and `lib/data-context.tsx` for getting all threads and accessing a thread by user; completion criterion — `npm run typecheck` passes and the operations are available via `useData()`
+- [x] 3.2 Implement an administrator mode in `components/features/ChatThread.tsx` with a list of employee requests and replies to the selected thread; completion criterion — the administrator sees threads created by employees, and the sent reply appears in that employee's thread
+- [x] 3.3 Compute the administrator flag when sending a message from the current user's role, removing the hard-coded `false`; completion criterion — an administrator message is saved as administrative, an employee message as an employee message
 
-## 4. Поздравление сотрудника создаёт пожелание
+## 4. An employee's congratulation creates a wish
 
-- [x] 4.1 Добавить в `components/features/DonateDialog.tsx` для сотрудника шаг ввода своей суммы участия и шаг ввода текста поздравления, при подтверждении вызывать операцию добавления суммы и создавать пожелание через операцию хранилища; признак завершения — после подтверждения поздравления запись появляется на доске пожеланий с ником автора и указанием получателя, введённая сумма добавляется к сбору, итоговая сумма сбора на шагах сотрудника не отображается
+- [x] 4.1 Add to `components/features/DonateDialog.tsx` for the employee a step for entering their participation amount and a step for entering the congratulation text; on confirmation, call the amount addition operation and create a wish via the store operation; completion criterion — after confirming the congratulation, an entry appears on the wish board with the author's nickname and the recipient, the entered amount is added to the collection, and the total collection amount is not displayed on the employee's steps
 
-## 5. Календарь по годам
+## 5. Calendar by years
 
-- [x] 5.1 Заменить константу года в `app/(app)/calendar/page.tsx` на состояние и добавить переключение года вперёд и назад с пересчётом дней рождения; признак завершения — переключение года меняет набор и даты именинников, отметка текущего дня отображается только для фактического текущего года
+- [x] 5.1 Replace the year constant in `app/(app)/calendar/page.tsx` with state and add forward/backward year switching with birthday recalculation; completion criterion — switching the year changes the set and dates of birthday people, and the current-day mark is displayed only for the actual current year
 
-## 6. Кнопка пожелания на главной
+## 6. The wish button on the home page
 
-- [x] 6.1 Связать кнопку «Оставить пожелание» в `app/(app)/page.tsx` с формой доски пожеланий; признак завершения — нажатие кнопки открывает форму создания пожелания
+- [x] 6.1 Wire the "Leave a wish" button in `app/(app)/page.tsx` to the wish board form; completion criterion — pressing the button opens the wish creation form
 
-## 7. Уборка и итоговая проверка
+## 7. Cleanup and final verification
 
-- [x] 7.1 Удалить неиспользуемую функцию `getRole()` в `lib/auth-context.tsx`; признак завершения — `npm run lint` не сообщает об ошибках, связанных с удалённым кодом
-- [x] 7.2 Выполнить итоговую проверку `npm run lint` и `npm run typecheck`; признак завершения — обе команды завершаются без ошибок
+- [x] 7.1 Remove the unused `getRole()` function in `lib/auth-context.tsx`; completion criterion — `npm run lint` reports no errors related to the removed code
+- [x] 7.2 Run the final check `npm run lint` and `npm run typecheck`; completion criterion — both commands finish without errors

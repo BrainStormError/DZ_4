@@ -1,29 +1,29 @@
 ## ADDED Requirements
 
-### Requirement: Подсказка о горизонтальной прокрутке ленты
+### Requirement: Hint about horizontal scrolling of the strip
 
-Лента поздравлений ДОЛЖНА (MUST) давать визуальную подсказку о том, что по ней можно прокручивать по горизонтали, когда карточки не помещаются в доступную ширину. Подсказка НЕ ДОЛЖНА появляться, когда все карточки помещаются целиком, и НЕ ДОЛЖНА заменять ручную прокрутку автопрокруткой.
+The congratulations strip MUST give a visual hint that it can be scrolled horizontally when the cards do not fit within the available width. The hint MUST NOT appear when all cards fit entirely, and MUST NOT replace manual scrolling with auto-scroll.
 
-#### Scenario: Карточки не помещаются
+#### Scenario: The cards do not fit
 
-- **WHEN** карточки поздравлений не помещаются в доступную ширину ленты
-- **THEN** лента показывает признак продолжения по горизонтали, а прокрутка остаётся ручной
+- **WHEN** the congratulations cards do not fit within the available width of the strip
+- **THEN** the strip shows a sign of horizontal continuation, and scrolling remains manual
 
-#### Scenario: Карточки помещаются
+#### Scenario: The cards fit
 
-- **WHEN** все карточки помещаются в доступную ширину
-- **THEN** подсказка о прокрутке не отображается, а лента остаётся статичной
+- **WHEN** all cards fit within the available width
+- **THEN** the scroll hint is not displayed, and the strip remains static
 
-### Requirement: Пошаговая прокрутка карточек ленты
+### Requirement: Stepwise scrolling of the strip cards
 
-При ручной горизонтальной прокрутке лента ДОЛЖНА (MUST) выравнивать карточки по шагу прокрутки, чтобы карточка не оставалась обрезанной посередине. Пошаговое выравнивание НЕ ДОЛЖНО (MUST NOT) включать автоматическую прокрутку и НЕ ДОЛЖНО нарушать доступность ленты с клавиатуры.
+During manual horizontal scrolling the strip MUST align the cards to the scroll step so that a card does not remain clipped in the middle. Step alignment MUST NOT enable automatic scrolling and MUST NOT break the keyboard accessibility of the strip.
 
-#### Scenario: Прокрутка до следующей карточки
+#### Scenario: Scrolling to the next card
 
-- **WHEN** пользователь прокручивает ленту по горизонтали
-- **THEN** карточки выравниваются по шагу, и карточка не остаётся обрезанной у края области просмотра
+- **WHEN** the user scrolls the strip horizontally
+- **THEN** the cards align to the step, and a card does not remain clipped at the edge of the viewport
 
-#### Scenario: Доступность с клавиатуры сохраняется
+#### Scenario: Keyboard accessibility is preserved
 
-- **WHEN** пользователь переходит к ленте клавишей Tab
-- **THEN** лента по-прежнему доступна для ручной прокрутки, а автоматическая прокрутка не запускается
+- **WHEN** the user navigates to the strip with the Tab key
+- **THEN** the strip remains available for manual scrolling, and automatic scrolling does not start

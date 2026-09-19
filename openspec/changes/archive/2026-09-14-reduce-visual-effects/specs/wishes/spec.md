@@ -1,43 +1,43 @@
 ## REMOVED Requirements
 
-### Requirement: Лента поздравлений для именинников дня
+### Requirement: Congratulations strip for the day's birthday people
 
-**Reason**: Автопрокрутка ленты выполнялась непрерывно и вместе с дублирующей копией карточек создавала постоянную нагрузку на рендеринг. От автоматической прокрутки решено отказаться.
+**Reason**: The strip's auto-scroll ran continuously and, together with the duplicate copy of the cards, created a constant load on rendering. It was decided to abandon automatic scrolling.
 
-**Migration**: Требование заменено требованием «Статичная лента поздравлений»: одна лента без автоматической прокрутки, с ручным горизонтальным скроллом при переполнении и без дублирующихся карточек. Цветовая подсветка карточек по имениннику сохраняется.
+**Migration**: The requirement is replaced by the requirement "Static congratulations strip": one strip without automatic scrolling, with manual horizontal scroll on overflow and without duplicate cards. The color highlighting of cards by birthday person is preserved.
 
 ## ADDED Requirements
 
-### Requirement: Статичная лента поздравлений
+### Requirement: Static congratulations strip
 
-Все поздравления, показанные для выбранной даты дня рождения, ДОЛЖНЫ (MUST) отображаться одной лентой, а не разрастающейся сеткой. Лента НЕ ДОЛЖНА (MUST NOT) автоматически прокручиваться и НЕ ДОЛЖНА (MUST NOT) содержать дублирующихся карточек. Когда карточки не помещаются в доступную ширину, прокрутка ДОЛЖНА (MUST) выполняться вручную пользователем; когда карточки помещаются полностью, лента ДОЛЖНА отображаться статичной полосой. Карточки ДОЛЖНЫ иметь цветовую подсветку, закреплённую за именинником. Лента ДОЛЖНА оставаться доступной с клавиатуры и корректно отображаться при `prefers-reduced-motion`.
+All congratulations shown for the selected birthday date MUST be displayed in a single strip rather than an expanding grid. The strip MUST NOT scroll automatically and MUST NOT contain duplicate cards. When the cards do not fit in the available width, scrolling MUST be performed manually by the user; when the cards fit completely, the strip MUST be displayed as a static band. The cards MUST have color highlighting tied to the birthday person. The strip MUST remain keyboard accessible and render correctly with `prefers-reduced-motion`.
 
-#### Scenario: Одна общая лента
+#### Scenario: A single shared strip
 
-- **WHEN** именинников текущего дня несколько
-- **THEN** все их поздравления показываются в одной ленте
+- **WHEN** there are several birthday people for the current day
+- **THEN** all their congratulations are shown in one strip
 
-#### Scenario: Мало поздравлений — статичная полоса
+#### Scenario: Few congratulations — a static band
 
-- **WHEN** все карточки поздравлений помещаются в доступную ширину ленты
-- **THEN** лента статична, и каждая карточка отображается ровно один раз
+- **WHEN** all congratulation cards fit in the available width of the strip
+- **THEN** the strip is static, and each card is displayed exactly once
 
-#### Scenario: Много поздравлений — ручная прокрутка
+#### Scenario: Many congratulations — manual scrolling
 
-- **WHEN** карточки поздравлений не помещаются в доступную ширину ленты
-- **THEN** лента не двигается сама, а прокрутка доступных карточек выполняется пользователем вручную по горизонтали
+- **WHEN** the congratulation cards do not fit in the available width of the strip
+- **THEN** the strip does not move on its own, and the user scrolls the available cards manually horizontally
 
-#### Scenario: Цветовая подсветка по имениннику
+#### Scenario: Color highlighting by birthday person
 
-- **WHEN** поздравления принадлежат разным именинникам
-- **THEN** карточки каждого именинника подсвечены закреплённым за ним цветом
+- **WHEN** the congratulations belong to different birthday people
+- **THEN** the cards of each birthday person are highlighted with the color tied to that person
 
-#### Scenario: Без дублирующихся карточек
+#### Scenario: No duplicate cards
 
-- **WHEN** пользователь просматривает ленту при любом числе карточек
-- **THEN** каждая карточка отображается ровно один раз, скрытых копий содержимого нет
+- **WHEN** the user views the strip with any number of cards
+- **THEN** each card is displayed exactly once, and there are no hidden copies of the content
 
-#### Scenario: Доступность ленты с клавиатуры
+#### Scenario: Keyboard accessibility of the strip
 
-- **WHEN** пользователь переходит к ленте клавишей Tab
-- **THEN** лента получает фокус, и её карточки доступны для ручной прокрутки, в том числе при `prefers-reduced-motion`
+- **WHEN** the user navigates to the strip with the Tab key
+- **THEN** the strip receives focus, and its cards are available for manual scrolling, including with `prefers-reduced-motion`

@@ -1,20 +1,20 @@
 ## ADDED Requirements
 
-### Requirement: Переход к вкладке переписки из шапки
+### Requirement: Navigation to the correspondence tab from the header
 
-Переход по индикатору непрочитанных сообщений в шапке ДОЛЖЕН (MUST) открывать раздел частых вопросов с активной вкладкой переписки. Активная вкладка ДОЛЖНА соответствовать адресу страницы при любом способе перехода, включая переход с уже открытой страницы раздела без полной перезагрузки.
+Navigation via the unread-messages indicator in the header (MUST) open the frequently asked questions section with the correspondence tab active. The active tab (MUST) correspond to the page address for any navigation method, including navigation from an already open page of the section without a full reload.
 
-#### Scenario: Переход из шапки открывает переписку
+#### Scenario: Navigation from the header opens the correspondence
 
-- **WHEN** администратор нажимает индикатор непрочитанных сообщений в шапке
-- **THEN** открывается вкладка переписки, и администратор может выбрать ветку и ответить
+- **WHEN** the administrator presses the unread-messages indicator in the header
+- **THEN** the correspondence tab opens, and the administrator can select a thread and reply
 
-#### Scenario: Переход с уже открытой страницы раздела
+#### Scenario: Navigation from an already open page of the section
 
-- **WHEN** администратор уже находится на странице раздела частых вопросов на вкладке вопросов и нажимает индикатор в шапке
-- **THEN** активной становится вкладка переписки без перезагрузки страницы
+- **WHEN** the administrator is already on the frequently asked questions page on the questions tab and presses the indicator in the header
+- **THEN** the correspondence tab becomes active without reloading the page
 
-#### Scenario: Прямая ссылка на вкладку переписки
+#### Scenario: A direct link to the correspondence tab
 
-- **WHEN** пользователь открывает адрес вкладки переписки напрямую
-- **THEN** отображается вкладка переписки
+- **WHEN** the user opens the address of the correspondence tab directly
+- **THEN** the correspondence tab is displayed

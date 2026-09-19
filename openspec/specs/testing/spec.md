@@ -1,50 +1,50 @@
 # testing Specification
 
 ## Purpose
-Обеспечивает инфраструктуру автоматического тестирования: unit- и интеграционные тесты для бизнес-компонентов с мок-провайдерами, чтобы гарантировать корректность критических пользовательских сценариев и предотвратить регрессии.
+Provides automatic testing infrastructure: unit and integration tests for business components with mock providers, to guarantee the correctness of critical user scenarios and prevent regressions.
 
 ## Requirements
 
-### Requirement: Тестовый раннер и окружение настроены
+### Requirement: Test runner and environment are configured
 
-Система ДОЛЖНА предоставлять настроенный Vitest с jsdom окружением, алиасами путей (`@/*`), глобальным setup-файлом с `@testing-library/jest-dom` и npm-скриптами `test` / `test:watch`.
+The system MUST provide a configured Vitest with a jsdom environment, path aliases (`@/*`), a global setup file with `@testing-library/jest-dom`, and the npm scripts `test` / `test:watch`.
 
-#### Scenario: Запуск тестов проходит успешно
-- **WHEN** выполняется `npm run test`
-- **THEN** Vitest запускается, находит тестовые файлы `*.test.{ts,tsx}`, выполняет их без ошибок конфигурации
+#### Scenario: Running the tests passes successfully
+- **WHEN** `npm run test` is executed
+- **THEN** Vitest starts, finds the test files `*.test.{ts,tsx}`, and runs them without configuration errors
 
-### Requirement: Утилита рендера с провайдерами
+### Requirement: Render utility with providers
 
-Система ДОЛЖНА предоставлять `renderWithProviders(ui)` обёртку, монтирующую компонент внутри `ThemeProvider`, `AuthProvider`, `DataProvider` для изолированного тестирования бизнес-компонентов.
+The system MUST provide a `renderWithProviders(ui)` wrapper that mounts a component inside `ThemeProvider`, `AuthProvider`, `DataProvider` for isolated testing of business components.
 
-#### Scenario: Компонент рендерится с контекстами
-- **WHEN** тест вызывает `renderWithProviders(<WishBoard />)`
-- **THEN** компонент получает доступ к `useAuth`, `useData`, `useTheme` без ошибки "must be used within Provider"
+#### Scenario: A component renders with the contexts
+- **WHEN** a test calls `renderWithProviders(<WishBoard />)`
+- **THEN** the component gets access to `useAuth`, `useData`, `useTheme` without the error "must be used within Provider"
 
-### Requirement: Позитивный тест DonateDialog — успешный сценарий
+### Requirement: Positive DonateDialog test — success scenario
 
-Система ДОЛЖНА иметь тест, проверяющий полный сценарий доната: ввод корпоративной почты → сумма → сообщение → подтверждение → появление шага `success` и вызов `addDonation` с правильными аргументами.
+The system MUST have a test verifying the full donation scenario: entering the corporate email → amount → message → confirmation → the appearance of the `success` step and the `addDonation` call with the correct arguments.
 
-#### Scenario: Успешное прохождение всех шагов доната
-- **WHEN** пользователь вводит `@company.com` почту, валидную сумму, опциональное сообщение и нажимает подтверждение
-- **THEN** диалог переходит на шаг `success`, `addDonation` вызван с `recipient.id` и суммой, при наличии текста — `addWish` вызван с автором и получателем
+#### Scenario: Successful completion of all donation steps
+- **WHEN** the user enters a `@company.com` email, a valid amount, an optional message, and clicks confirmation
+- **THEN** the dialog moves to the `success` step, `addDonation` is called with `recipient.id` and the amount, and if there is text — `addWish` is called with the author and the recipient
 
-### Requirement: Тест валидации DonateDialog — некорпоративная почта
+### Requirement: DonateDialog validation test — non-corporate email
 
-Система ДОЛЖНА иметь тест, проверяющий блокировку перехода к следующему шагу при вводе некорпоративной почты (`user@gmail.com`) с отображением inline-ошибки.
+The system MUST have a test verifying that the transition to the next step is blocked when a non-corporate email (`user@gmail.com`) is entered, with an inline error displayed.
 
-#### Scenario: Блокировка на шаге email при невалидной почте
-- **WHEN** пользователь вводит `user@gmail.com` и нажимает «Продолжить»
-- **THEN** отображается `Alert` с текстом ошибки, кнопка «Продолжить» не переводит на шаг `amount`, `addDonation` не вызывается
+#### Scenario: Blocking at the email step with an invalid email
+- **WHEN** the user enters `user@gmail.com` and clicks "Continue"
+- **THEN** an `Alert` with the error text is displayed, the "Continue" button does not move to the `amount` step, and `addDonation` is not called
 
-### Requirement: Тест ролей AdminTable — скрытие сумм у сотрудника
+### Requirement: AdminTable roles test — hiding amounts from an employee
 
-Система ДОЛЖНА иметь тест, проверяющий что при рендере `AdminTable` под ролью `employee` таблица сумм не отображается, а под ролью `admin` — отображается с рабочей кнопкой «Изменить» (доступной только при выборе причины).
+The system MUST have a test verifying that when `AdminTable` is rendered under the `employee` role the amounts table is not displayed, and under the `admin` role it is displayed with a working "Edit" button (available only when a reason is selected).
 
-#### Scenario: Рендер под employee скрывает суммы
-- **WHEN** `AuthProvider` задаёт роль `employee`
-- **THEN** таблица сборов не рендерится (или показывает заглушку "Доступ запрещён")
+#### Scenario: Rendering under employee hides the amounts
+- **WHEN** `AuthProvider` sets the role `employee`
+- **THEN** the collection table is not rendered (or shows the placeholder "Access denied")
 
-#### Scenario: Рендер под admin показывает таблицу и работает редактирование
-- **WHEN** `AuthProvider` задаёт роль `admin`
-- **THEN** таблица сумм видна, кнопка «Изменить» открывает модалку, сохранение заблокировано пока не выбрана причина и не введён комментарий
+#### Scenario: Rendering under admin shows the table and editing works
+- **WHEN** `AuthProvider` sets the role `admin`
+- **THEN** the amounts table is visible, the "Edit" button opens the modal, and saving is blocked until a reason is selected and a comment is entered

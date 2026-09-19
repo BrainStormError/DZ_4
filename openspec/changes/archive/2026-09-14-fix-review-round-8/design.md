@@ -1,81 +1,81 @@
 ## Context
 
-См. `proposal.md` — Why. Текущее состояние, влияющее на подход:
+See `proposal.md` — Why. Current state affecting the approach:
 
-- Чат администратора (`components/features/ChatThread.tsx`) — карточка с `max-h-[600px]` и `overflow-hidden`, внутренний ряд `h-full`, а список сотрудников на десктопе `md:max-h-none`. При большом числе веток список растёт на всю высоту, и нижний блок с полем ответа обрезается.
-- Текущая дата задаётся в `lib/date-context.tsx` как `useState(() => startOfDay(new Date()))` — значение вычисляется при SSR и при гидратации в разные моменты/таймзоны, что даёт расхождение текста даты и принудительный переход всего дерева на клиентский рендеринг.
-- Тема задаётся в `lib/theme-context.tsx` как `useState(readDomTheme)`, где инициализатор читает `document.documentElement.getAttribute('data-theme')`. Инлайн-скрипт в `app/layout.tsx` уже выставляет `data-theme` до гидратации, а подпись темы в `ThemeSwitcher` помечена `suppressHydrationWarning`, что маскирует расхождение.
-- Лента поздравлений (`components/features/WishBoard.tsx`) определяет переполнение через `ResizeObserver` + `setIsOverflowing` и дублирует список для бегущей строки; возможен цикл «измерение → состояние → изменение DOM → измерение».
-- Модальные диалоги (`DonateDialog`, «Изменить сумму» в `AdminTable`, «Изменить пожелание» в `WishBoard`) используют модальный Radix `Dialog`, который выставляет на `<body>` блокировку прокрутки и указателя; при переходе с открытым диалогом блокировка может залипнуть.
-- Способность `app-shell` введена в `fix-review-round-7` и ожидает архивации; дельта этого изменения её дополняет.
+- The administrator chat (`components/features/ChatThread.tsx`) is a card with `max-h-[600px]` and `overflow-hidden`, an inner row with `h-full`, and the employee list on desktop `md:max-h-none`. With many threads, the list grows to full height, and the bottom block with the reply field is clipped.
+- The current date is set in `lib/date-context.tsx` as `useState(() => startOfDay(new Date()))` — the value is computed during SSR and during hydration at different moments/time zones, which produces a mismatch in the date text and forces the entire tree to switch to client-side rendering.
+- The theme is set in `lib/theme-context.tsx` as `useState(readDomTheme)`, where the initializer reads `document.documentElement.getAttribute('data-theme')`. The inline script in `app/layout.tsx` already sets `data-theme` before hydration, and the theme label in `ThemeSwitcher` is marked with `suppressHydrationWarning`, which masks the mismatch.
+- The congratulations strip (`components/features/WishBoard.tsx`) determines overflow via `ResizeObserver` + `setIsOverflowing` and duplicates the list for the marquee; a loop of "measurement → state → DOM change → measurement" is possible.
+- Modal dialogs (`DonateDialog`, "Change amount" in `AdminTable`, "Change wish" in `WishBoard`) use the modal Radix `Dialog`, which sets scroll and pointer lock on `<body>`; when navigating with an open dialog, the lock may get stuck.
+- The `app-shell` capability was introduced in `fix-review-round-7` and awaits archiving; the delta of this change supplements it.
 
 ## Goals / Non-Goals
 
 **Goals:**
 
-- Сделать поле ответа администратору доступным при любом числе обращений.
-- Устранить расхождение даты и темы между серверным рендером и гидратацией без принудительного клиентского рендеринга.
-- Исключить зацикливание рендеринга ленты поздравлений.
-- Исключить залипание блокировки прокрутки после перехода при открытом модальном диалоге.
+- Make the administrator reply field accessible with any number of requests.
+- Eliminate the mismatch of date and theme between server-side rendering and hydration without forcing client-side rendering.
+- Prevent the congratulations strip rendering from looping.
+- Prevent the scroll lock from getting stuck after navigation with an open modal dialog.
 
 **Non-Goals:**
 
-- Персистентность, бэкенд, реальная авторизация; состояние остаётся клиентским.
-- Замена кастомного `theme-context` на `next-themes` (не требуется для устранения дефекта).
-- Изменение правил показа пожеланий, скрытия сумм и самих тем.
-- Отказ от модальности диалогов (модальность сохраняется).
+- Persistence, backend, real authorization; state remains client-side.
+- Replacing the custom `theme-context` with `next-themes` (not required to fix the defect).
+- Changing the rules for displaying wishes, hiding amounts, and the themes themselves.
+- Abandoning the modality of dialogs (modality is preserved).
 
 ## Decisions
 
-### Решение 1: полю ответа — определённая высота карточки
+### Decision 1: the reply field gets a definite card height
 
-Проблема в том, что `h-full` внутри карточки не резолвируется: у `CardContent` нет определённой высоты (только `flex-1`), поэтому ряд растёт под список и нижний блок обрезается. Лечение — дать карточке определённую высоту на десктопе и цепочку `min-h-0`.
+The problem is that `h-full` inside the card does not resolve: `CardContent` has no definite height (only `flex-1`), so the row grows under the list and the bottom block is clipped. The cure is to give the card a definite height on desktop and a `min-h-0` chain.
 
-- Почему: при определённой высоте процентные высоты резолвируются, а `overflow-y-auto` списка начинает работать, и список прокручивается в своей области.
-- Альтернатива — ограничить только список (`md:max-h-[…]`): лечит симптом, но оставляет хрупкую высотную связку и требует подбора магической высоты под шапку.
-- Следствие: карточка `md:h-[600px]`, внутренний ряд и колонки получают `min-h-0`; список обращений и блок сообщений прокручиваются независимо, поле ответа остаётся внизу.
+- Why: with a definite height, percentage heights resolve, and the list's `overflow-y-auto` starts working, and the list scrolls within its area.
+- Alternative — limit only the list (`md:max-h-[…]`): treats the symptom but leaves a fragile height chain and requires selecting a magic height for the header.
+- Consequence: the card gets `md:h-[600px]`, the inner row and columns get `min-h-0`; the request list and the message block scroll independently, the reply field stays at the bottom.
 
-### Решение 2: текущая дата вычисляется только на клиенте
+### Decision 2: the current date is computed only on the client
 
-`DateProvider` инициализирует `realToday` стабильным значением, одинаковым для сервера и первого клиентского рендера, а реальную дату устанавливает в `useEffect` после монтирования.
+`DateProvider` initializes `realToday` with a stable value, the same for the server and the first client render, and sets the real date in `useEffect` after mounting.
 
-- Почему: сервер и первый клиентский рендер совпадают, поэтому расхождения текста даты нет; затем эффект ставит корректную локальную дату.
-- Альтернатива — `suppressHydrationWarning` на каждом месте вывода даты: отвергнута, так как расхождение вызывает смену всего дерева на клиентский рендеринг, а дата используется во многих блоках.
-- Следствие: кратковременное обновление даты после монтирования допустимо; приложение и так закрыто `AuthGate`, поэтому видимая разница минимальна.
+- Why: the server and the first client render match, so there is no date text mismatch; then the effect sets the correct local date.
+- Alternative — `suppressHydrationWarning` at every date output location: rejected, since the mismatch causes the entire tree to switch to client-side rendering, and the date is used in many blocks.
+- Consequence: a brief date update after mounting is acceptable; the application is already wrapped in `AuthGate`, so the visible difference is minimal.
 
-### Решение 3: тема — старт с темой по умолчанию + эффект восстановления
+### Decision 3: theme — start with the default theme + restore effect
 
-`ThemeProvider` инициализирует состояние значением по умолчанию (совпадает с SSR), а в `useEffect` читает уже выставленный `data-theme` и обновляет состояние.
+`ThemeProvider` initializes state with the default value (matching SSR), and in `useEffect` reads the already set `data-theme` and updates the state.
 
-- Почему: значение по умолчанию совпадает на сервере и клиенте — расхождения нет; эффект ставит реальную тему, и поскольку значение меняется, ре-рендер исправляет подпись.
-- Альтернатива — перейти на `next-themes` (уже в зависимостях): решает ту же задачу штатно, но требует пересборки `ThemeProvider`/`ThemeSwitcher` под API библиотеки; отложена как ненужная для дефекта.
-- Следствие: убирается зависимость от `suppressHydrationWarning` как «маскировки»; подпись всегда соответствует применённой теме.
+- Why: the default value matches on the server and client — there is no mismatch; the effect sets the real theme, and since the value changes, the re-render corrects the label.
+- Alternative — switch to `next-themes` (already in dependencies): solves the same problem in a standard way, but requires rebuilding `ThemeProvider`/`ThemeSwitcher` for the library API; deferred as unnecessary for the defect.
+- Consequence: the dependency on `suppressHydrationWarning` as a "mask" is removed; the label always matches the applied theme.
 
-### Решение 4: лента — стабилизация измерения переполнения
+### Decision 4: strip — stabilizing overflow measurement
 
-Сначала воспроизвести цикл, затем защитить измерение: функциональное обновление `setIsOverflowing(prev => …)` с явным сравнением, объединение вызовов через `requestAnimationFrame` и наблюдение только за контейнером, а не за списком.
+First reproduce the loop, then protect the measurement: functional update `setIsOverflowing(prev => …)` with an explicit comparison, batching calls via `requestAnimationFrame`, and observing only the container, not the list.
 
-- Почему: устраняется источник «измерение → состояние → DOM → измерение» и граничное осциллирование у порога.
-- Альтернатива — убрать бегущую строку: противоречит требованию `wishes` об автопрокрутке при переполнении.
-- Следствие: лента остаётся, но переполнение определяется без зацикливания.
+- Why: the source of "measurement → state → DOM → measurement" and boundary oscillation at the threshold is eliminated.
+- Alternative — remove the marquee: contradicts the `wishes` requirement for auto-scroll on overflow.
+- Consequence: the strip remains, but overflow is detected without looping.
 
-### Решение 5: диалоги — закрытие при смене маршрута, модальность сохраняется
+### Decision 5: dialogs — close on route change, modality is preserved
 
-Диалоги остаются модальными, но при смене маршрута (`usePathname`) закрываются, чтобы Radix корректно снял блокировку `<body>`.
+Dialogs remain modal, but on route change (`usePathname`) they close so that Radix correctly releases the `<body>` lock.
 
-- Почему: модальность нужна для фокуса и `aria-modal`; закрытие по смене маршрута устраняет залипание блокировки, а не маскирует его.
-- Альтернатива — `modal={false}`: отвергнута, ломает перехват фокуса и семантику модального диалога.
-- Альтернатива — ручной сброс стилей `<body>` после перехода: лечит симптом и требует знать все точки перехода; допустимо как страховка, но не как основное решение.
-- Следствие: у каждого диалога-хоста добавляется эффект, закрывающий его при смене пути.
+- Why: modality is needed for focus and `aria-modal`; closing on route change eliminates the lock getting stuck rather than masking it.
+- Alternative — `modal={false}`: rejected, breaks focus trapping and the semantics of a modal dialog.
+- Alternative — manually reset `<body>` styles after navigation: treats the symptom and requires knowing all navigation points; acceptable as a safety net, but not as the main solution.
+- Consequence: each dialog host gets an effect that closes it on path change.
 
 ## Risks / Trade-offs
 
-- [Зависимость от архивации round-7] → Дельта `app-shell` дополняет способность, введённую в `fix-review-round-7`. Архивация round-7 должна предшествовать архивации этого изменения, либо дельты применяются вместе.
-- [Кратковременное обновление даты после монтирования] → Может дать одно перерисовывание даты; приемлемо, так как контент закрыт `AuthGate` и расхождение не видно пользователю.
-- [Немодальные меню шапки уже сделаны в round-7] → Это изменение не откатывает `modal={false}` для меню шапки; оно только распространяет защиту на модальные диалоги.
-- [Баг ленты не подтверждён статически] → Сначала воспроизводится; если цикл не воспроизводится, применяется только защитная стабилизация, а не изменение поведения ленты.
-- [Изменение высоты карточки чата] → Может повлиять на мобильную раскладку; на мобильном карточка остаётся с `max-h`, ограничение высоты применяется только на десктопе.
+- [Dependency on round-7 archiving] → The `app-shell` delta supplements the capability introduced in `fix-review-round-7`. Archiving round-7 must precede archiving this change, or the deltas are applied together.
+- [Brief date update after mounting] → May cause one date re-render; acceptable, since the content is wrapped in `AuthGate` and the mismatch is not visible to the user.
+- [Non-modal header menus were already done in round-7] → This change does not roll back `modal={false}` for header menus; it only extends the protection to modal dialogs.
+- [The strip bug is not confirmed statically] → It is reproduced first; if the loop is not reproduced, only protective stabilization is applied, rather than a change in the strip's behavior.
+- [Change in chat card height] → May affect the mobile layout; on mobile the card keeps `max-h`, and the height constraint is applied only on desktop.
 
 ## Migration Plan
 
-Изменение полностью клиентское и неперсистентное — миграций данных нет, откат через revert. Вёрстка чата и провайдеры даты/темы меняются атомарно; отдельной последовательности развёртывания не требуется.
+The change is entirely client-side and non-persistent — there are no data migrations, and rollback is via revert. The chat layout and the date/theme providers change atomically; no separate deployment sequence is required.

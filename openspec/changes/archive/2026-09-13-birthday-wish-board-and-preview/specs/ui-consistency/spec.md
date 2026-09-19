@@ -1,25 +1,25 @@
 ## MODIFIED Requirements
 
-### Requirement: Единый источник сообщения о добровольности и скрытых суммах
+### Requirement: A single source of the message about voluntariness and hidden amounts
 
-Система ДОЛЖНА представлять утверждение о добровольности участия и о том, что суммы сборов видны только администратору, в одном каноническом месте интерфейса. Каноническая формулировка добровольности на главной странице: «Мы собираем средства на подарки коллегам к их дню рождения. Любой сотрудник может присоединиться — это добровольно.» На одной странице одинаковое по смыслу утверждение НЕ ДОЛЖНО повторяться более одного раза вне контекста конкретного шага сценария.
+The system MUST present the statement about the voluntariness of participation and that collection amounts are visible only to the administrator in a single canonical place in the interface. The canonical wording of voluntariness on the home page: "We collect funds for gifts to colleagues for their birthdays. Any employee can join — participation is voluntary." On one page, a statement with the same meaning MUST NOT be repeated more than once outside the context of a specific scenario step.
 
-#### Scenario: Главная страница без дублирующих блоков
+#### Scenario: Home page without duplicate blocks
 
-- **WHEN** пользователь открывает главную страницу
-- **THEN** утверждение о добровольности и скрытии сумм встречается не более одного раза в содержимом страницы (помимо футера), а дублирующие hero-бейдж и privacy-карточки отсутствуют
+- **WHEN** the user opens the home page
+- **THEN** the statement about voluntariness and hiding amounts appears no more than once in the page content (aside from the footer), and duplicate hero badge and privacy cards are absent
 
-#### Scenario: FAQ без дублирующих карточек
+#### Scenario: FAQ without duplicate cards
 
-- **WHEN** пользователь открывает раздел «Вопросы и ответы»
-- **THEN** quick-info карточки, повторяющие ответы Q1/Q2 и текст главной, отсутствуют, а ответы FAQ остаются единственным источником формулировок
+- **WHEN** the user opens the "Questions and Answers" section
+- **THEN** quick-info cards repeating answers Q1/Q2 and the home page text are absent, and the FAQ answers remain the only source of wording
 
-#### Scenario: Диалог участия без повторяющихся пояснений
+#### Scenario: Participation dialog without repeated explanations
 
-- **WHEN** пользователь проходит шаги диалога участия
-- **THEN** пояснение о скрытии суммы показывается не более одного раза — на релевантном шаге
+- **WHEN** the user goes through the steps of the participation dialog
+- **THEN** the explanation about hiding the amount is shown no more than once — at the relevant step
 
-#### Scenario: Каноническая формулировка добровольности
+#### Scenario: Canonical wording of voluntariness
 
-- **WHEN** пользователь читает текст о добровольности на главной странице
-- **THEN** текст совпадает с канонической формулировкой и не содержит усилений вроде «полностью добровольно»
+- **WHEN** the user reads the text about voluntariness on the home page
+- **THEN** the text matches the canonical wording and does not contain intensifiers like "completely voluntary"

@@ -1,78 +1,78 @@
 ## MODIFIED Requirements
 
-### Requirement: Показ поздравлений по дню рождения
+### Requirement: Display of congratulations by birthday
 
-Доска пожеланий ДОЛЖНА (MUST) показывать поздравления только для сотрудников, у которых день рождения совпадает с текущей датой. Администратор ДОЛЖЕН (MUST) учитываться как сотрудник наравне с остальными. Если сегодня именинников нет, доска НЕ ДОЛЖНА (MUST NOT) показывать поздравления за другие даты — ни за прошедшие, ни за будущие. Поздравления для будущих и прошедших дней рождения НЕ ДОЛЖНЫ (MUST NOT) показываться никогда.
+The wish board MUST show congratulations only for employees whose birthday coincides with the current date. The administrator MUST be counted as an employee on a par with the others. If there are no birthday people today, the board MUST NOT show congratulations for other dates — neither past nor future. Congratulations for future and past birthdays MUST NOT ever be shown.
 
-#### Scenario: Сегодня есть именинник
+#### Scenario: There is a birthday person today
 
-- **WHEN** у одного или нескольких сотрудников день рождения совпадает с текущей датой
-- **THEN** доска показывает пожелания только для этих сотрудников
+- **WHEN** one or more employees have a birthday that coincides with the current date
+- **THEN** the board shows wishes only for those employees
 
-#### Scenario: Сегодня именинников нет
+#### Scenario: There are no birthday people today
 
-- **WHEN** ни у одного сотрудника день рождения не совпадает с текущей датой
-- **THEN** доска не показывает ни одного пожелания и не переходит к другим датам дня рождения
+- **WHEN** no employee's birthday coincides with the current date
+- **THEN** the board shows no wishes and does not move to other birthday dates
 
-#### Scenario: Нет пожеланий для ближайшего именинника
+#### Scenario: No wishes for the nearest birthday person
 
-- **WHEN** для сегодняшнего дня рождения нет ни одного пожелания
-- **THEN** система показывает пустое состояние и не переходит к другим датам дня рождения
+- **WHEN** there is not a single wish for today's birthday
+- **THEN** the system shows an empty state and does not move to other birthday dates
 
-#### Scenario: Поздравления за прошедшую дату скрыты
+#### Scenario: Congratulations for a past date are hidden
 
-- **WHEN** пожелание адресовано сотруднику, чей день рождения уже прошёл
-- **THEN** это пожелание не отображается на доске
+- **WHEN** a wish is addressed to an employee whose birthday has already passed
+- **THEN** that wish is not displayed on the board
 
-#### Scenario: Будущие поздравления скрыты
+#### Scenario: Future congratulations are hidden
 
-- **WHEN** пожелание адресовано сотруднику, чей день рождения ещё не наступил
-- **THEN** это пожелание не отображается на доске
+- **WHEN** a wish is addressed to an employee whose birthday has not yet arrived
+- **THEN** that wish is not displayed on the board
 
-#### Scenario: Администратор показан как именинник
+#### Scenario: The administrator is shown as a birthday person
 
-- **WHEN** день рождения администратора совпадает с текущей датой
-- **THEN** поздравления для администратора отображаются на доске так же, как для любого сотрудника
+- **WHEN** the administrator's birthday coincides with the current date
+- **THEN** congratulations for the administrator are displayed on the board just like for any employee
 
 ## ADDED Requirements
 
-### Requirement: Пустое состояние доски пожеланий
+### Requirement: Empty state of the wish board
 
-Когда доска не может показать ни одной карточки, она ДОЛЖНА (MUST) оставаться на странице с заголовком и объяснять причину: при отсутствии именинников — что пожелания доступны в день рождения, при наличии именинников без пожеланий — что поздравлений пока нет. Доска НЕ ДОЛЖНА (MUST NOT) исчезать со страницы и НЕ ДОЛЖНА (MUST NOT) подменять пустое состояние пожеланиями других дат.
+When the board cannot show a single card, it MUST remain on the page with the title and explain the reason: when there are no birthday people — that wishes are available on the birthday; when there are birthday people but no wishes — that there are no congratulations yet. The board MUST NOT disappear from the page and MUST NOT replace the empty state with wishes from other dates.
 
-#### Scenario: Сегодня именинников нет
+#### Scenario: There are no birthday people today
 
-- **WHEN** ни у одного сотрудника день рождения не совпадает с текущей датой
-- **THEN** доска остаётся на странице и показывает пустое состояние с пояснением, что пожелания доступны в день рождения
+- **WHEN** no employee's birthday coincides with the current date
+- **THEN** the board remains on the page and shows an empty state explaining that wishes are available on the birthday
 
-#### Scenario: Именинники есть, пожеланий нет
+#### Scenario: There are birthday people, but no wishes
 
-- **WHEN** у сотрудника сегодня день рождения, но для него ещё нет ни одного пожелания
-- **THEN** доска показывает пустое состояние с предложением оставить первое пожелание
+- **WHEN** an employee has a birthday today, but there is not a single wish for them yet
+- **THEN** the board shows an empty state with an invitation to leave the first wish
 
-### Requirement: Доска пожеланий использует доступную ширину
+### Requirement: The wish board uses the available width
 
-Карточка поздравления ДОЛЖНА (MUST) растягиваться по доступной ширине ленты в пределах читаемого максимума, чтобы на широких экранах доска не оставляла одностороннее пустое поле. Когда карточки не заполняют ширину ленты, полоса ДОЛЖНА (MUST) центрироваться; когда карточки не помещаются, они ДОЛЖНЫ (MUST) сохранять минимальную ширину, а прокрутка остаётся ручной. Лента НЕ ДОЛЖНА (MUST NOT) превращаться в сетку.
+A congratulation card MUST stretch across the available strip width within the readable maximum, so that on wide screens the board does not leave a one-sided empty field. When the cards do not fill the strip width, the strip MUST be centered; when the cards do not fit, they MUST keep the minimum width, and scrolling remains manual. The strip MUST NOT turn into a grid.
 
-#### Scenario: Одно пожелание на широком экране
+#### Scenario: One wish on a wide screen
 
-- **WHEN** на широком экране на доске показано одно пожелание
-- **THEN** карточка растянута до читаемого максимума, а полоса центрирована, так что свободное место распределено по краям, а не собрано с одной стороны
+- **WHEN** one wish is shown on the board on a wide screen
+- **THEN** the card is stretched to the readable maximum, and the strip is centered, so that the free space is distributed at the edges rather than gathered on one side
 
-#### Scenario: Несколько пожеланий помещаются
+#### Scenario: Several wishes fit
 
-- **WHEN** карточки пожеланий помещаются в ширину ленты
-- **THEN** карточки делят доступную ширину, а лента остаётся статичной полосой без прокрутки
+- **WHEN** the wish cards fit within the strip width
+- **THEN** the cards share the available width, and the strip remains a static bar without scrolling
 
-#### Scenario: Карточки не помещаются
+#### Scenario: The cards do not fit
 
-- **WHEN** карточек больше, чем помещается в ширину ленты
-- **THEN** карточки сохраняют минимальную ширину, лента прокручивается вручную и сохраняет подсказку о горизонтальной прокрутке
+- **WHEN** there are more cards than fit within the strip width
+- **THEN** the cards keep the minimum width, the strip scrolls manually and preserves the hint about horizontal scrolling
 
 ## REMOVED Requirements
 
-### Requirement: Прошедший день рождения только для чтения
+### Requirement: Past birthday read-only
 
-**Reason**: Заглушка показывала поздравления за уже прошедшую дату дня рождения, когда сегодня именинников нет. Пользователь не мог отличить актуальные поздравления от архивных и видел поздравления человеку, чей день рождения прошёл. Пустота страницы, ради которой заглушка вводилась, теперь закрывается пустым состоянием доски и использованием доской доступной ширины.
+**Reason**: The placeholder showed congratulations for an already past birthday date when there are no birthday people today. The user could not distinguish current congratulations from archived ones and saw congratulations for a person whose birthday had passed. The page emptiness for which the placeholder was introduced is now covered by the board's empty state and by the board using the available width.
 
-**Migration**: Данные пожеланий не меняются — пожелание снова становится видимым в день рождения получателя. Изменилось только правило показа; миграций данных не требуется.
+**Migration**: The wish data does not change — a wish becomes visible again on the recipient's birthday. Only the display rule changed; no data migrations are required.

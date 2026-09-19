@@ -1,20 +1,20 @@
 ## MODIFIED Requirements
 
-### Requirement: Актуальная текущая дата
+### Requirement: Current actual date
 
-Список «Именинники сегодня» и признак «Сегодня» ДОЛЖНЫ вычисляться от текущей даты, а НЕ от захардкоженного значения. По умолчанию текущая дата берётся из локальной системной даты браузера. Администратор ДОЛЖЕН иметь возможность включить режим предпросмотра даты, при котором текущая дата для блоков именинников и доски пожеланий берётся из выбранного дня; режим предпросмотра НЕ ДОЛЖЕН изменять реальные данные и ДОЛЖЕН сбрасываться к системной дате.
+The "Birthday people today" list and the "Today" marker MUST be computed from the current date, and NOT from a hardcoded value. By default, the current date is taken from the browser's local system date. An administrator MUST be able to enable a date preview mode in which the current date for the birthday person blocks and the wish board is taken from the selected day; the preview mode MUST NOT change real data and MUST reset to the system date.
 
-#### Scenario: Дата отличается от даты разработки
+#### Scenario: The date differs from the development date
 
-- **WHEN** приложение открывается в день, отличный от захардкоженной даты `2026-09-13`
-- **THEN** «Именинники сегодня» содержит только тех, у кого день рождения совпадает с реальной датой
+- **WHEN** the application is opened on a day different from the hardcoded date `2026-09-13`
+- **THEN** the "Birthday people today" list contains only those whose birthday matches the real date
 
-#### Scenario: Даты нет в текущем дне
+#### Scenario: No date on the current day
 
-- **WHEN** ни у кого из сотрудников нет дня рождения в реальную текущую дату
-- **THEN** отображается сообщение об отсутствии именинников, а не фиксированный сотрудник
+- **WHEN** no employee has a birthday on the real current date
+- **THEN** a message about the absence of birthday people is displayed, not a fixed employee
 
-#### Scenario: Предпросмотр даты администратором
+#### Scenario: Date preview by an administrator
 
-- **WHEN** администратор выбирает в календаре дату, отличную от реальной
-- **THEN** блоки именинников и доска пожеланий показывают состояние на выбранную дату, а реальные данные не изменяются
+- **WHEN** the administrator selects a date different from the real one in the calendar
+- **THEN** the birthday person blocks and the wish board show the state for the selected date, and real data is not changed

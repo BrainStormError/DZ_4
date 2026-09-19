@@ -1,25 +1,25 @@
 ## MODIFIED Requirements
 
-### Requirement: Единый источник сообщения о добровольности участия
+### Requirement: Single source of the voluntary participation statement
 
-Система ДОЛЖНА представлять утверждение о добровольности участия в одном каноническом месте — hero-блоке главной страницы. Футер НЕ ДОЛЖЕН содержать утверждение о добровольности участия. Утверждение о видимости сумм сбора НЕ ДОЛЖНО размещаться в футере и на главной странице. На одной странице одинаковое по смыслу утверждение о добровольности НЕ ДОЛЖНО повторяться более одного раза вне контекста конкретного шага сценария.
+The system MUST present the statement about voluntary participation in one canonical place — the hero block of the home page. The footer MUST NOT contain a statement about voluntary participation. The statement about the visibility of collection amounts MUST NOT be placed in the footer or on the home page. On one page, a statement with the same meaning about voluntariness MUST NOT be repeated more than once outside the context of a specific scenario step.
 
-#### Scenario: Главная страница без дублирующих блоков
+#### Scenario: Home page without duplicate blocks
 
-- **WHEN** пользователь открывает главную страницу
-- **THEN** утверждение о добровольности встречается ровно один раз в hero-блоке, а утверждение о видимости сумм сбора на странице отсутствует
+- **WHEN** the user opens the home page
+- **THEN** the statement about voluntariness occurs exactly once in the hero block, and the statement about the visibility of collection amounts is absent from the page
 
-#### Scenario: Футер без утверждения о суммах
+#### Scenario: Footer without a statement about amounts
 
-- **WHEN** пользователь просматривает футер приложения
-- **THEN** футер не содержит ни утверждения о видимости сумм сбора, ни утверждения о добровольности участия
+- **WHEN** the user views the application footer
+- **THEN** the footer contains neither a statement about the visibility of collection amounts nor a statement about voluntary participation
 
-#### Scenario: Футер без утверждения о добровольности
+#### Scenario: Footer without a statement about voluntariness
 
-- **WHEN** пользователь просматривает футер приложения
-- **THEN** футер не содержит утверждения о добровольности участия
+- **WHEN** the user views the application footer
+- **THEN** the footer does not contain a statement about voluntary participation
 
-#### Scenario: FAQ без дублирующих карточек
+#### Scenario: FAQ without duplicate cards
 
-- **WHEN** пользователь открывает раздел «Вопросы и ответы»
-- **THEN** quick-info карточки, повторяющие ответы Q1/Q2 и текст главной, отсутствуют, а ответы FAQ остаются единственным источником формулировок
+- **WHEN** the user opens the "Questions and answers" section
+- **THEN** quick-info cards that repeat the answers to Q1/Q2 and the home page text are absent, and the FAQ answers remain the only source of the wording

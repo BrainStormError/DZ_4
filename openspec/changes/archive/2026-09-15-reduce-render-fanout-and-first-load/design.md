@@ -1,39 +1,39 @@
 ## Context
 
-Мотивация — в `proposal.md`; требования к наблюдаемому поведению — в дельтах `specs/performance/spec.md` и `specs/support-chat/spec.md`.
+Motivation is in `proposal.md`; the requirements for observable behavior are in the deltas `specs/performance/spec.md` and `specs/support-chat/spec.md`.
 
-Текущее состояние по коду:
+Current state of the code:
 
-- `lib/data-store.ts:124-139` — `useDataStore()` возвращает литерал объекта на каждый рендер. Отдельные поля внутри стора стабильны между рендерами, потому что это `useState`-значения и `useCallback` (`addWish`, `addDonation`, `addChatMessage`, `markThreadRead` не зависят ни от чего; `setGiftSent`, `getAllThreads`, `getChatThread` зависят от `history`/`chats`). Это и есть точка опоры для мемоизации.
-- `lib/data-context.tsx:10` — значение отдаётся без мемоизации, `useData()` возвращает стор целиком. Все потребители — шесть мест: `Header.tsx:30`, `faq/page.tsx:54`, `ChatThread.tsx:21`, `WishBoard.tsx:42`, `DonateDialog.tsx:48`, `AdminTable.tsx:79`.
-- `app/(app)/faq/page.tsx:59` выводит вкладку из `useSearchParams`, `:64-73` на каждый клик вызывает `router.replace`.
-- `app/layout.tsx:10-46` — пять семейств `next/font/google` без опции `preload`; `globals.css:34-105` распределяет их по трём темам (`warm` → `nunito`, `festival` → `bricolage`+`manrope`, `premium` → `fraunces`+`inter`). Тема применяется inline-скриптом (`app/layout.tsx:48`) из `localStorage`, то есть на сервере неизвестна.
-- `lib/date-context.tsx:35-44` — уже существующий образец мемоизации `value`.
-- Next.js 13.5 (App Router), React 18, обе страницы, которые затрагивает ленивая загрузка, объявлены как `'use client'` (`app/(app)/page.tsx:1`, `app/(app)/admin/page.tsx:1`).
+- `lib/data-store.ts:124-139` — `useDataStore()` returns an object literal on every render. Individual fields inside the store are stable between renders, because they are `useState` values and `useCallback` (`addWish`, `addDonation`, `addChatMessage`, `markThreadRead` depend on nothing; `setGiftSent`, `getAllThreads`, `getChatThread` depend on `history`/`chats`). This is exactly the anchor point for memoization.
+- `lib/data-context.tsx:10` — the value is provided without memoization, `useData()` returns the entire store. All consumers are six places: `Header.tsx:30`, `faq/page.tsx:54`, `ChatThread.tsx:21`, `WishBoard.tsx:42`, `DonateDialog.tsx:48`, `AdminTable.tsx:79`.
+- `app/(app)/faq/page.tsx:59` derives the tab from `useSearchParams`, `:64-73` calls `router.replace` on every click.
+- `app/layout.tsx:10-46` — five `next/font/google` families without the `preload` option; `globals.css:34-105` distributes them across three themes (`warm` → `nunito`, `festival` → `bricolage`+`manrope`, `premium` → `fraunces`+`inter`). The theme is applied by an inline script (`app/layout.tsx:48`) from `localStorage`, that is, it is unknown on the server.
+- `lib/date-context.tsx:35-44` — an already existing example of `value` memoization.
+- Next.js 13.5 (App Router), React 18; both pages affected by lazy loading are declared as `'use client'` (`app/(app)/page.tsx:1`, `app/(app)/admin/page.tsx:1`).
 
-Ограничения: `npm run build && npm run start` — единственный источник выводов о производительности; dev-режим (StrictMode, компиляция маршрута при первом переходе) для оценок не используется.
+Constraints: `npm run build && npm run start` is the only source of performance conclusions; dev mode (StrictMode, route compilation on the first navigation) is not used for estimates.
 
 ## Goals / Non-Goals
 
 **Goals:**
 
-1. Убрать серверный запрос и пустой фолбэк из клика по вкладке FAQ, сохранив поведение deep-link и перехода из шапки.
-2. Сделать так, чтобы изменение одного домена данных не перерисовывало подписчиков других доменов.
-3. Убрать прелоад шрифтов неактивных тем.
-4. Подключать тяжёлый диалог участия вне критического пути — только если шаги 1-3 не вернули первую загрузку в бюджет.
-5. Дать воспроизводимый способ подтверждать каждый шаг замерами.
+1. Remove the server request and the empty fallback from a click on the FAQ tab, while preserving the deep-link and header-navigation behavior.
+2. Make it so that a change in one data domain does not re-render subscribers of other domains.
+3. Remove the preload of fonts for inactive themes.
+4. Load the heavy participation dialog outside the critical path — only if steps 1-3 have not brought the first load back within budget.
+5. Provide a reproducible way to confirm each step with measurements.
 
 **Non-Goals:**
 
-- `React.memo` на `Header`/`WishBoard`/`HomePage`: это маскирует причину, а не устраняет её, и конфликтует с требованием изоляции по данным.
-- Перенос темы в cookie (описан как отклонённая альтернатива в решении 4).
-- Дробление `AdminTable`: маршрут `/admin` уже отдельный чанк.
-- Анимации, монтирование Radix-компонентов, легитимные сбросы по `usePathname` (`WishBoard:49`, `DonateDialog:56`, `AdminTable:88`), `useAsyncAction`.
-- Апгрейд Next.js, реальный бэкенд, персистентность данных.
+- `React.memo` on `Header`/`WishBoard`/`HomePage`: this masks the cause rather than eliminating it, and conflicts with the data-isolation requirement.
+- Moving the theme into a cookie (described as a rejected alternative in decision 4).
+- Splitting `AdminTable`: the `/admin` route is already a separate chunk.
+- Animations, mounting of Radix components, legitimate resets by `usePathname` (`WishBoard:49`, `DonateDialog:56`, `AdminTable:88`), `useAsyncAction`.
+- Upgrading Next.js, a real backend, data persistence.
 
 ## Decisions
 
-### 1. Вкладка FAQ: состояние как источник истины для отрисовки, адрес — для deep-link
+### 1. FAQ tab: state as the source of truth for rendering, the address — for deep-linking
 
 ```tsx
 const urlTab = searchParams.get('tab') === 'messages' ? 'chat' : 'faq';
@@ -52,22 +52,22 @@ const handleTabChange = (value: string) => {
 };
 ```
 
-Почему так:
+Why this way:
 
-- Инициализация состоянием + эффект-синхронизация, а не только инициализация. Переход `/faq` → `/faq?tab=messages` — это смена `searchParams` внутри одного маршрута, страница при этом не ремоунтится и состояние сохраняется. Без эффекта сценарий «Переход с уже открытой страницы раздела» из `specs/support-chat/spec.md` перестанет работать. Эффект идемпотентен: если `useSearchParams` обновляется вслед за `replaceState`, `setTab` получит то же значение и React схлопнет лишний рендер.
-- URL собирается из `window.location` в момент клика, а не из `searchParams`. Причина: если нативный `replaceState` не обновляет состояние роутера (см. открытый вопрос), `searchParams.toString()` окажется устаревшим и начнёт терять или дублировать параметры. `window.location` отражает то, что реально записано в адресную строку.
-- `usePathname` в компоненте после этого не нужен, `Suspense` (`faq/page.tsx:144`) остаётся: он требуется `next build` для `useSearchParams` и не является источником фолбэка при клике после отказа от `router.replace`.
+- Initialization with state + effect synchronization, and not just initialization. The transition `/faq` → `/faq?tab=messages` is a change of `searchParams` within a single route, and the page is not remounted and the state is preserved. Without the effect, the scenario "Transition from an already open section page" from `specs/support-chat/spec.md` would stop working. The effect is idempotent: if `useSearchParams` updates following `replaceState`, `setTab` will receive the same value and React will collapse the extra render.
+- The URL is assembled from `window.location` at the moment of the click, and not from `searchParams`. Reason: if the native `replaceState` does not update the router state (see the open question), `searchParams.toString()` will turn out to be stale and will start dropping or duplicating parameters. `window.location` reflects what is actually written in the address bar.
+- `usePathname` is no longer needed in the component, `Suspense` (`faq/page.tsx:144`) remains: it is required by `next build` for `useSearchParams` and is not the source of the fallback on a click after abandoning `router.replace`.
 
-Альтернативы:
+Alternatives:
 
-- **Только `useState` без эффекта** — проще, но нарушает существующий сценарий поддержки чата. Отклонено.
-- **Оставить вывод вкладки из `searchParams` и заменить только `router.replace` на нативный `history.replaceState`** — минимальная правка и, возможно, достаточная, но целиком зависит от того, уведомляет ли роутер Next 13.5 подписчиков `useSearchParams` при нативном вызове. Если нет — вкладка не переключится вообще. Отклонено как несущественно проверяемое без спайка; выбранный вариант работает при любом исходе.
-- **Отдельный сегмент маршрута `/faq/messages`** — честная навигация, но это уже серверный переход, то есть прямо противоположно цели.
+- **`useState` only, without the effect** — simpler, but violates the existing support-chat scenario. Rejected.
+- **Keep deriving the tab from `searchParams` and replace only `router.replace` with the native `history.replaceState`** — a minimal edit and possibly sufficient, but it depends entirely on whether the Next 13.5 router notifies `useSearchParams` subscribers on a native call. If not, the tab will not switch at all. Rejected as not meaningfully verifiable without a spike; the chosen option works regardless of the outcome.
+- **A separate route segment `/faq/messages`** — honest navigation, but that is already a server transition, that is, the exact opposite of the goal.
 
-### 2. `DataContext`: три домена, мемоизация значений
+### 2. `DataContext`: three domains, memoization of values
 
 ```
-DataProvider (имя сохраняется)
+DataProvider (the name is preserved)
   value: useMemo([wishes, addWish, updateWish])          -> WishesContext   -> useWishes()
   value: useMemo([donations, history, addDonation,
                   setGiftSent, updateDonation])           -> DonationsContext-> useDonations()
@@ -75,34 +75,34 @@ DataProvider (имя сохраняется)
                   getAllThreads, markThreadRead])         -> ChatsContext    -> useChats()
 ```
 
-Раскладка по потребителям: `Header`, `faq/page`, `ChatThread` → `useChats()`; `WishBoard` → `useWishes()`; `DonateDialog` → `useDonations()` и `useWishes()`; `AdminTable` → `useDonations()`.
+Distribution across consumers: `Header`, `faq/page`, `ChatThread` → `useChats()`; `WishBoard` → `useWishes()`; `DonateDialog` → `useDonations()` and `useWishes()`; `AdminTable` → `useDonations()`.
 
-Почему так:
+Why this way:
 
-- Выигрыш даёт идентичность `value`, а не прекращение рендера провайдера. `DataProvider` после разбиения по-прежнему ре-рендерится на каждую мутацию, потому что весь стор живёт в одном хуке. Но `children` — стабильный элемент, пришедший из `app/layout.tsx`, поэтому React не спускается в поддерево и трогает только потребителей изменившегося контекста. Это стоит помнить при проверке замером: «провайдер перерисовался» в Profiler — ожидаемо и не является провалом.
-- Три домена, а не гранулярность по компонентам: `DonateDialog` действительно нужен доступ и к пожеланиям, и к взносам. Дальнейшее дробление потребовало бы селекторов и не дало бы выигрыша на таком объёме данных.
-- `useData()` удаляется. Если оставить агрегат, любой новый потребитель снова подпишется на всё, и требование изоляции перестанет выполняться. Имя `DataProvider` и тип `DataStore` (`lib/data-store.ts:141`) сохраняются: на них завязаны `app/layout.tsx:8` и `lib/test-utils.tsx:5`.
-- Мемоизация идёт по полям стора, а не по самому объекту стора, поэтому стабильные `useCallback`-функции не инвалидируют значения без необходимости. Единственный домен, где функция пересоздаётся вместе с данными, — `setGiftSent` (зависит от `history`); это осознанно, так как читает `history` при вызове.
+- The win comes from the identity of `value`, not from stopping the provider's render. After the split, `DataProvider` still re-renders on every mutation, because the whole store lives in a single hook. But `children` is a stable element coming from `app/layout.tsx`, so React does not descend into the subtree and touches only the consumers of the changed context. This is worth remembering when verifying by measurement: "the provider re-rendered" in the Profiler is expected and is not a failure.
+- Three domains, and not per-component granularity: `DonateDialog` genuinely needs access to both wishes and contributions. Further splitting would require selectors and would not give a win at this data volume.
+- `useData()` is removed. If the aggregate is kept, any new consumer will again subscribe to everything, and the isolation requirement will stop holding. The name `DataProvider` and the type `DataStore` (`lib/data-store.ts:141`) are preserved: `app/layout.tsx:8` and `lib/test-utils.tsx:5` depend on them.
+- Memoization is by the store's fields, and not by the store object itself, so stable `useCallback` functions do not invalidate values unnecessarily. The only domain where a function is recreated together with the data is `setGiftSent` (it depends on `history`); this is intentional, since it reads `history` when called.
 
-Альтернативы:
+Alternatives:
 
-- **Один контекст + `useSyncExternalStore` с селекторами** — даёт ту же изоляцию без трёх провайдеров, но требует ручного стора и подписки, при этом внешний API компонентов не меняется. Код сложнее, выгоды на объёме моков нет.
-- **Оставить `useData()` как тонкую обёртку** — не влияет на изоляцию, но сохраняет приманку для новых подписчиков. Отклонено.
-- **Вынести состояние в фичевые провайдеры рядом с потребителями** — сильнее архитектурно, но `DonateDialog` и `WishBoard` живут в разных ветках дерева, а данные общие; это уже переработка, а не оптимизация.
+- **A single context + `useSyncExternalStore` with selectors** — gives the same isolation without three providers, but requires a manual store and subscription, while the external API of the components does not change. The code is more complex, and there is no benefit at the mock data volume.
+- **Keep `useData()` as a thin wrapper** — does not affect isolation, but preserves a lure for new subscribers. Rejected.
+- **Move the state into feature providers next to the consumers** — architecturally stronger, but `DonateDialog` and `WishBoard` live in different branches of the tree, while the data is shared; this is already a rework, and not an optimization.
 
-### 3. Мемоизация значений в корневых провайдерах
+### 3. Memoization of values in the root providers
 
-`lib/auth-context.tsx:47` и `lib/theme-context.tsx:36` оборачиваются в `useMemo` по полям, по образцу `lib/date-context.tsx:35-44`. Здесь выбор без альтернатив: значение состоит из `useState`-значения и стабильного `useCallback`, любое другое решение — повторение того же кода.
+`lib/auth-context.tsx:47` and `lib/theme-context.tsx:36` are wrapped in `useMemo` by fields, following the pattern of `lib/date-context.tsx:35-44`. Here the choice has no alternatives: the value consists of a `useState` value and a stable `useCallback`, and any other solution is a repetition of the same code.
 
-### 4. Шрифты: `preload: false` для неактивных тем
+### 4. Fonts: `preload: false` for inactive themes
 
-Дефолтная тема `warm` использует `nunito` (`globals.css:34-35`, `lib/theme.ts`), поэтому `nunito` остаётся с `preload: true`, а `bricolage`, `manrope`, `fraunces`, `inter` получают `preload: false`. `subsets` не урезаются: без `cyrillic` русский текст в темах `festival` и `premium` потеряет основной набор глифов, а `bricolage`/`fraunces` в проекте и так объявлены только с `latin`.
+The default theme `warm` uses `nunito` (`globals.css:34-35`, `lib/theme.ts`), so `nunito` keeps `preload: true`, while `bricolage`, `manrope`, `fraunces`, `inter` get `preload: false`. `subsets` are not trimmed: without `cyrillic`, Russian text in the `festival` and `premium` themes will lose the main glyph set, and `bricolage`/`fraunces` in the project are already declared with `latin` only.
 
-Почему это работает: `preload` управляет только ссылкой `<link rel="preload" as="font">`, которая заставляет браузер скачать файл независимо от использования. Без прелоада ресурс `@font-face` запрашивается лениво — тогда, когда текст реально применяет это семейство, то есть при переключении на соответствующую тему.
+Why this works: `preload` controls only the `<link rel="preload" as="font">` reference, which forces the browser to download the file regardless of use. Without preload, the `@font-face` resource is requested lazily — at the moment when text actually applies this family, that is, when switching to the corresponding theme.
 
-Альтернатива — **перенести тему в cookie**: сервер узнаёт тему при отдаче HTML, сам ставит `data-theme` на `<html>` (вместо inline-скрипта `app/layout.tsx:48`) и прелоадит ровно нужное семейство. Это снимает подмену шрифта у пользователей с сохранённой нестандартной темой, но расширяет изменение на `theme-context.tsx`, inline-скрипт и запись cookie, а также создаёт риск рассинхронизации темы до и после гидратации. Отклонено по умолчанию; цена отказа — кратковременная подмена шрифта при нестандартной теме, что допустимо существующим требованием «Подмена шрифта не сдвигает разметку».
+An alternative is to **move the theme into a cookie**: the server learns the theme when serving the HTML, sets `data-theme` on `<html>` itself (instead of the inline script `app/layout.tsx:48`), and preloads exactly the needed family. This removes the font swap for users with a saved non-default theme, but expands the change to `theme-context.tsx`, the inline script, and cookie writing, and also creates a risk of theme desynchronization before and after hydration. Rejected by default; the price of rejection is a brief font swap with a non-default theme, which is acceptable under the existing requirement "A font swap does not shift the layout".
 
-### 5. Ленивый `DonateDialog` с гейтом по первому открытию
+### 5. Lazy `DonateDialog` with a gate on the first open
 
 ```tsx
 const DonateDialog = dynamic(
@@ -120,36 +120,36 @@ const handleDonate = (u?: User) => {
 {donateMounted && <DonateDialog open={donateOpen} onOpenChange={setDonateOpen} targetUser={donateTarget} />}
 ```
 
-Почему гейт, а не только `dynamic`: `next/dynamic` загружает чанк при монтировании компонента, а не при `open`. Без гейта чанк всё равно запрашивается при отрисовке главной, просто вне критического пути — это полезно, но это не «загрузка по требованию». Гейт превращает это в загрузку при первом клике.
+Why a gate, and not just `dynamic`: `next/dynamic` loads the chunk when the component mounts, and not on `open`. Without the gate, the chunk is still requested during the home page render, just outside the critical path — that is useful, but it is not "load on demand". The gate turns this into a load on the first click.
 
-Почему монтирование не снимается: если рендерить `open && <DonateDialog/>`, закрытие диалога приведёт к размонтированию и потере анимации закрытия, что запрещено Non-Goals. Флаг `donateMounted` включается один раз и не сбрасывается.
+Why the mount is not removed: if `open && <DonateDialog/>` were rendered, closing the dialog would lead to unmounting and the loss of the closing animation, which is prohibited by the Non-Goals. The `donateMounted` flag is turned on once and is not reset.
 
-`ssr: false` допустим, потому что `app/(app)/page.tsx:1` — клиентский компонент; в Server Components Next 13 такое сочетание запрещено. Заглушка `h-0` не видна, пока диалог закрыт, и не влияет на CLS.
+`ssr: false` is acceptable, because `app/(app)/page.tsx:1` is a client component; in Next 13 Server Components such a combination is prohibited. The `h-0` placeholder is not visible while the dialog is closed and does not affect CLS.
 
-`AdminTable` не трогается: `/admin` — отдельный маршрут, его код и так загружается только при переходе, а дополнительная ленивая загрузка внутри страницы добавит второй запрос после чанка раздела.
+`AdminTable` is not touched: `/admin` is a separate route, its code is already loaded only on navigation, and additional lazy loading inside the page would add a second request after the section chunk.
 
-### 6. Порядок и измерение
+### 6. Order and measurement
 
-Шаги 1-4 независимы друг от друга, шаг 5 условный. Каждый шаг: замер до, правка, `npm run lint`, `npm run typecheck`, `npm test`, затем `npm run build && npm run start` и замер после по одному сценарию («клик по табу», «добавить пожелание», «первая загрузка главной»). В Profiler смотреть Self time и «why did this render»; для шага 1 отдельный бинарный маркер — отсутствие запросов `?_rsc=` в Network при клике по табу.
+Steps 1-4 are independent of each other, step 5 is conditional. Each step: measurement before, edit, `npm run lint`, `npm run typecheck`, `npm test`, then `npm run build && npm run start` and measurement after for one scenario ("tab click", "add a wish", "first load of the home page"). In the Profiler, look at Self time and "why did this render"; for step 1 there is a separate binary marker — the absence of `?_rsc=` requests in Network on a tab click.
 
 ## Risks / Trade-offs
 
-- **Нативный `replaceState` в Next 13.5 может не обновлять `useSearchParams`** → эффект-синхронизация в этом случае просто не срабатывает, состояние уже верное, вкладка и адрес совпадают. Сценарии шапки и `Back` работают через обычную навигацию, где `useSearchParams` обновляется. Проверяется спайком перед реализацией; от исхода правка не зависит.
-- **Разбиение контекста может не убрать ре-рендер `DataProvider`** → ожидаемое поведение, см. решение 2. В замер включать только подписчиков, а не провайдер.
-- **`DonateDialog` остаётся подписанным на два домена** → при отправке взноса с пожеланием это два обновления в разных микротасках (между ними `await`) и две волны рендера. Не регрессия, но видно в Profiler; уменьшение возможно только отказом от единого шага подтверждения, что меняет UX.
-- **`preload: false` даёт подмену шрифта у сохранённой нестандартной темы** → сознательный размен, требование о несдвигающейся разметке сохраняется за счёт `display: 'swap'`.
-- **Ленивый диалог добавляет задержку при первом клике** → заглушка без сдвига разметки; если по замеру задержка заметна на INP, шаг откатывается вместе с гейтом, соседние шаги не затронуты.
-- **Удаление `useData()` ломает мок в тесте** → `components/features/DonateDialog.test.tsx:52-69` обязан получить `useWishes` и `useDonations`; `AdminTable.test.tsx` моков контекста данных не имеет и служит проверкой, что `DataProvider` сохранён.
+- **The native `replaceState` in Next 13.5 may not update `useSearchParams`** → in this case the effect synchronization simply does not fire, the state is already correct, and the tab and the address match. The header and `Back` scenarios work through normal navigation, where `useSearchParams` is updated. This is verified by a spike before implementation; the edit does not depend on the outcome.
+- **Splitting the context may not remove the `DataProvider` re-render** → expected behavior, see decision 2. Include only the subscribers in the measurement, and not the provider.
+- **`DonateDialog` remains subscribed to two domains** → when sending a contribution with a wish, these are two updates in different microtasks (`await` between them) and two render waves. Not a regression, but visible in the Profiler; a reduction is possible only by abandoning the single confirmation step, which changes the UX.
+- **`preload: false` gives a font swap for a saved non-default theme** → a deliberate trade-off; the requirement of a non-shifting layout is preserved thanks to `display: 'swap'`.
+- **The lazy dialog adds a delay on the first click** → a placeholder without a layout shift; if the measurement shows the delay is noticeable on INP, the step is rolled back together with the gate, and the neighboring steps are unaffected.
+- **Removing `useData()` breaks the mock in the test** → `components/features/DonateDialog.test.tsx:52-69` is obliged to receive `useWishes` and `useDonations`; `AdminTable.test.tsx` has no data context mocks and serves as a check that `DataProvider` is preserved.
 
 ## Migration Plan
 
-1. Шаг 1 (вкладка FAQ) отдельным коммитом: правка + прогон проверок + замер «клик по табу» и Network.
-2. Шаг 2 (разбиение контекста) отдельным коммитом: `lib/data-context.tsx`, миграция шести потребителей, правка мока теста, прогон `npm test`.
-3. Шаг 3 (мемоизация `auth`/`theme`) и шаг 4 (шрифты) — по коммиту каждый, замер после шрифтов.
-4. Шаг 5 запускается, только если после шагов 1-4 первая загрузка главной всё ещё вне бюджета.
-5. Откат — ревертом соответствующего коммита: шаги не связаны общими правками, кроме шага 2, который трогает `data-context` и его потребителей целиком.
+1. Step 1 (FAQ tab) as a separate commit: edit + running the checks + measuring "tab click" and Network.
+2. Step 2 (context splitting) as a separate commit: `lib/data-context.tsx`, migration of the six consumers, editing the test mock, running `npm test`.
+3. Step 3 (memoization of `auth`/`theme`) and step 4 (fonts) — one commit each, measurement after the fonts.
+4. Step 5 is started only if, after steps 1-4, the first load of the home page is still outside the budget.
+5. Rollback — by reverting the corresponding commit: the steps are not connected by shared edits, except for step 2, which touches `data-context` and its consumers as a whole.
 
 ## Open Questions
 
-- Обновляет ли `useSearchParams` при нативном `window.history.replaceState` в Next 13.5. Проверяется спайком до реализации шага 1; выбранный подход не зависит от ответа.
-- Достаточно ли эффекта-синхронизации, чтобы после переключения вкладки кнопки «назад/вперёд» браузера показывали согласованное состояние: `replaceState` не создаёт запись истории, поэтому назад возвращает на предыдущую страницу, а не на предыдущую вкладку. Поведение совпадает с текущим `router.replace`.
+- Whether `useSearchParams` is updated on a native `window.history.replaceState` in Next 13.5. This is verified by a spike before implementing step 1; the chosen approach does not depend on the answer.
+- Whether the effect synchronization is enough for the browser's "back/forward" buttons to show a consistent state after switching the tab: `replaceState` does not create a history entry, so back returns to the previous page, and not to the previous tab. The behavior coincides with the current `router.replace`.
