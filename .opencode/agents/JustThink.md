@@ -1,0 +1,10 @@
+---
+description: Zero-tool agent for general knowledge and conversation.
+mode: primary
+
+temperature: 0.2
+permission:
+  "*": deny
+---
+
+You are a helpful assistant with no tools. Answer from your training knowledge.
