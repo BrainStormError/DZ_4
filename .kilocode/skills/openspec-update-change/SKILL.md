@@ -12,80 +12,46 @@ metadata:
 
 Revise a change's existing planning artifacts and keep them coherent. Never edit code.
 
-**Store selection:** If the user names a store (a store is a standalone OpenSpec repo registered on this machine) or the work lives in one, run `openspec store list --json` to discover registered store ids, then pass `--store <id>` on the commands that read or write specs and changes (`new change`, `status`, `instructions`, `list`, `show`, `validate`, `archive`, `doctor`, `context`, `schemas`, `view`). Once selected, treat `--store <id>` as sticky for the rest of the workflow. Every unscoped example of those commands below is shorthand: before running it, append the flag. For example, run `openspec status --change "<name>" --json --store "<id>"`, not the unscoped form shown below. Other commands do not take the flag. Hints printed by commands already carry the flag; keep it on follow-ups. Without a store, commands act on the nearest local `openspec/` root.
+**Store.** If the user names a registered store, or the work lives in one, read `references/store.md` first and keep `--store <id>` on every spec/change command.
 
-**Input**: Optionally specify a change name. If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.
+**Input.** Optional change name; if omitted, infer from context, else prompt. Ask when vague or ambiguous.
 
-`/opsx-continue` is an optional workflow and may not be installed. Before suggesting it anywhere below, verify that it is available. If it is unavailable, `openspec status --change "<name>" --json` shows the next artifact and `openspec instructions "<artifact-id>" --change "<name>" --json` explains how to create it.
+`/opsx-continue` is an optional workflow that may not be installed. Before suggesting it, verify it is available. If it is unavailable, `openspec status --change "<name>" --json` shows the next artifact and `openspec instructions "<artifact-id>" --change "<name>" --json` explains how to create it.
 
-**Steps**
+## Steps
 
-1. **Select the change**
+1. **Select the change.** Use the given name; else infer; else auto-select the only active change; else `openspec list --json` (sorted by most recently modified) and ask. When prompting, present the top 3–4 most recently modified changes with name, schema (`schema` field else `spec-driven`), status (e.g. "0/5 tasks", "complete", "no tasks"), and recency (`lastModified`); mark the most recent "(Recommended)". Announce: "Using change: <name>" and the override (e.g. `/opsx-update <other>`).
 
-   If a name is provided, use it. Otherwise:
-   - Infer from conversation context if the user mentioned a change
-   - Auto-select if only one active change exists
-   - If ambiguous, run `openspec list --json` to get available changes sorted by most recently modified, and ask the user to select one
+2. **Get the change's artifacts.** `openspec status --change "<name>" --json` → `schemaName`, `artifacts[]` (statuses `done`/`skipped`/`ready`/`blocked`), `isPlanningComplete` (older CLIs: `isComplete`), and `planningHome`/`changeRoot`/`artifactPaths`/`actionContext`. Use these paths; never assume repo-local ones, never assume artifact ids, and never branch on hardcoded artifact names — custom schemas must work unchanged.
+   - The files to edit are `artifactPaths.<id>.existingOutputPaths` — the concrete files on disk, already glob-expanded. Do NOT write to `resolvedOutputPath`: for a glob artifact it is still the pattern, not a real file.
 
-   When prompting, present the top 3-4 most recently modified changes as options, showing:
-   - Change name
-   - Schema (from `schema` field if present, otherwise "spec-driven")
-   - Status (e.g., "0/5 tasks", "complete", "no tasks")
-   - How recently it was modified (from `lastModified` field)
+3. **Understand the request.** A specific revision ("the design now uses X") is the starting edit. A bare "update" / "make this coherent" means a coherence review: read the existing artifacts and check them against each other for contradictions, gaps, and duplication.
 
-   Mark the most recently modified change as "(Recommended)" since it's likely what the user wants to update.
+4. **Read and reconcile.** Read the artifact(s) the request touches plus the change's other existing artifacts. Apply the requested edit, then check every other existing artifact against it **in any direction** — an edit to a later artifact may require revising an earlier one, not only the reverse. Build order is a useful reading order, not a constraint on what may be revised. Note everything now inconsistent, missing, or contradictory.
+   - Revise only files that already exist (`existingOutputPaths`). Do not create artifacts that do not exist, and do not invent new files under a glob artifact — note them and point the user to `/opsx-continue`.
+   - If the change is already coherent, say so and make no edits. Details: `references/reconcile.md`.
 
-   Always announce: "Using change: <name>" and how to override (e.g., `/opsx-update <other>`).
+5. **Confirm and apply, one artifact at a time.** Show each proposed revision and why; write only after the user confirms. If the user rejects a revision, do not write it. For a substantial rewrite, first get that artifact's rules and template: `openspec instructions "<artifact-id>" --change "<name>" --json`.
 
-2. **Get the change's artifacts**
-   ```bash
-   openspec status --change "<name>" --json
-   ```
-   Parse the JSON to understand current state. The response includes:
-   - `schemaName`: The workflow schema being used (e.g., "spec-driven")
-   - `artifacts`: Array of artifacts with their status ("done", "skipped", "ready", "blocked")
-   - `isPlanningComplete`: Boolean indicating if all planning artifacts are complete. Older CLI versions expose the same value as `isComplete`.
-   - `planningHome`, `changeRoot`, `artifactPaths`, and `actionContext`: path and scope context. Use these instead of assuming repo-local paths.
+6. **Point to the next step (guidance only — NEVER act on it).** Missing artifacts → suggest `/opsx-continue`. Change already implemented (tasks checked off) → the code may no longer match the revised plan; suggest `/opsx-apply`. Everything done and implemented → suggest `/opsx-archive`.
 
-   The artifact ids and paths come from the active schema - do NOT assume them, and do NOT branch on hardcoded artifact names. Custom schemas must work unchanged.
+## Output
 
-   The files to edit are `artifactPaths.<id>.existingOutputPaths` - the concrete files that exist on disk, already glob-expanded for glob artifacts (e.g. `specs/**/*.md`). Do NOT write to `resolvedOutputPath`: for a glob artifact it is still the glob pattern, not a real file.
+After each invocation show: which artifacts were revised (and which proposed revisions were rejected); anything deferred to `/opsx-continue` (not-yet-created artifacts or files); where the change stands and the recommended next command.
 
-3. **Understand the request**
-   - If the user asked for a specific revision ("the design now uses X"), that is the starting edit.
-   - If they only said "update" / "make this coherent", treat it as a coherence review: read the existing artifacts and check them against each other for contradictions, gaps, and duplication.
+## Routing
 
-4. **Read and reconcile**
-   - Read the artifact(s) the request touches and the change's other existing artifacts.
-   - Apply the requested edit. Then check every other existing artifact against it - in ANY direction: an edit to a later artifact may require revising an earlier one, not only the other way around. Build order is a useful reading order, not a constraint on which artifacts may be revised.
-   - Note everything that is now inconsistent, missing, or contradictory.
-   - Revise only files that already exist (`existingOutputPaths`). Do NOT create artifacts that don't exist yet, and do NOT invent new files under a glob artifact - note them and point the user to `/opsx-continue` to create them.
-   - If the change is already coherent, say so and make no edits.
+| Situation | Read |
+| --- | --- |
+| Coherence review, any-direction reconciliation, `existingOutputPaths` vs globs | `references/reconcile.md` |
+| Registered store / `--store` stickiness | `references/store.md` |
+| A worked coherence review | `examples/coherence-review.md` |
 
-5. **Confirm and apply, one artifact at a time**
-   - Show each proposed revision and why. Write only after the user confirms.
-   - If the user rejects a revision, do not write it - leave that artifact unchanged.
-   - When a substantial rewrite is needed, get that artifact's rules and template first:
-     ```bash
-     openspec instructions "<artifact-id>" --change "<name>" --json
-     ```
+## Guardrails
 
-6. **Point to the next step (guidance only - NEVER act on it)**
-   - Artifacts still missing -> suggest `/opsx-continue` to create them.
-   - Change already implemented (tasks checked off / already applied) -> the code may no longer match the revised plan; suggest `/opsx-apply` to carry the delta into code.
-   - Everything done and implemented -> suggest `/opsx-archive`.
-
-**Output**
-
-After each invocation, show:
-- Which artifacts were revised (and which proposed revisions were rejected)
-- Anything deferred to `/opsx-continue` (not-yet-created artifacts or files)
-- Where the change stands and the recommended next command
-
-**Guardrails**
-- Planning artifacts only - NEVER edit implementation code. If the revised plan implies code changes, stop and point to `/opsx-apply`.
-- Use the artifact ids and paths reported by `openspec status`; never branch on hardcoded artifact names.
-- Edit only the concrete files in `existingOutputPaths`; never write to a glob `resolvedOutputPath`.
-- Do not advance the build frontier: no new artifacts, no new files under glob artifacts - that is `/opsx-continue`'s job.
+- Planning artifacts only — NEVER edit implementation code. If the revised plan implies code changes, stop and point to `/opsx-apply`.
+- Use artifact ids and paths reported by `openspec status`; never branch on hardcoded artifact names.
+- Edit only concrete files in `existingOutputPaths`; never write to a glob `resolvedOutputPath`.
+- Do not advance the build frontier: no new artifacts, no new files under glob artifacts — that is `/opsx-continue`'s job.
 - Confirm every edit with the user before writing.
-- If the request changes the change's *intent* rather than refining it, first verify whether the optional `/opsx-new` workflow is available. If it is, recommend starting fresh with `/opsx-new` (the "Update vs. Start Fresh" heuristic). If it is unavailable, ask for a distinct unused change name and recommend `openspec new change "<new-change-name>"` instead.
+- If the request changes the change's *intent* rather than refining it, first verify whether the optional `/opsx-new` workflow is available. If it is, recommend starting fresh with `/opsx-new` ("Update vs. Start Fresh" heuristic). If not, ask for a distinct unused change name and recommend `openspec new change "<new-change-name>"`.
