@@ -10,9 +10,22 @@ const authState = vi.hoisted(() => ({
   user: null as User | null,
 }));
 
+const directoryState = vi.hoisted(() => ({
+  users: [] as User[],
+}));
+
 vi.mock('next/navigation', () => ({
   usePathname: () => '/',
   useRouter: () => ({ replace: vi.fn(), push: vi.fn() }),
+}));
+
+vi.mock('@/lib/directory-context', () => ({
+  DirectoryProvider: ({ children }: { children: ReactNode }) => children,
+  useDirectory: () => ({
+    users: directoryState.users,
+    isLoading: false,
+    error: null,
+  }),
 }));
 
 vi.mock('@/lib/auth-context', () => ({
@@ -58,6 +71,7 @@ const admin: User = {
 describe('AdminTable', () => {
   it('employee sees access denied and no amounts table', async () => {
     authState.user = employee;
+    directoryState.users = [employee, admin];
     renderWithProviders(<AdminTable />);
 
     expect(await screen.findByText('Доступ запрещён')).toBeInTheDocument();
@@ -66,6 +80,7 @@ describe('AdminTable', () => {
 
   it('admin sees the table and editing is gated by reason and comment', async () => {
     authState.user = admin;
+    directoryState.users = [employee, admin];
     const user = userEvent.setup();
     renderWithProviders(<AdminTable />);
 

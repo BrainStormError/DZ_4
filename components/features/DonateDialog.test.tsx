@@ -13,6 +13,7 @@ const mocks = vi.hoisted(() => ({
   wishes: [] as never[],
   donations: [] as never[],
   chats: [] as never[],
+  users: [] as User[],
 }));
 
 vi.mock('next/navigation', () => ({
@@ -48,6 +49,15 @@ vi.mock('@/lib/date-context', () => ({
   }),
 }));
 
+vi.mock('@/lib/directory-context', () => ({
+  DirectoryProvider: ({ children }: { children: ReactNode }) => children,
+  useDirectory: () => ({
+    users: mocks.users,
+    isLoading: false,
+    error: null,
+  }),
+}));
+
 vi.mock('@/lib/data-context', () => ({
   DataProvider: ({ children }: { children: ReactNode }) => children,
   useWishes: () => ({
@@ -74,9 +84,20 @@ const targetUser: User = {
   role: 'employee',
 };
 
+const dmitry: User = {
+  id: 'u2',
+  fullName: 'Дмитрий Волков',
+  email: 'dmitry.volkov@company.com',
+  birthDate: '1988-09-14',
+  department: 'Разработка',
+  avatarUrl: '',
+  role: 'employee',
+};
+
 describe('DonateDialog', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.users = [dmitry, targetUser];
   });
 
   it('happy path: completes donation and shows success step', async () => {
@@ -99,12 +120,7 @@ describe('DonateDialog', () => {
     await user.click(confirmButton);
 
     await waitFor(() => {
-      expect(mocks.addDonation).toHaveBeenCalledWith('u1', 500);
-    });
-    expect(mocks.addWish).toHaveBeenCalledWith({
-      authorEmail: 'dmitry.volkov@company.com',
-      targetUserId: 'u1',
-      text: 'Поздравляю!',
+      expect(mocks.addDonation).toHaveBeenCalledWith('u1', 500, 'Поздравляю!');
     });
 
     expect(await screen.findByText('Готово!')).toBeInTheDocument();

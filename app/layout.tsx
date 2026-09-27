@@ -1,12 +1,11 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
 import { Manrope } from 'next/font/google';
 import { Toaster } from 'sonner';
 import { AuthProvider } from '@/lib/auth-context';
-import { AUTH_COOKIE_NAME } from '@/lib/auth-cookie';
-import { checkCorpEmail } from '@/lib/corp-email';
+import { resolveCurrentUser } from '@/lib/session';
 import { ThemeProvider } from '@/lib/theme-context';
+import { DirectoryProvider } from '@/lib/directory-context';
 import { DataProvider } from '@/lib/data-context';
 import { DateProvider } from '@/lib/date-context';
 
@@ -26,10 +25,8 @@ export const metadata: Metadata = {
   description: 'Сервис корпоративных подарков: поздравляйте коллег с днём рождения вместе',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const email = cookies().get(AUTH_COOKIE_NAME)?.value;
-  const auth = email ? checkCorpEmail(email) : null;
-  const initialUser = auth?.ok && auth.user ? auth.user : null;
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const initialUser = await resolveCurrentUser();
 
   return (
     <html lang="ru" className={fontVariables} suppressHydrationWarning>
@@ -40,7 +37,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           <AuthProvider initialUser={initialUser}>
             <DateProvider>
-              <DataProvider>{children}</DataProvider>
+              <DirectoryProvider>
+                <DataProvider>{children}</DataProvider>
+              </DirectoryProvider>
             </DateProvider>
           </AuthProvider>
         </ThemeProvider>

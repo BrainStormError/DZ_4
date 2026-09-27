@@ -44,7 +44,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useDonations } from '@/lib/data-context';
 import { useAppDate } from '@/lib/date-context';
 import { useAsyncAction } from '@/lib/hooks';
-import { mockUsers } from '@/lib/mock-data';
+import { useDirectory } from '@/lib/directory-context';
 import { isGiftDeclined, reasonLabel } from '@/lib/data-store';
 import { parseIsoLocal } from '@/lib/birthdays';
 import { parseNonNegativeInt } from '@/lib/utils';
@@ -78,6 +78,7 @@ const DAY_PICKER_CLASSNAMES = {
 export function AdminTable() {
   const { user } = useAuth();
   const { donations, history, setGiftSent, updateDonation } = useDonations();
+  const { users, isLoading: directoryLoading, error: directoryError } = useDirectory();
   const { today, isPreview, previewDate, setPreviewDate, resetDate } = useAppDate();
   const [editTarget, setEditTarget] = useState<User | null>(null);
   const [editAmount, setEditAmount] = useState('');
@@ -116,7 +117,29 @@ export function AdminTable() {
     return <AdminAccessDenied />;
   }
 
-  const getUserById = (id: string) => mockUsers.find((u) => u.id === id);
+  if (directoryError) {
+    return (
+      <Card>
+        <CardContent className="p-8 text-center">
+          <p className="text-sm text-muted-foreground">
+            Не удалось загрузить список сотрудников. Обновите страницу.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (directoryLoading && users.length === 0) {
+    return (
+      <Card>
+        <CardContent className="p-8 text-center">
+          <p className="text-sm text-muted-foreground">Загружаем сотрудников…</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const getUserById = (id: string) => users.find((u) => u.id === id);
   const getDonation = (userId: string) =>
     donations.find((d) => d.userId === userId) || { userId, totalAmount: 0, giftSent: false };
 
@@ -326,7 +349,7 @@ export function AdminTable() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mockUsers.map((u) => {
+                {users.map((u) => {
                   const donation = getDonation(u.id);
                   const declined = isGiftDeclined(u.id, history);
                   return (

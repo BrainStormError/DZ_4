@@ -7,18 +7,19 @@ import { DonateDialog } from '@/components/features/DonateDialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Heart, Gift, Users } from 'lucide-react';
-import { mockUsers } from '@/lib/mock-data';
+import { useDirectory } from '@/lib/directory-context';
 import { useAppDate } from '@/lib/date-context';
 import { getPersonColors, getTodayBirthdays, parseIsoLocal } from '@/lib/birthdays';
 import type { User } from '@/lib/types';
 
 export default function HomePage() {
   const { today, isPreview } = useAppDate();
+  const { users, isLoading, error } = useDirectory();
   const [donateOpen, setDonateOpen] = useState(false);
   const [donateTarget, setDonateTarget] = useState<User | null>(null);
   const [wishFormOpen, setWishFormOpen] = useState(false);
 
-  const todayBirthdays = useMemo(() => getTodayBirthdays(today, mockUsers), [today]);
+  const todayBirthdays = useMemo(() => getTodayBirthdays(today, users), [today, users]);
 
   const todayBirthdayColors = useMemo(
     () => getPersonColors(todayBirthdays),
@@ -29,7 +30,7 @@ export default function HomePage() {
 
   const upcomingBirthdays = useMemo(() => {
     const horizon = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 30);
-    const rest = mockUsers.filter((u) => {
+    const rest = users.filter((u) => {
       const bd = parseIsoLocal(u.birthDate);
       const bdThisYear = new Date(today.getFullYear(), bd.getMonth(), bd.getDate());
       return bdThisYear.getTime() > today.getTime() && bdThisYear.getTime() <= horizon.getTime();
@@ -41,7 +42,7 @@ export default function HomePage() {
       const bDate = new Date(today.getFullYear(), bBd.getMonth(), bBd.getDate());
       return aDate.getTime() - bDate.getTime();
     });
-  }, [today]);
+  }, [today, users]);
 
   const handleDonate = (u?: User) => {
     setDonateTarget(u || null);
@@ -50,6 +51,17 @@ export default function HomePage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+      {users.length === 0 && (isLoading || error) && (
+        <Card className="mb-8">
+          <CardContent className="p-8 text-center">
+            <p className="text-sm text-muted-foreground">
+              {error
+                ? 'Не удалось загрузить список сотрудников. Обновите страницу.'
+                : 'Загружаем сотрудников…'}
+            </p>
+          </CardContent>
+        </Card>
+      )}
       {/* Hero */}
       <section className="relative overflow-hidden rounded-3xl bg-card mb-8">
         <div className="hero-overlay absolute inset-0" />

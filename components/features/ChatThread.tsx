@@ -10,8 +10,8 @@ import { MessageCircle, Send, Inbox, Loader2, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useChats } from '@/lib/data-context';
 import { useAsyncAction } from '@/lib/hooks';
+import { useDirectory } from '@/lib/directory-context';
 import { countUnreadInThread } from '@/lib/data-store';
-import { mockUsers } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
@@ -19,6 +19,7 @@ import { ru } from 'date-fns/locale';
 export function ChatThread() {
   const { user } = useAuth();
   const { getChatThread, getAllThreads, addChatMessage, markThreadRead } = useChats();
+  const { users, isLoading: directoryLoading, error: directoryError } = useDirectory();
   const [text, setText] = useState('');
   const [selectedEmail, setSelectedEmail] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -37,7 +38,10 @@ export function ChatThread() {
   );
 
   const isAdmin = user?.role === 'admin';
-  const employeeUsers = useMemo(() => mockUsers.filter((u) => u.role === 'employee'), []);
+  const employeeUsers = useMemo(
+    () => users.filter((u) => u.role === 'employee'),
+    [users]
+  );
   const threads = getAllThreads();
   const activeThreads = threads.filter((t) => t.messages.length > 0).length;
 
@@ -51,6 +55,26 @@ export function ChatThread() {
   }, [activeThread?.messages.length, activeEmail]);
 
   if (!user) return null;
+
+  if (directoryError) {
+    return (
+      <Card>
+        <CardContent className="p-8 text-center">
+          <p className="text-sm text-muted-foreground">
+            Не удалось загрузить список сотрудников. Обновите страницу.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (isAdmin && directoryLoading && users.length === 0) {
+    return (
+      <Card className="flex items-center justify-center h-[70dvh] md:h-[600px]">
+        <p className="text-sm text-muted-foreground">Загружаем сотрудников…</p>
+      </Card>
+    );
+  }
 
   const retrySend = async () => {
     if (!activeEmail || !text.trim()) return;
@@ -93,7 +117,7 @@ export function ChatThread() {
 
     return messages.map((msg) => {
       const isOwn = msg.authorEmail === user.email;
-      const author = mockUsers.find((u) => u.email === msg.authorEmail);
+      const author = users.find((u) => u.email === msg.authorEmail);
       return (
         <div key={msg.id} className={cn('flex gap-2', isOwn ? 'flex-row-reverse' : 'flex-row')}>
           <Avatar className="h-7 w-7 shrink-0">

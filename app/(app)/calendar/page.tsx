@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, CalendarDays } from 'lucide-react';
-import { mockUsers } from '@/lib/mock-data';
+import { useDirectory } from '@/lib/directory-context';
 import { useAppDate } from '@/lib/date-context';
 import { parseIsoLocal } from '@/lib/birthdays';
 import { pluralizeRu, prepositionalMonth } from '@/lib/utils';
@@ -18,6 +18,7 @@ const MONTHS = [
 
 export default function CalendarPage() {
   const { today } = useAppDate();
+  const { users, isLoading, error } = useDirectory();
   const todayYear = today.getFullYear();
   const todayMonth = today.getMonth();
   const todayDay = today.getDate();
@@ -31,7 +32,7 @@ export default function CalendarPage() {
   }, [today]);
 
   const birthdaysInMonth = useMemo(() => {
-    return mockUsers
+    return users
       .filter((u) => {
         const bd = parseIsoLocal(u.birthDate);
         if (bd.getMonth() !== month) return false;
@@ -39,7 +40,7 @@ export default function CalendarPage() {
         return year >= bd.getFullYear();
       })
       .sort((a, b) => parseIsoLocal(a.birthDate).getDate() - parseIsoLocal(b.birthDate).getDate());
-  }, [month, year]);
+  }, [month, year, users]);
 
   // Build calendar grid
   const firstDayOfMonth = new Date(year, month, 1);
@@ -47,7 +48,7 @@ export default function CalendarPage() {
   const startWeekday = (firstDayOfMonth.getDay() + 6) % 7; // Monday = 0
 
   const birthdaysByDay = useMemo(() => {
-    const map: Record<number, typeof mockUsers> = {};
+    const map: Record<number, typeof users> = {};
     birthdaysInMonth.forEach((u) => {
       const day = parseIsoLocal(u.birthDate).getDate();
       if (!map[day]) map[day] = [];
@@ -72,6 +73,18 @@ export default function CalendarPage() {
           Дни рождения сотрудников в {year} году
         </p>
       </div>
+
+      {users.length === 0 && (isLoading || error) && (
+        <Card className="mb-6">
+          <CardContent className="p-8 text-center">
+            <p className="text-sm text-muted-foreground">
+              {error
+                ? 'Не удалось загрузить список сотрудников. Обновите страницу.'
+                : 'Загружаем сотрудников…'}
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Month and year navigation */}
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">

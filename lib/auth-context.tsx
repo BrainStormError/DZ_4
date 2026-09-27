@@ -2,12 +2,11 @@
 
 import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import type { User } from './types';
-import { checkCorpEmail } from './corp-email';
 import { clearAuthCookie, writeAuthCookie } from './auth-cookie';
 
 interface AuthState {
   user: User | null;
-  login: (email: string) => { ok: boolean; error?: string };
+  login: (email: string) => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
 }
 
@@ -28,15 +27,28 @@ export function AuthProvider({
 }) {
   const [user, setUser] = useState<User | null>(initialUser);
 
-  const login = useCallback((email: string) => {
-    const result = checkCorpEmail(email);
-    if (!result.ok || !result.user) {
-      return { ok: false, error: result.error };
+  const login = useCallback(async (email: string) => {
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = (await response.json()) as {
+        ok: boolean;
+        user?: User;
+        error?: string;
+      };
+      if (!data.ok || !data.user) {
+        return { ok: false, error: data.error || 'Ошибка входа' };
+      }
+      setUser(data.user);
+      writeAuthCookie(data.user.email);
+      dropLegacySession();
+      return { ok: true };
+    } catch {
+      return { ok: false, error: 'Не удалось выполнить вход. Попробуйте ещё раз.' };
     }
-    setUser(result.user);
-    writeAuthCookie(result.user.email);
-    dropLegacySession();
-    return { ok: true };
   }, []);
 
   const logout = useCallback(() => {

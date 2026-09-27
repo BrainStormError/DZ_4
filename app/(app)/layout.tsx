@@ -1,16 +1,13 @@
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { PreviewBanner } from '@/components/layout/PreviewBanner';
-import { AUTH_COOKIE_NAME } from '@/lib/auth-cookie';
-import { checkCorpEmail } from '@/lib/corp-email';
+import { resolveCurrentUser } from '@/lib/session';
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const email = cookies().get(AUTH_COOKIE_NAME)?.value;
-  const auth = email ? checkCorpEmail(email) : null;
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  const user = await resolveCurrentUser();
 
-  if (!auth?.ok || !auth.user) {
+  if (!user) {
     redirect('/login');
   }
 

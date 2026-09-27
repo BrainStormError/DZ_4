@@ -28,7 +28,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useWishes } from '@/lib/data-context';
 import { useAppDate } from '@/lib/date-context';
 import { useAsyncAction } from '@/lib/hooks';
-import { mockUsers } from '@/lib/mock-data';
+import { useDirectory } from '@/lib/directory-context';
 import { getBoardWishes, getPersonColors, getTodayBirthdays } from '@/lib/birthdays';
 import type { Wish } from '@/lib/types';
 
@@ -40,6 +40,7 @@ interface WishBoardProps {
 export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
   const { user } = useAuth();
   const { wishes, addWish, updateWish } = useWishes();
+  const { users, isLoading: directoryLoading, error: directoryError } = useDirectory();
   const { today, isPreview } = useAppDate();
   const [internalShowForm, setInternalShowForm] = useState(false);
   const [text, setText] = useState('');
@@ -50,11 +51,11 @@ export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
   const [hasWishesOverflow, setHasWishesOverflow] = useState(false);
   const pathname = usePathname();
 
-  const todayBirthdayUsers = useMemo(() => getTodayBirthdays(today, mockUsers), [today]);
+  const todayBirthdayUsers = useMemo(() => getTodayBirthdays(today, users), [today, users]);
 
   const boardWishes = useMemo(
-    () => getBoardWishes(today, mockUsers, wishes),
-    [today, wishes]
+    () => getBoardWishes(today, users, wishes),
+    [today, wishes, users]
   );
 
   const colorByUserId = useMemo(() => getPersonColors(todayBirthdayUsers), [todayBirthdayUsers]);
@@ -123,8 +124,8 @@ export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
 
   const isAdmin = user.role === 'admin';
 
-  const getUserByEmail = (email: string) => mockUsers.find((u) => u.email === email);
-  const getUserById = (id: string) => mockUsers.find((u) => u.id === id);
+  const getUserByEmail = (email: string) => users.find((u) => u.email === email);
+  const getUserById = (id: string) => users.find((u) => u.id === id);
   const emailToNick = (email: string) => email.split('@')[0];
 
   const submitWish = async () => {
@@ -348,6 +349,15 @@ export function WishBoard({ formOpen, onFormOpenChange }: WishBoardProps = {}) {
               aria-hidden="true"
             />
           )}
+        </div>
+      ) : directoryError ? (
+        <div className="text-center py-12 text-muted-foreground">
+          <AlertCircle className="h-12 w-12 mx-auto mb-3 opacity-30" />
+          <p>Не удалось загрузить список сотрудников. Обновите страницу.</p>
+        </div>
+      ) : directoryLoading && users.length === 0 ? (
+        <div className="text-center py-12 text-muted-foreground">
+          <p>Загружаем сотрудников…</p>
         </div>
       ) : (
         <div className="text-center py-12 text-muted-foreground">

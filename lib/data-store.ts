@@ -1,112 +1,173 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import type { Wish, Donation, DonationHistoryEntry, ChatThread, ChatMessage, RefundReason } from './types';
-import {
-  mockWishes,
-  mockDonations,
-  mockDonationHistory,
-  mockChats,
-} from './mock-data';
+import { useState, useCallback, useEffect } from 'react';
+import type {
+  Wish,
+  Donation,
+  DonationHistoryEntry,
+  ChatThread,
+  ChatMessage,
+  RefundReason,
+} from './types';
+
+async function request<T>(url: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(url, {
+    ...init,
+    headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
+  });
+  const data = (await response.json().catch(() => null)) as
+    | { error?: string }
+    | null;
+  if (!response.ok) {
+    throw new Error(data?.error || 'Не удалось выполнить запрос');
+  }
+  return data as T;
+}
+
+function upsertDonation(list: Donation[], donation: Donation): Donation[] {
+  const exists = list.some((d) => d.userId === donation.userId);
+  if (!exists) return [...list, donation];
+  return list.map((d) => (d.userId === donation.userId ? donation : d));
+}
 
 export function useDataStore() {
-  const [wishes, setWishes] = useState<Wish[]>(mockWishes);
-  const [donations, setDonations] = useState<Donation[]>(mockDonations);
-  const [history, setHistory] = useState<DonationHistoryEntry[]>(mockDonationHistory);
-  const [chats, setChats] = useState<ChatThread[]>(mockChats);
+  const [wishes, setWishes] = useState<Wish[]>([]);
+  const [donations, setDonations] = useState<Donation[]>([]);
+  const [history, setHistory] = useState<DonationHistoryEntry[]>([]);
+  const [chats, setChats] = useState<ChatThread[]>([]);
 
-  const addWish = useCallback((wish: Omit<Wish, 'id' | 'createdAt'>) => {
-    const newWish: Wish = {
-      ...wish,
-      id: `w${Date.now()}`,
-      createdAt: new Date().toISOString(),
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      try {
+        const [loadedWishes, donationPayload, loadedChats] = await Promise.all([
+          request<Wish[]>('/api/wishes'),
+          request<{ donations: Donation[]; history: DonationHistoryEntry[] }>(
+            '/api/donations'
+          ),
+          request<ChatThread[]>('/api/chats'),
+        ]);
+        if (cancelled) return;
+        setWishes(loadedWishes);
+        setDonations(donationPayload.donations);
+        setHistory(donationPayload.history);
+        setChats(loadedChats);
+      } catch {
+        // Unauthenticated pages and transient failures keep the empty state.
+      }
+    }
+
+    void load();
+    return () => {
+      cancelled = true;
     };
-    setWishes((prev) => [newWish, ...prev]);
-    return newWish;
   }, []);
 
-  const updateWish = useCallback((id: string, text: string) => {
-    setWishes((prev) => prev.map((w) => (w.id === id ? { ...w, text } : w)));
+  const addWish = useCallback(async (wish: Omit<Wish, 'id' | 'createdAt'>) => {
+    const created = await request<Wish>('/api/wishes', {
+      method: 'POST',
+      body: JSON.stringify({ targetUserId: wish.targetUserId, text: wish.text }),
+    });
+    setWishes((prev) => [created, ...prev]);
+    return created;
   }, []);
 
-  const addDonation = useCallback((userId: string, amount: number) => {
-    setDonations((prev) =>
-      prev.map((d) =>
-        d.userId === userId ? { ...d, totalAmount: d.totalAmount + amount } : d
-      )
-    );
+  const updateWish = useCallback(async (id: string, text: string) => {
+    const updated = await request<Wish>(`/api/wishes/${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ text }),
+    });
+    setWishes((prev) => prev.map((w) => (w.id === id ? updated : w)));
+    return updated;
   }, []);
 
-  const setGiftSent = useCallback(
-    (userId: string, sent: boolean) => {
-      if (isGiftDeclined(userId, history)) return;
-      setDonations((prev) =>
-        prev.map((d) => (d.userId === userId ? { ...d, giftSent: sent } : d))
+  const addDonation = useCallback(
+    async (userId: string, amount: number, wishText?: string) => {
+      const result = await request<{ donation: Donation; wish: Wish | null }>(
+        '/api/donations',
+        {
+          method: 'POST',
+          body: JSON.stringify({ userId, amount, wishText }),
+        }
       );
+      setDonations((prev) => upsertDonation(prev, result.donation));
+      if (result.wish) {
+        const createdWish = result.wish;
+        setWishes((prev) => [createdWish, ...prev.filter((w) => w.id !== createdWish.id)]);
+      }
+      return result.donation;
     },
-    [history]
+    []
   );
 
+  const setGiftSent = useCallback(async (userId: string, sent: boolean) => {
+    const donation = await request<Donation>(
+      `/api/donations/${encodeURIComponent(userId)}/gift-status`,
+      { method: 'PATCH', body: JSON.stringify({ sent }) }
+    );
+    setDonations((prev) => upsertDonation(prev, donation));
+    return donation;
+  }, []);
+
   const updateDonation = useCallback(
-    (entry: Omit<DonationHistoryEntry, 'id' | 'createdAt'>) => {
-      setDonations((prev) =>
-        prev.map((d) =>
-          d.userId === entry.userId ? { ...d, totalAmount: entry.newAmount } : d
-        )
-      );
-      const newEntry: DonationHistoryEntry = {
-        ...entry,
-        id: `h${Date.now()}`,
-        createdAt: new Date().toISOString(),
-      };
-      setHistory((prev) => [newEntry, ...prev]);
-      return newEntry;
+    async (entry: Omit<DonationHistoryEntry, 'id' | 'createdAt'>) => {
+      const result = await request<{
+        donation: Donation;
+        entry: DonationHistoryEntry;
+      }>(`/api/donations/${encodeURIComponent(entry.userId)}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          newAmount: entry.newAmount,
+          reason: entry.reason,
+          comment: entry.comment,
+        }),
+      });
+      setDonations((prev) => upsertDonation(prev, result.donation));
+      setHistory((prev) => [result.entry, ...prev]);
+      return result.entry;
     },
     []
   );
 
   const addChatMessage = useCallback(
-    (
+    async (
       threadUserEmail: string,
       text: string,
-      author: { email: string; isAdmin: boolean }
+      _author: { email: string; isAdmin: boolean }
     ) => {
-      const newMsg: ChatMessage = {
-        id: `c${Date.now()}`,
-        authorEmail: author.email,
-        text,
-        isAdmin: author.isAdmin,
-        createdAt: new Date().toISOString(),
-      };
+      const message = await request<ChatMessage>(
+        `/api/chats/${encodeURIComponent(threadUserEmail)}/messages`,
+        { method: 'POST', body: JSON.stringify({ text }) }
+      );
       setChats((prev) => {
         const existing = prev.find((c) => c.userEmail === threadUserEmail);
         if (existing) {
           return prev.map((c) =>
-            c.userEmail === threadUserEmail ? { ...c, messages: [...c.messages, newMsg] } : c
+            c.userEmail === threadUserEmail
+              ? { ...c, messages: [...c.messages, message] }
+              : c
           );
         }
-        return [...prev, { userEmail: threadUserEmail, messages: [newMsg] }];
+        return [...prev, { userEmail: threadUserEmail, messages: [message] }];
       });
-      return newMsg;
+      return message;
     },
     []
   );
 
   const getAllThreads = useCallback((): ChatThread[] => chats, [chats]);
 
-  const markThreadRead = useCallback((userEmail: string) => {
-    setChats((prev) =>
-      prev.map((c) =>
-        c.userEmail === userEmail
-          ? {
-              ...c,
-              messages: c.messages.map((m) =>
-                m.isAdmin === false ? { ...m, readByAdmin: true } : m
-              ),
-            }
-          : c
-      )
-    );
+  const markThreadRead = useCallback(async (userEmail: string) => {
+    try {
+      const thread = await request<ChatThread>(
+        `/api/chats/${encodeURIComponent(userEmail)}/read`,
+        { method: 'POST' }
+      );
+      setChats((prev) => prev.map((c) => (c.userEmail === userEmail ? thread : c)));
+    } catch {
+      // The unread marker is best-effort; it stays until the request succeeds.
+    }
   }, []);
 
   const getChatThread = useCallback(

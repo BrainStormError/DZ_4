@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.gitignore
+openspec
+.kilo
+.kilocode
+refactored-skills
+.env
+.env*.local
+npm-debug.log*
+*.tsbuildinfo
+Dockerfile
+docker-compose.yml
+README.md

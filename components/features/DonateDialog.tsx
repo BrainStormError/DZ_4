@@ -26,11 +26,11 @@ import { Gift, Mail, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { User } from '@/lib/types';
 import { useAuth } from '@/lib/auth-context';
-import { useDonations, useWishes } from '@/lib/data-context';
+import { useDonations } from '@/lib/data-context';
 import { useAppDate } from '@/lib/date-context';
 import { useAsyncAction } from '@/lib/hooks';
+import { useDirectory } from '@/lib/directory-context';
 import { checkCorpEmail } from '@/lib/corp-email';
-import { mockUsers } from '@/lib/mock-data';
 import { getCongratulatableUsers } from '@/lib/birthdays';
 import { isGiftDeclined } from '@/lib/data-store';
 import { parsePositiveInt } from '@/lib/utils';
@@ -46,7 +46,7 @@ type Step = 'recipient' | 'email' | 'amount' | 'message' | 'confirm' | 'success'
 export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogProps) {
   const { user } = useAuth();
   const { addDonation, history } = useDonations();
-  const { addWish } = useWishes();
+  const { users, error: directoryError } = useDirectory();
   const { today, isPreview } = useAppDate();
   const [step, setStep] = useState<Step>('recipient');
   const [recipient, setRecipient] = useState<User | null>(null);
@@ -62,32 +62,18 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
   const hasWish = wishText.trim().length > 0;
   const canConfirm = !!recipient && parsedAmount !== null && !isPreview;
   const recipientName = recipient?.fullName ?? '';
-  const recipientOptions = getCongratulatableUsers(today, mockUsers, user?.id);
+  const recipientOptions = getCongratulatableUsers(today, users, user?.id);
   const declinedUserIds = useMemo(
     () =>
       new Set(
-        mockUsers.filter((u) => isGiftDeclined(u.id, history)).map((u) => u.id)
+        users.filter((u) => isGiftDeclined(u.id, history)).map((u) => u.id)
       ),
-    [history]
+    [history, users]
   );
 
   const donateAction = useAsyncAction(
-    async (args: {
-      recipientId: string;
-      amount: number;
-      authorEmail: string;
-      wishText?: string;
-    }) => {
-      await Promise.resolve(addDonation(args.recipientId, args.amount));
-      if (args.wishText) {
-        await Promise.resolve(
-          addWish({
-            authorEmail: args.authorEmail,
-            targetUserId: args.recipientId,
-            text: args.wishText,
-          })
-        );
-      }
+    async (args: { recipientId: string; amount: number; wishText?: string }) => {
+      await addDonation(args.recipientId, args.amount, args.wishText);
     }
   );
 
@@ -110,7 +96,7 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
 
   const handleRecipientSelect = (id: string) => {
     if (declinedUserIds.has(id)) return;
-    setRecipient(mockUsers.find((u) => u.id === id) ?? null);
+    setRecipient(users.find((u) => u.id === id) ?? null);
   };
 
   const handleEmailSubmit = (e: React.FormEvent) => {
@@ -120,12 +106,13 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
       setEmailError('Сначала выберите получателя');
       return;
     }
-    const result = checkCorpEmail(email);
+    const normalized = email.trim().toLowerCase();
+    const result = checkCorpEmail(normalized);
     if (!result.ok) {
       setEmailError(result.error || 'Некорректный адрес почты');
       return;
     }
-    if (result.user?.id !== user?.id) {
+    if (normalized !== user?.email.toLowerCase()) {
       setEmailError('Укажите свою корпоративную почту: отправитель должен совпадать с текущим пользователем');
       return;
     }
@@ -154,7 +141,6 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
       await donateAction.mutate({
         recipientId: recipient.id,
         amount: parsedAmount,
-        authorEmail: user.email,
         wishText: hasWish ? wishText.trim() : undefined,
       });
       toast.success(hasWish ? 'Поздравление отправлено' : 'Средства добавлены к сбору');
@@ -183,6 +169,14 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
               </DialogDescription>
             </DialogHeader>
             <div className="flex flex-col gap-4">
+              {directoryError && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    Не удалось загрузить список сотрудников. Обновите страницу.
+                  </AlertDescription>
+                </Alert>
+              )}
               <div className="flex flex-col gap-2">
                 <Label htmlFor="donate-recipient">Получатель</Label>
                 <Select value={recipient?.id ?? ''} onValueChange={handleRecipientSelect}>
