@@ -17,3 +17,14 @@ export async function hasUnregisteredSession(): Promise<boolean> {
   const session = await getServerSession(authOptions);
   return Boolean(session?.unregistered && !session.userId);
 }
+
+/**
+ * The confirmed address carried by an active unregistered session, or `null`.
+ * A registration ticket is accepted only together with this session.
+ */
+export async function getUnregisteredEmail(): Promise<string | null> {
+  const session = await getServerSession(authOptions);
+  if (!session?.unregistered || session.userId) return null;
+  const email = session.user?.email?.trim().toLowerCase();
+  return email || null;
+}

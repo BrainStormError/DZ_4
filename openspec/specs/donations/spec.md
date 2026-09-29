@@ -6,25 +6,6 @@ Allows an employee to participate in a voluntary collection only after confirmin
 
 ## Requirements
 
-### Requirement: Confirmation of corporate email before participation
-
-The system MUST require confirmation of the corporate email before submitting participation in the collection. The address MUST end in `@company.com` and be present in the corporate directory; the validation rule MUST match the login rule. Until the address is confirmed, proceeding to the next participation step MUST be unavailable.
-
-#### Scenario: Valid corporate email
-
-- **WHEN** the user enters an existing `@company.com` address
-- **THEN** the system confirms the address and proceeds to the next participation step
-
-#### Scenario: Address outside the corporate domain
-
-- **WHEN** the user enters an address without the `@company.com` domain
-- **THEN** the system shows an error and does not proceed to the next step
-
-#### Scenario: Unknown corporate address
-
-- **WHEN** the user enters the address `unknown.user@company.com`, which is absent from the directory
-- **THEN** the system rejects the address in the same way as at login and does not proceed to the next step
-
 ### Requirement: Collected amounts are hidden from employees
 
 The system MUST hide the collected amounts per recipient from users with the `employee` role: neither for themselves nor for other employees. The numeric value of the collected amount MUST NOT be displayed to an employee at any participation step or anywhere on the pages available to them. At the confirmation step only the amount entered by the user themselves is displayed; the total collected amount, as well as a separate explanation about hiding it, MUST NOT be shown.
@@ -41,7 +22,7 @@ The system MUST hide the collected amounts per recipient from users with the `em
 
 ### Requirement: Employee participation in the collection
 
-The employee MUST be able to specify a positive amount for their participation while confirming the corporate email. The specified amount MUST be added to the total collection of the selected recipient, while the total collected amount MUST NOT be shown to the employee: only their own contribution and an explanation about hiding are displayed. **At all steps of the dialog, participation MUST show loading states (disabled buttons with a spinner), error (Alert with "Retry"), success (a toast and a transition to the next step or the success screen).**
+The employee MUST be able to specify a positive amount for their participation and submit it. The specified amount MUST be added to the total collection of the selected recipient, while the total collected amount MUST NOT be shown to the employee: only their own contribution and an explanation about hiding are displayed. **At all steps of the dialog, participation MUST show loading states (disabled buttons with a spinner), error (Alert with "Retry"), success (a toast and a transition to the next step or the success screen).**
 
 #### Scenario: Employee specifies the participation amount
 - **WHEN** the employee enters a positive amount and confirms the submission
@@ -112,17 +93,17 @@ The system MUST NOT start the participation scenario without a selected recipien
 
 ### Requirement: Sender identity matches the account
 
-The corporate email entered in the participation dialog MUST match the address of the current authorized user. If they do not match, the system MUST show an error and MUST NOT proceed to the next step. The sender displayed at confirmation MUST match the actual author of the wish.
+The sender of a participation MUST be the authorized user, and the participation dialog MUST NOT contain a control for entering an address. The sender displayed at confirmation MUST match the actual author of the wish, and the stored author MUST be the authorized user.
 
 #### Scenario: Another employee's email was entered
 
-- **WHEN** the authorized user enters a colleague's corporate email
-- **THEN** the system rejects the input with an error and does not proceed to the next step
+- **WHEN** a participation is submitted by an authorized user
+- **THEN** the dialog contains no field for entering an address, and the stored author of the participation and of the wish is the authorized user rather than another employee
 
 #### Scenario: Confirmation of a correct sender
 
-- **WHEN** the user enters their own corporate email
-- **THEN** their address is displayed at confirmation, and the wish is published under their corporate nickname
+- **WHEN** the user reaches the confirmation step
+- **THEN** the displayed sender is the authorized user, and the wish is published under that user's identity
 
 ### Requirement: Strict validation of the participation amount
 
@@ -149,7 +130,7 @@ The participation dialog MUST NOT promise to send a wish without specifying an a
 
 #### Scenario: Copy of the email confirmation step
 
-- **WHEN** the user opens the corporate email confirmation step
+- **WHEN** the user opens the participation dialog
 - **THEN** the text does not contain a promise to congratulate without sending funds and points to the wish board
 
 ### Requirement: Validation of amount change by the administrator
@@ -241,17 +222,17 @@ A monetary congratulation MUST be available only for employees whose birthday is
 
 ### Requirement: Recipient email in the selection
 
-The recipient selection form for a monetary congratulation MUST show the recipient's corporate email in addition to their name and department, so that the user can distinguish employees with the same name and make sure the addressee is correct.
+The recipient selection form for a monetary congratulation MUST show the recipient's email address in addition to their name and department, so that the user can distinguish employees with the same name and make sure the addressee is correct.
 
 #### Scenario: Email is visible in the recipient list
 
 - **WHEN** the user opens the recipient selection for a monetary congratulation
-- **THEN** the name, the department, and the corporate email are shown for each available recipient
+- **THEN** the name, the department, and the email address are shown for each available recipient
 
 #### Scenario: Email corresponds to the selected recipient
 
 - **WHEN** the user selects a recipient from the list
-- **THEN** the subsequent steps relate to the same employee whose corporate email was shown in the list
+- **THEN** the subsequent steps relate to the same employee whose email address was shown in the list
 
 ### Requirement: Recipient selection is discernible on a narrow screen
 

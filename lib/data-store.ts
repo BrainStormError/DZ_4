@@ -34,6 +34,7 @@ export function useDataStore() {
   const [wishes, setWishes] = useState<Wish[]>([]);
   const [donations, setDonations] = useState<Donation[]>([]);
   const [history, setHistory] = useState<DonationHistoryEntry[]>([]);
+  const [declinedUserIds, setDeclinedUserIds] = useState<string[]>([]);
   const [chats, setChats] = useState<ChatThread[]>([]);
 
   useEffect(() => {
@@ -43,15 +44,20 @@ export function useDataStore() {
       try {
         const [loadedWishes, donationPayload, loadedChats] = await Promise.all([
           request<Wish[]>('/api/wishes'),
-          request<{ donations: Donation[]; history: DonationHistoryEntry[] }>(
-            '/api/donations'
-          ),
+          request<{
+            donations?: Donation[];
+            history?: DonationHistoryEntry[];
+            declinedUserIds?: string[];
+          }>('/api/donations'),
           request<ChatThread[]>('/api/chats'),
         ]);
         if (cancelled) return;
         setWishes(loadedWishes);
-        setDonations(donationPayload.donations);
-        setHistory(donationPayload.history);
+        // Administrators receive the amounts and the journal; employees receive
+        // only the identifiers of recipients who declined the gift.
+        setDonations(donationPayload.donations ?? []);
+        setHistory(donationPayload.history ?? []);
+        setDeclinedUserIds(donationPayload.declinedUserIds ?? []);
         setChats(loadedChats);
       } catch {
         // Unauthenticated pages and transient failures keep the empty state.
@@ -84,14 +90,17 @@ export function useDataStore() {
 
   const addDonation = useCallback(
     async (userId: string, amount: number, wishText?: string) => {
-      const result = await request<{ donation: Donation; wish: Wish | null }>(
+      const result = await request<{ donation?: Donation; wish: Wish | null }>(
         '/api/donations',
         {
           method: 'POST',
           body: JSON.stringify({ userId, amount, wishText }),
         }
       );
-      setDonations((prev) => upsertDonation(prev, result.donation));
+      if (result.donation) {
+        const donation = result.donation;
+        setDonations((prev) => upsertDonation(prev, donation));
+      }
       if (result.wish) {
         const createdWish = result.wish;
         setWishes((prev) => [createdWish, ...prev.filter((w) => w.id !== createdWish.id)]);
@@ -186,6 +195,7 @@ export function useDataStore() {
     wishes,
     donations,
     history,
+    declinedUserIds,
     chats,
     addWish,
     updateWish,

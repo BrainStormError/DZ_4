@@ -6,7 +6,12 @@ import { useDataStore, type DataStore } from './data-store';
 export type WishesValue = Pick<DataStore, 'wishes' | 'addWish' | 'updateWish'>;
 export type DonationsValue = Pick<
   DataStore,
-  'donations' | 'history' | 'addDonation' | 'setGiftSent' | 'updateDonation'
+  | 'donations'
+  | 'history'
+  | 'declinedUserIds'
+  | 'addDonation'
+  | 'setGiftSent'
+  | 'updateDonation'
 >;
 export type ChatsValue = Pick<
   DataStore,
@@ -33,6 +38,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     () => ({
       donations: store.donations,
       history: store.history,
+      declinedUserIds: store.declinedUserIds,
       addDonation: store.addDonation,
       setGiftSent: store.setGiftSent,
       updateDonation: store.updateDonation,
@@ -40,6 +46,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     [
       store.donations,
       store.history,
+      store.declinedUserIds,
       store.addDonation,
       store.setGiftSent,
       store.updateDonation,

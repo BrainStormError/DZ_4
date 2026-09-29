@@ -31,7 +31,6 @@ import { useAppDate } from '@/lib/date-context';
 import { useAsyncAction } from '@/lib/hooks';
 import { useDirectory } from '@/lib/directory-context';
 import { getCongratulatableUsers } from '@/lib/birthdays';
-import { isGiftDeclined } from '@/lib/data-store';
 import { parsePositiveInt } from '@/lib/utils';
 
 interface DonateDialogProps {
@@ -44,7 +43,7 @@ type Step = 'recipient' | 'amount' | 'message' | 'confirm' | 'success';
 
 export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogProps) {
   const { user } = useAuth();
-  const { addDonation, history } = useDonations();
+  const { addDonation, declinedUserIds } = useDonations();
   const { users, error: directoryError } = useDirectory();
   const { today, isPreview } = useAppDate();
   const [step, setStep] = useState<Step>('recipient');
@@ -60,12 +59,9 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
   const canConfirm = !!recipient && parsedAmount !== null && !isPreview;
   const recipientName = recipient?.fullName ?? '';
   const recipientOptions = getCongratulatableUsers(today, users, user?.id);
-  const declinedUserIds = useMemo(
-    () =>
-      new Set(
-        users.filter((u) => isGiftDeclined(u.id, history)).map((u) => u.id)
-      ),
-    [history, users]
+  const declinedUserIdsSet = useMemo(
+    () => new Set(declinedUserIds),
+    [declinedUserIds]
   );
 
   const donateAction = useAsyncAction(
@@ -77,20 +73,20 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
   useEffect(() => {
     if (open) {
       const initialRecipient =
-        targetUser && !declinedUserIds.has(targetUser.id) ? targetUser : null;
+        targetUser && !declinedUserIdsSet.has(targetUser.id) ? targetUser : null;
       setRecipient(initialRecipient);
       setStep(initialRecipient ? 'amount' : 'recipient');
       setAmount('');
       setWishText('');
     }
-  }, [open, targetUser, declinedUserIds]);
+  }, [open, targetUser, declinedUserIdsSet]);
 
   useEffect(() => {
     onOpenChange(false);
   }, [pathname, onOpenChange]);
 
   const handleRecipientSelect = (id: string) => {
-    if (declinedUserIds.has(id)) return;
+    if (declinedUserIdsSet.has(id)) return;
     setRecipient(users.find((u) => u.id === id) ?? null);
   };
 
@@ -159,7 +155,7 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
                   </SelectTrigger>
                   <SelectContent>
                     {recipientOptions.map((u) => {
-                      const declined = declinedUserIds.has(u.id);
+                      const declined = declinedUserIdsSet.has(u.id);
                       const label = `${u.fullName} — ${u.department} — ${u.email}${
                         declined ? ' — отказался от подарка' : ''
                       }`;

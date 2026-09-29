@@ -1,12 +1,12 @@
 // @vitest-environment node
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import {
   REGISTRATION_TTL_SECONDS,
   createRegistrationTicket,
   readRegistrationTicket,
 } from './registration-ticket';
 
-process.env.NEXTAUTH_SECRET = 'test-secret';
+process.env.REGISTRATION_TICKET_SECRET = 'registration-test-secret';
 
 const payload = {
   email: 'new.person@example.com',
@@ -16,6 +16,10 @@ const payload = {
 };
 
 describe('registration ticket', () => {
+  afterEach(() => {
+    process.env.REGISTRATION_TICKET_SECRET = 'registration-test-secret';
+  });
+
   it('round-trips a signed ticket', () => {
     const ticket = createRegistrationTicket(payload, 1_000);
 
@@ -46,5 +50,29 @@ describe('registration ticket', () => {
     expect(readRegistrationTicket(`${encoded}.${signature.slice(0, -2)}xx`, 1_000)).toBeNull();
     expect(readRegistrationTicket(signature, 1_000)).toBeNull();
     expect(readRegistrationTicket(undefined, 1_000)).toBeNull();
+  });
+
+  it('rejects a ticket signed with another key', () => {
+    const ticket = createRegistrationTicket(payload, 1_000);
+
+    process.env.REGISTRATION_TICKET_SECRET = 'a-different-secret';
+
+    expect(readRegistrationTicket(ticket, 1_000)).toBeNull();
+  });
+
+  it('reports a missing secret instead of defaulting', () => {
+    delete process.env.REGISTRATION_TICKET_SECRET;
+
+    expect(() => createRegistrationTicket(payload, 1_000)).toThrow(
+      /REGISTRATION_TICKET_SECRET/
+    );
+  });
+
+  it('refuses the example placeholder secret', () => {
+    process.env.REGISTRATION_TICKET_SECRET = 'replace-with-a-long-random-secret';
+
+    expect(() => createRegistrationTicket(payload, 1_000)).toThrow(
+      /placeholder/i
+    );
   });
 });

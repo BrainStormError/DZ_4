@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { errorResponse, isNonNegativeInt, parseJsonBody } from '@/lib/api';
+import { errorResponse, isNonNegativeInt, originGuard, parseJsonBody } from '@/lib/api';
+import { logEvent } from '@/lib/log';
 import { resolveCurrentUser } from '@/lib/session';
 import {
   findUserById,
@@ -16,9 +17,16 @@ export async function PATCH(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  const blocked = originGuard(request);
+  if (blocked) return blocked;
+
   const user = await resolveCurrentUser();
   if (!user) return errorResponse('Требуется вход в систему', 401);
   if (user.role !== 'admin') {
+    logEvent('authorization', 'refused', {
+      endpoint: 'PATCH /api/donations/[id]',
+      account: user.email,
+    });
     return errorResponse('Действие доступно только администратору', 403);
   }
 
@@ -61,6 +69,12 @@ export async function PATCH(
     comment,
   });
   if (!result) return errorResponse('Сбор не найден', 404);
+
+  logEvent('donation_amount_changed', 'success', {
+    account: user.email,
+    recipient: target.email,
+    newAmount: body.newAmount,
+  });
 
   return NextResponse.json(result);
 }

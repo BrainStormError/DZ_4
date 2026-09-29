@@ -38,6 +38,11 @@ The system MUST read deployment configuration, including the database connection
 - **WHEN** the required database connection configuration is absent
 - **THEN** the application does not silently fall back to built-in data and reports the failure
 
+#### Scenario: Missing identity-provider configuration fails clearly
+
+- **WHEN** the identity-provider credentials or the session secret are absent
+- **THEN** the application reports the failure instead of starting sign-in that cannot succeed
+
 #### Scenario: An example environment file exists
 
 - **WHEN** a developer needs to configure the stack

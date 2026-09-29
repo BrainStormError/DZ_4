@@ -6,6 +6,7 @@ import type {
   ChatThread,
   Donation,
   DonationHistoryEntry,
+  PublicUser,
   RefundReason,
   User,
   Wish,
@@ -42,6 +43,19 @@ function mapUser(row: UserRow): User {
   };
 }
 
+/** Drops the provider subject id and any other internal identity value. */
+export function toPublicUser(user: User): PublicUser {
+  return {
+    id: user.id,
+    fullName: user.fullName,
+    email: user.email,
+    birthDate: user.birthDate,
+    department: user.department,
+    avatarUrl: user.avatarUrl,
+    role: user.role,
+  };
+}
+
 export async function listUsers(): Promise<User[]> {
   const rows = await query<UserRow>(
     `SELECT ${USER_COLUMNS} FROM users ORDER BY length(id), id`
@@ -74,9 +88,30 @@ export async function findUserByGoogleSub(googleSub: string): Promise<User | nul
 }
 
 /**
+ * Records the provider subject on a record that has none, on its first
+ * sign-in. A record that already carries a different subject is left untouched.
+ */
+export async function bindUserGoogleSub(
+  id: string,
+  googleSub: string
+): Promise<User | null> {
+  const rows = await query<UserRow>(
+    `UPDATE users SET google_sub = $2
+     WHERE id = $1 AND google_sub IS NULL
+     RETURNING ${USER_COLUMNS}`,
+    [id, googleSub]
+  );
+  return rows[0] ? mapUser(rows[0]) : null;
+}
+
+/**
  * Creates a user from a completed registration form. The role is fixed to
  * `employee`: there is no parameter to request another role, so registration
  * can never produce an administrator.
+ *
+ * The insert is conflict-safe, so two simultaneous submissions for the same
+ * address create exactly one record and the loser receives `null` instead of an
+ * internal error.
  */
 export async function createEmployeeUser(input: {
   email: string;
@@ -84,11 +119,12 @@ export async function createEmployeeUser(input: {
   birthDate: string;
   department: string;
   googleSub?: string | null;
-}): Promise<User> {
+}): Promise<User | null> {
   const fullName = input.fullName.trim();
   const rows = await query<UserRow>(
     `INSERT INTO users (id, full_name, email, google_sub, birth_date, department, avatar_url, role)
      VALUES ($1, $2, $3, $4, $5, $6, $7, 'employee')
+     ON CONFLICT DO NOTHING
      RETURNING ${USER_COLUMNS}`,
     [
       'u' + randomUUID(),
@@ -100,7 +136,7 @@ export async function createEmployeeUser(input: {
       defaultAvatarUrl(fullName),
     ]
   );
-  return mapUser(rows[0]);
+  return rows[0] ? mapUser(rows[0]) : null;
 }
 
 type WishRow = {
@@ -187,21 +223,36 @@ export async function listDonations(): Promise<Donation[]> {
   return rows.map(mapDonation);
 }
 
+/** Identifiers of recipients who declined the gift, without any amount. */
+export async function listDeclinedUserIds(): Promise<string[]> {
+  const rows = await query<{ user_id: string }>(
+    `SELECT DISTINCT user_id FROM donation_history WHERE reason = 'refund_declined'`
+  );
+  return rows.map((row) => row.user_id);
+}
+
 export async function submitParticipation(input: {
   userId: string;
   amount: number;
   authorId: string;
   wishText?: string;
-}): Promise<{ donation: Donation; wish: Wish | null }> {
+  /** Upper bound for the stored total; the update is refused above it. */
+  maxTotal?: number;
+}): Promise<{ donation: Donation; wish: Wish | null } | null> {
   return withTransaction(async (client) => {
+    const maxTotal = input.maxTotal ?? Number.MAX_SAFE_INTEGER;
     const donationResult = await client.query<DonationRow>(
       `INSERT INTO donations (user_id, total_amount, gift_sent)
        VALUES ($1, $2, false)
        ON CONFLICT (user_id) DO UPDATE
          SET total_amount = donations.total_amount + EXCLUDED.total_amount
+         WHERE donations.total_amount + EXCLUDED.total_amount <= $3
        RETURNING user_id, total_amount, gift_sent`,
-      [input.userId, input.amount]
+      [input.userId, input.amount, maxTotal]
     );
+
+    // The guard refused the accumulation: leave the store untouched.
+    if (donationResult.rows.length === 0) return null;
 
     let wish: Wish | null = null;
     if (input.wishText && input.wishText.trim()) {

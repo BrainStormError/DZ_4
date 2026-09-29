@@ -1,6 +1,6 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import { requireSecret } from './config';
 
-export const REGISTRATION_COOKIE_NAME = 'corp-gift-registration';
 export const REGISTRATION_TTL_SECONDS = 10 * 60;
 
 export interface RegistrationTicket {
@@ -17,13 +17,7 @@ export interface RegistrationTicket {
 }
 
 function ticketSecret(): string {
-  const secret = process.env.NEXTAUTH_SECRET;
-  if (!secret) {
-    throw new Error(
-      'NEXTAUTH_SECRET is not set. Configure the session secret before starting the application.'
-    );
-  }
-  return secret;
+  return requireSecret('REGISTRATION_TICKET_SECRET');
 }
 
 function sign(payload: string): string {

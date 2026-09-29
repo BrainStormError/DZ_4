@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { errorResponse, parseJsonBody } from '@/lib/api';
+import { decodeThreadEmail, errorResponse, originGuard, parseJsonBody } from '@/lib/api';
+import { logEvent } from '@/lib/log';
 import { resolveCurrentUser } from '@/lib/session';
 import { addChatMessage, findUserByEmail } from '@/lib/repository';
 
@@ -9,12 +10,23 @@ export async function POST(
   request: Request,
   { params }: { params: { userEmail: string } }
 ) {
+  const blocked = originGuard(request);
+  if (blocked) return blocked;
+
   const user = await resolveCurrentUser();
   if (!user) return errorResponse('Требуется вход в систему', 401);
 
-  const threadEmail = decodeURIComponent(params.userEmail).trim().toLowerCase();
+  const threadEmail = decodeThreadEmail(params.userEmail);
+  if (!threadEmail) {
+    return errorResponse('Некорректный идентификатор беседы', 400);
+  }
+
   const isAdmin = user.role === 'admin';
   if (!isAdmin && threadEmail !== user.email.toLowerCase()) {
+    logEvent('authorization', 'refused', {
+      endpoint: 'POST /api/chats/[userEmail]/messages',
+      account: user.email,
+    });
     return errorResponse('Доступ к чужой переписке запрещён', 403);
   }
 

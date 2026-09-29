@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { errorResponse, parseJsonBody } from '@/lib/api';
+import { errorResponse, originGuard, parseJsonBody } from '@/lib/api';
+import { logEvent } from '@/lib/log';
 import { resolveCurrentUser } from '@/lib/session';
 import { updateWishText } from '@/lib/repository';
 
@@ -9,9 +10,16 @@ export async function PATCH(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  const blocked = originGuard(request);
+  if (blocked) return blocked;
+
   const user = await resolveCurrentUser();
   if (!user) return errorResponse('Требуется вход в систему', 401);
   if (user.role !== 'admin') {
+    logEvent('authorization', 'refused', {
+      endpoint: 'PATCH /api/wishes/[id]',
+      account: user.email,
+    });
     return errorResponse('Действие доступно только администратору', 403);
   }
 

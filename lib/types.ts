@@ -14,6 +14,12 @@ export interface User {
   role: Role;
 }
 
+/**
+ * The projection returned to clients: only the fields the interface displays,
+ * never the provider subject identifier or another internal identity value.
+ */
+export type PublicUser = Omit<User, 'googleSub'>;
+
 export interface Wish {
   id: string;
   authorEmail: string;

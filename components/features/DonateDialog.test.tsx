@@ -12,6 +12,7 @@ const mocks = vi.hoisted(() => ({
   history: [] as never[],
   wishes: [] as never[],
   donations: [] as never[],
+  declinedUserIds: [] as string[],
   chats: [] as never[],
   users: [] as User[],
 }));
@@ -68,6 +69,7 @@ vi.mock('@/lib/data-context', () => ({
   useDonations: () => ({
     donations: mocks.donations,
     history: mocks.history,
+    declinedUserIds: mocks.declinedUserIds,
     addDonation: mocks.addDonation,
     setGiftSent: vi.fn(),
     updateDonation: vi.fn(),
@@ -98,6 +100,7 @@ describe('DonateDialog', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.users = [dmitry, targetUser];
+    mocks.declinedUserIds = [];
   });
 
   it('happy path: completes donation and shows success step', async () => {
@@ -135,5 +138,13 @@ describe('DonateDialog', () => {
     await user.type(amountInput, '500');
     await user.click(screen.getByRole('button', { name: 'Продолжить' }));
     expect(await screen.findByLabelText('Текст поздравления')).toBeInTheDocument();
+  });
+
+  it('does not offer an amount for a recipient who declined the gift', async () => {
+    mocks.declinedUserIds = ['u1'];
+    renderWithProviders(<DonateDialog open onOpenChange={vi.fn()} targetUser={targetUser} />);
+
+    expect(await screen.findByText('Поздравить сотрудника')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Сумма (₽)')).not.toBeInTheDocument();
   });
 });

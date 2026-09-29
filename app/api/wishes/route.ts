@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { errorResponse, parseJsonBody } from '@/lib/api';
+import { errorResponse, originGuard, parseJsonBody } from '@/lib/api';
 import { resolveCurrentUser } from '@/lib/session';
 import { createWish, findUserById, listWishes } from '@/lib/repository';
 
@@ -13,6 +13,9 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const blocked = originGuard(request);
+  if (blocked) return blocked;
+
   const user = await resolveCurrentUser();
   if (!user) return errorResponse('Требуется вход в систему', 401);
 
