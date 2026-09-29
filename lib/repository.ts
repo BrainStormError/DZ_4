@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { defaultAvatarUrl } from './avatar';
 import { query, withTransaction } from './db';
 import type {
   ChatMessage,
@@ -18,6 +19,7 @@ type UserRow = {
   id: string;
   full_name: string;
   email: string;
+  google_sub: string | null;
   birth_date: string;
   department: string;
   avatar_url: string;
@@ -25,13 +27,14 @@ type UserRow = {
 };
 
 const USER_COLUMNS =
-  "id, full_name, email, to_char(birth_date, 'YYYY-MM-DD') AS birth_date, department, avatar_url, role";
+  "id, full_name, email, google_sub, to_char(birth_date, 'YYYY-MM-DD') AS birth_date, department, avatar_url, role";
 
 function mapUser(row: UserRow): User {
   return {
     id: row.id,
     fullName: row.full_name,
     email: row.email,
+    googleSub: row.google_sub,
     birthDate: row.birth_date,
     department: row.department,
     avatarUrl: row.avatar_url,
@@ -60,6 +63,44 @@ export async function findUserById(id: string): Promise<User | null> {
     [id]
   );
   return rows[0] ? mapUser(rows[0]) : null;
+}
+
+export async function findUserByGoogleSub(googleSub: string): Promise<User | null> {
+  const rows = await query<UserRow>(
+    `SELECT ${USER_COLUMNS} FROM users WHERE google_sub = $1 LIMIT 1`,
+    [googleSub]
+  );
+  return rows[0] ? mapUser(rows[0]) : null;
+}
+
+/**
+ * Creates a user from a completed registration form. The role is fixed to
+ * `employee`: there is no parameter to request another role, so registration
+ * can never produce an administrator.
+ */
+export async function createEmployeeUser(input: {
+  email: string;
+  fullName: string;
+  birthDate: string;
+  department: string;
+  googleSub?: string | null;
+}): Promise<User> {
+  const fullName = input.fullName.trim();
+  const rows = await query<UserRow>(
+    `INSERT INTO users (id, full_name, email, google_sub, birth_date, department, avatar_url, role)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, 'employee')
+     RETURNING ${USER_COLUMNS}`,
+    [
+      'u' + randomUUID(),
+      fullName,
+      input.email.trim().toLowerCase(),
+      input.googleSub ?? null,
+      input.birthDate,
+      input.department.trim(),
+      defaultAvatarUrl(fullName),
+    ]
+  );
+  return mapUser(rows[0]);
 }
 
 type WishRow = {

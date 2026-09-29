@@ -18,7 +18,8 @@
 | Переписка: чтение списка веток | `GET /api/chats` | Только своя ветка | Все ветки |
 | Переписка: отправка сообщения | `POST /api/chats/[userEmail]/messages` | Только в свою ветку, иначе `403` | В любую ветку |
 | Переписка: отметка прочитанным | `POST /api/chats/[userEmail]/read` | Нет, `403` | Да |
-| Вход в систему | `POST /api/auth/login` | Да | Да |
+| Вход в систему | Google OAuth 2.0 через `/api/auth/[...nextauth]` | Да | Да |
+| Регистрация нового сотрудника | `POST /api/auth/register` (роль всегда `employee`) | Да | Да |
 
 ## Обобщённые правила
 
@@ -51,7 +52,8 @@
 
 | Ограничение | Таблица | Файл:строка |
 | --- | --- | --- |
-| Роль только `employee` или `admin` | `users.role` (enum `user_role`) | `db/init/001_schema.sql:7,21` |
+| Роль только `employee` или `admin` | `users.role` (enum `user_role`) | `db/init/001_schema.sql:7,22` |
+| Google subject уникален, когда задан | `users.google_sub` (`UNIQUE`, nullable) | `db/init/001_schema.sql:18` |
 | Причина возврата только из двух значений | `donation_history.reason` (enum `refund_reason`) | `db/init/001_schema.sql:10,48` |
 | Сумма сбора не может быть отрицательной | `donations.total_amount` (`CHECK >= 0`) | `db/init/001_schema.sql:38` |
 | Суммы в журнале не могут быть отрицательными | `donation_history.previous_amount`, `new_amount` | `db/init/001_schema.sql:46-47` |

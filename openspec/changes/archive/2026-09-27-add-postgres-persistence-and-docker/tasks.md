@@ -1,7 +1,7 @@
 ## 1. Schema and seed data
 
 - [x] 1.1 Create `db/init/001_schema.sql` with the tables `users`, `wishes`, `donations`, `donation_history`, `chat_messages`, the enums `user_role` and `refund_reason`, the foreign keys, the constraints, and the indexes `wishes_target_created_idx` and `chat_thread_created_idx`; keep ids as `text` and totals as `integer` — verification: start a local PostgreSQL 16 container, mount `db/init`, and confirm `\dt` lists all five tables and `\d wishes` shows the foreign keys and index
-- [x] 1.2 Create `db/init/002_seed.sql` from `lib/mock-data.ts` with the 12 users, 6 wishes, 12 donation rows, 2 history entries, and 2 chat threads mapped to the new foreign keys, and make re-application idempotent — verification: apply the seed twice on the same database and confirm no duplicate rows and the same counts (12/6/12/2/4)
+- [x] 1.2 Create `db/init/002_seed.sql` from `lib/mock-data.ts` with the 12 users, 6 wishes, 12 donation rows, 2 history entries, and 2 chat threads mapped to the new foreign keys, and make re-application idempotent — verification: apply the seed twice on the same database and confirm no duplicate rows and the same counts (12/6/12/2/3)
 - [x] 1.3 Verify the seeded directory supports login for `anna.smirnova@company.com` and the admin `alexander.petrov@company.com` — verification: a `SELECT` against `users` returns both rows with the expected roles
 
 ## 2. Database access layer

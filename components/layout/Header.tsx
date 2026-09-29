@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { useChats } from '@/lib/data-context';
 import { countUnreadMessages } from '@/lib/data-store';
@@ -30,7 +30,6 @@ export function Header() {
   const { user, logout } = useAuth();
   const { chats } = useChats();
   const pathname = usePathname();
-  const router = useRouter();
   const mobileNavRef = useRef<HTMLElement>(null);
   const [hasNavOverflow, setHasNavOverflow] = useState(false);
 
@@ -38,8 +37,8 @@ export function Header() {
   const unreadCount = isAdmin ? countUnreadMessages(chats) : 0;
 
   const handleLogout = () => {
-    logout();
-    router.replace('/login');
+    // Server-side sign-out clears the session cookie, then returns to /login.
+    void logout();
   };
 
   useEffect(() => {

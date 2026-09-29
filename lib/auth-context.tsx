@@ -1,22 +1,16 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import { signIn, signOut } from 'next-auth/react';
 import type { User } from './types';
-import { clearAuthCookie, writeAuthCookie } from './auth-cookie';
 
 interface AuthState {
   user: User | null;
-  login: (email: string) => Promise<{ ok: boolean; error?: string }>;
-  logout: () => void;
+  login: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthState | undefined>(undefined);
-
-const LEGACY_STORAGE_KEY = 'corp-gift-auth-email';
-
-function dropLegacySession() {
-  if (typeof window !== 'undefined') localStorage.removeItem(LEGACY_STORAGE_KEY);
-}
 
 export function AuthProvider({
   children,
@@ -27,34 +21,13 @@ export function AuthProvider({
 }) {
   const [user, setUser] = useState<User | null>(initialUser);
 
-  const login = useCallback(async (email: string) => {
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      const data = (await response.json()) as {
-        ok: boolean;
-        user?: User;
-        error?: string;
-      };
-      if (!data.ok || !data.user) {
-        return { ok: false, error: data.error || 'Ошибка входа' };
-      }
-      setUser(data.user);
-      writeAuthCookie(data.user.email);
-      dropLegacySession();
-      return { ok: true };
-    } catch {
-      return { ok: false, error: 'Не удалось выполнить вход. Попробуйте ещё раз.' };
-    }
+  const login = useCallback(async () => {
+    await signIn('google', { callbackUrl: '/' });
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
     setUser(null);
-    clearAuthCookie();
-    dropLegacySession();
+    await signOut({ callbackUrl: '/login' });
   }, []);
 
   const value = useMemo<AuthState>(

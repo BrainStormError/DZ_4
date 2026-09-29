@@ -5,8 +5,6 @@ import { Toaster } from 'sonner';
 import { AuthProvider } from '@/lib/auth-context';
 import { resolveCurrentUser } from '@/lib/session';
 import { ThemeProvider } from '@/lib/theme-context';
-import { DirectoryProvider } from '@/lib/directory-context';
-import { DataProvider } from '@/lib/data-context';
 import { DateProvider } from '@/lib/date-context';
 
 const manrope = Manrope({
@@ -36,11 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <ThemeProvider>
           <AuthProvider initialUser={initialUser}>
-            <DateProvider>
-              <DirectoryProvider>
-                <DataProvider>{children}</DataProvider>
-              </DirectoryProvider>
-            </DateProvider>
+            <DateProvider>{children}</DateProvider>
           </AuthProvider>
         </ThemeProvider>
         <Toaster />

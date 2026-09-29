@@ -17,7 +17,7 @@
 | Параметр | Значение |
 | --- | --- |
 | Роли | `employee`, `admin` (enum `user_role`, `db/init/001_schema.sql:7`) |
-| Демо-сотрудник | `anna.smirnova@company.com` |
-| Демо-администратор | `alexander.petrov@company.com` |
-| Cookie сессии | `corp-gift-auth-email` (`lib/auth-cookie.ts:1`) |
-| Домен входа | `@company.com` (`lib/corp-email.ts:1`) |
+| Вход | Google OAuth 2.0, провайдер NextAuth v4 (`lib/auth-options.ts`) |
+| Cookie сессии | `next-auth.session-token`, подписана и `HttpOnly` (`lib/auth-options.ts`) |
+| Администратор | назначается вручную в БД (`UPDATE users SET role = 'admin' ...`) |
+| Демо-записи | `anna.smirnova@company.com`, `alexander.petrov@company.com` — данные для получателей, но войти под ними нельзя (нет Google-аккаунта) |

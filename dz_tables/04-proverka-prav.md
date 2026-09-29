@@ -25,8 +25,8 @@
 | `app/api/chats/route.ts` | 9-16 | `401`, затем выбор выборки по роли |
 | `app/api/chats/[userEmail]/messages/route.ts` | 12-19 | `401`, затем владение веткой: `403` при чужом `userEmail` |
 | `app/api/chats/[userEmail]/read/route.ts` | 12-16 | `401`, затем `403` для не-администратора |
-| `app/api/auth/login/route.ts` | 9-12 | `400` при некорректном теле (проверка входа не требуется) |
-| `app/api/auth/verify-email/route.ts` | 9-12 | `400` при некорректном теле (проверка входа не требуется) |
+| `app/api/auth/[...nextauth]/route.ts` | — | вход, callback и выход обрабатывает NextAuth; собственных проверок прав нет |
+| `app/api/auth/register/route.ts` | 36-38, 54-56 | `401` без действующего ticket регистрации; `400` при неполном профиле |
 
 ## Точки проверки на уровне страниц
 
@@ -77,6 +77,8 @@
 | `PATCH /api/donations/[id]/gift-status` | ранее был отказ от подарка | `409` | `app/api/donations/[id]/gift-status/route.ts:26-28` |
 | `POST /api/chats/[userEmail]/messages` | пустой `text` | `400` | `app/api/chats/[userEmail]/messages/route.ts:26` |
 | `POST /api/chats/[userEmail]/messages` | ветка-сотрудник не найден | `404` | `app/api/chats/[userEmail]/messages/route.ts:21-22` |
+| `POST /api/auth/register` | нет или просрочен ticket регистрации | `401` | `app/api/auth/register/route.ts:36-38` |
+| `POST /api/auth/register` | пустое имя, некорректная дата или пустой отдел | `400` | `app/api/auth/register/route.ts:49-56` |
 
 ## Вспомогательные функции валидации
 
@@ -86,7 +88,8 @@
 | `parseJsonBody(request)` | безопасный разбор JSON, возвращает `null` при ошибке | `lib/api.ts:7-13` |
 | `isPositiveInt(value)` | проверка целого числа больше нуля | `lib/api.ts:15-17` |
 | `isNonNegativeInt(value)` | проверка целого числа не меньше нуля | `lib/api.ts:19-21` |
-| `checkCorpEmail(email)` | проверка домена `@company.com` | `lib/corp-email.ts:12-17` |
+| `readRegistrationTicket(raw)` | проверка подписи и срока ticket регистрации | `lib/registration-ticket.ts` |
+| `createEmployeeUser(input)` | создание сотрудника с фиксированной ролью `employee` | `lib/repository.ts` |
 
 ## Контроль конкурентного доступа
 
@@ -100,9 +103,9 @@
 
 | № | Ограничение | Причина |
 | --- | --- | --- |
-| 1 | Cookie сессии не подписана и не `HttpOnly` | Вход в системе демонстрационный, подлинность значения не проверяется |
-| 2 | Отсутствует проверка CSRF на мутирующих запросах | Есть только `SameSite=Lax` |
-| 3 | Отсутствует ограничение частоты попыток входа | Нет rate limiting на `POST /api/auth/login` |
+| 1 | Сессия не отзывается мгновенно на уровне cookie | Токен подписан; отзыв доступа обеспечивается сверкой записи в БД на каждом серверном рендере |
+| 2 | Отсутствует проверка CSRF на собственных мутирующих запросах | Часть запросов защищена `SameSite=Lax`; маршрут NextAuth имеет собственную CSRF-защиту |
+| 3 | Отсутствует ограничение частоты попыток входа | Нет rate limiting на callback входа Google |
 | 4 | Журнал возвратов доступен всем авторизованным | `GET /api/donations` не фильтрует `history` по роли |
 | 5 | Нет пагинации выборок | `listUsers`, `listWishes`, `listDonationHistory`, `listChatThreads` возвращают полные наборы |
 | 6 | Отметка «подарок вручён» не пишется в журнал | `setGiftSent()` в отличие от `updateDonationAmount()` не создаёт запись в `donation_history` |

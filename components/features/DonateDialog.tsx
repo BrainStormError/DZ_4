@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Gift, Mail, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Gift, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { User } from '@/lib/types';
 import { useAuth } from '@/lib/auth-context';
@@ -30,7 +30,6 @@ import { useDonations } from '@/lib/data-context';
 import { useAppDate } from '@/lib/date-context';
 import { useAsyncAction } from '@/lib/hooks';
 import { useDirectory } from '@/lib/directory-context';
-import { checkCorpEmail } from '@/lib/corp-email';
 import { getCongratulatableUsers } from '@/lib/birthdays';
 import { isGiftDeclined } from '@/lib/data-store';
 import { parsePositiveInt } from '@/lib/utils';
@@ -41,7 +40,7 @@ interface DonateDialogProps {
   targetUser: User | null;
 }
 
-type Step = 'recipient' | 'email' | 'amount' | 'message' | 'confirm' | 'success';
+type Step = 'recipient' | 'amount' | 'message' | 'confirm' | 'success';
 
 export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogProps) {
   const { user } = useAuth();
@@ -50,8 +49,6 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
   const { today, isPreview } = useAppDate();
   const [step, setStep] = useState<Step>('recipient');
   const [recipient, setRecipient] = useState<User | null>(null);
-  const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState('');
   const [amount, setAmount] = useState('');
   const [wishText, setWishText] = useState('');
   const pathname = usePathname();
@@ -82,13 +79,11 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
       const initialRecipient =
         targetUser && !declinedUserIds.has(targetUser.id) ? targetUser : null;
       setRecipient(initialRecipient);
-      setStep(initialRecipient ? 'email' : 'recipient');
-      setEmail(user?.email ?? '');
-      setEmailError('');
+      setStep(initialRecipient ? 'amount' : 'recipient');
       setAmount('');
       setWishText('');
     }
-  }, [open, targetUser, user?.email, declinedUserIds]);
+  }, [open, targetUser, declinedUserIds]);
 
   useEffect(() => {
     onOpenChange(false);
@@ -97,27 +92,6 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
   const handleRecipientSelect = (id: string) => {
     if (declinedUserIds.has(id)) return;
     setRecipient(users.find((u) => u.id === id) ?? null);
-  };
-
-  const handleEmailSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isPreview) return;
-    if (!recipient) {
-      setEmailError('Сначала выберите получателя');
-      return;
-    }
-    const normalized = email.trim().toLowerCase();
-    const result = checkCorpEmail(normalized);
-    if (!result.ok) {
-      setEmailError(result.error || 'Некорректный адрес почты');
-      return;
-    }
-    if (normalized !== user?.email.toLowerCase()) {
-      setEmailError('Укажите свою корпоративную почту: отправитель должен совпадать с текущим пользователем');
-      return;
-    }
-    setEmailError('');
-    setStep('amount');
   };
 
   const handleAmountSubmit = (e: React.FormEvent) => {
@@ -198,57 +172,18 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
                   </SelectContent>
                 </Select>
               </div>
-              <Button
-                type="button"
-                disabled={!recipient || isPreview}
-                onClick={() => recipient && setStep('email')}
-              >
-                Продолжить
-              </Button>
-            </div>
-          </>
-        )}
-
-        {step === 'email' && (
-          <>
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Gift className="h-5 w-5 text-primary" />
-                Поздравить сотрудника
-              </DialogTitle>
-              <DialogDescription>
-                {recipient ? `Получатель: ${recipientName}` : 'Выберите получателя'}
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleEmailSubmit} className="flex flex-col gap-4">
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="donate-email">Ваша корпоративная почта</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="donate-email"
-                    type="email"
-                    placeholder="name@company.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-9"
-                    required
-                    autoFocus
-                  />
-                </div>
-              </div>
-              {emailError && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{emailError}</AlertDescription>
-                </Alert>
-              )}
               <div className="rounded-lg bg-muted/50 p-3 text-xs text-muted-foreground">
                 <p className="font-medium text-foreground mb-1">Участие добровольное</p>
                 <p>Поздравить без взноса можно на доске пожеланий — кнопкой «Оставить пожелание».</p>
               </div>
-              <Button type="submit" disabled={isPreview}>Продолжить</Button>
-            </form>
+              <Button
+                type="button"
+                disabled={!recipient || isPreview}
+                onClick={() => recipient && setStep('amount')}
+              >
+                Продолжить
+              </Button>
+            </div>
           </>
         )}
 
@@ -326,7 +261,7 @@ export function DonateDialog({ open, onOpenChange, targetUser }: DonateDialogPro
             <div className="flex flex-col gap-3 py-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">От:</span>
-                <span className="font-medium">{email}</span>
+                <span className="font-medium">{user?.email}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Получатель:</span>

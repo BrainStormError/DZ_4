@@ -6,8 +6,8 @@
 
 | № | Метод и путь | Доступ | Файл |
 | --- | --- | --- | --- |
-| 1 | `POST /api/auth/login` | публичный | `app/api/auth/login/route.ts` |
-| 2 | `POST /api/auth/verify-email` | публичный | `app/api/auth/verify-email/route.ts` |
+| 1 | `GET/POST /api/auth/[...nextauth]` | публичный | `app/api/auth/[...nextauth]/route.ts` |
+| 2 | `POST /api/auth/register` | по ticket регистрации | `app/api/auth/register/route.ts` |
 | 3 | `GET /api/users` | любой авторизованный | `app/api/users/route.ts` |
 | 4 | `GET /api/wishes` | любой авторизованный | `app/api/wishes/route.ts` |
 | 5 | `POST /api/wishes` | любой авторизованный | `app/api/wishes/route.ts` |
@@ -20,14 +20,14 @@
 | 12 | `POST /api/chats/[userEmail]/messages` | любой авторизованный, с проверкой владения веткой | `app/api/chats/[userEmail]/messages/route.ts` |
 | 13 | `POST /api/chats/[userEmail]/read` | только `admin` | `app/api/chats/[userEmail]/read/route.ts` |
 
-Итого: 13 маршрутов, 9 файлов обработчиков, 5 ресурсных групп (auth, users, wishes, donations, chats).
+Итого: 13 маршрутов, 9 файлов обработчиков, 5 ресурсных групп (auth, users, wishes, donations, chats). Все обработчики, кроме маршрута NextAuth и завершения регистрации, требуют действующей сессии.
 
 ## Детализация по маршрутам
 
 | № | Метод и путь | Тело запроса | Успешный ответ | Коды ошибок |
 | --- | --- | --- | --- | --- |
-| 1 | `POST /api/auth/login` | `{"email":"..."}` | `200` `{ok:true, user}` | `400` |
-| 2 | `POST /api/auth/verify-email` | `{"email":"..."}` | `200` `{ok:true, user}` | `400` |
+| 1 | `GET/POST /api/auth/[...nextauth]` | — (OAuth-редиректы и формы NextAuth) | `200` (сессия, JSON или редирект) | `400`, `401`, `403` |
+| 2 | `POST /api/auth/register` | `{"fullName":"...","birthDate":"YYYY-MM-DD","department":"..."}` | `201` `{user}` | `400`, `401` |
 | 3 | `GET /api/users` | — | `200` `User[]` | `401` |
 | 4 | `GET /api/wishes` | — | `200` `Wish[]` | `401` |
 | 5 | `POST /api/wishes` | `{"targetUserId":"...","text":"..."}` | `201` `Wish` | `400`, `401`, `404` |

@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
   id         text PRIMARY KEY,
   full_name  text NOT NULL,
   email      text NOT NULL UNIQUE,
+  google_sub text UNIQUE,
   birth_date date NOT NULL,
   department text NOT NULL,
   avatar_url text NOT NULL,

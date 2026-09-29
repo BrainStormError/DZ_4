@@ -1,18 +1,19 @@
-import { cookies } from 'next/headers';
-import { AUTH_COOKIE_NAME } from './auth-cookie';
-import { findUserByEmail } from './repository';
+import { getServerSession } from 'next-auth';
+import { authOptions } from './auth-options';
+import { findUserById } from './repository';
 import type { User } from './types';
 
 export async function resolveCurrentUser(): Promise<User | null> {
-  const raw = cookies().get(AUTH_COOKIE_NAME)?.value;
-  if (!raw) return null;
+  const session = await getServerSession(authOptions);
+  const userId = session?.userId;
+  if (!userId) return null;
 
-  let email = raw;
-  try {
-    email = decodeURIComponent(raw);
-  } catch {
-    // keep the raw value if it is not a valid percent-encoded string
-  }
+  // The token carries only the id; the stored record stays authoritative for
+  // existence and role, so deleting a row ends the session on the next request.
+  return findUserById(userId);
+}
 
-  return findUserByEmail(email);
+export async function hasUnregisteredSession(): Promise<boolean> {
+  const session = await getServerSession(authOptions);
+  return Boolean(session?.unregistered && !session.userId);
 }

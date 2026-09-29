@@ -80,7 +80,9 @@ export function AdminTable() {
   const { donations, history, setGiftSent, updateDonation } = useDonations();
   const { users, isLoading: directoryLoading, error: directoryError } = useDirectory();
   const { today, isPreview, previewDate, setPreviewDate, resetDate } = useAppDate();
+  const [editOpen, setEditOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<User | null>(null);
+  const [editPreviousAmount, setEditPreviousAmount] = useState(0);
   const [editAmount, setEditAmount] = useState('');
   const [editReason, setEditReason] = useState<RefundReason | ''>('');
   const [editComment, setEditComment] = useState('');
@@ -104,12 +106,15 @@ export function AdminTable() {
     {
       onSuccess: () => {
         toast.success('Сумма обновлена');
-        setEditTarget(null);
+        // Keep the snapshot until the closing transition ends, so the dialog
+        // never renders a missing name or a substituted amount.
+        setEditOpen(false);
       },
     }
   );
 
   useEffect(() => {
+    setEditOpen(false);
     setEditTarget(null);
   }, [pathname]);
 
@@ -171,9 +176,11 @@ export function AdminTable() {
   const handleOpenEdit = (u: User) => {
     const current = getDonation(u.id).totalAmount;
     setEditTarget(u);
+    setEditPreviousAmount(current);
     setEditAmount(String(current));
     setEditReason('');
     setEditComment('');
+    setEditOpen(true);
   };
 
   const handleToggleGift = async (userId: string, sent: boolean) => {
@@ -193,12 +200,11 @@ export function AdminTable() {
     if (!editTarget || !canSave) return;
     const newAmount = parseNonNegativeInt(editAmount);
     if (newAmount === null) return;
-    const current = getDonation(editTarget.id).totalAmount;
     try {
       await updateAction.mutate({
         userId: editTarget.id,
         adminEmail: user.email,
-        previousAmount: current,
+        previousAmount: editPreviousAmount,
         newAmount,
         reason: editReason,
         comment: editComment.trim(),
@@ -425,12 +431,17 @@ export function AdminTable() {
       </Tabs>
 
       {/* Edit Dialog */}
-      <Dialog open={!!editTarget} onOpenChange={(open) => !open && setEditTarget(null)}>
-        <DialogContent className="sm:max-w-md">
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent
+          className="sm:max-w-md"
+          onCloseAutoFocus={() => setEditTarget(null)}
+        >
           <DialogHeader>
             <DialogTitle>Изменить сумму сбора</DialogTitle>
             <DialogDescription>
-              {editTarget?.fullName} — текущая сумма: {getDonation(editTarget?.id || '').totalAmount.toLocaleString('ru-RU')} ₽
+              {editTarget
+                ? `${editTarget.fullName} — текущая сумма: ${editPreviousAmount.toLocaleString('ru-RU')} ₽`
+                : ''}
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4">
@@ -515,7 +526,7 @@ export function AdminTable() {
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditTarget(null)}>
+            <Button variant="outline" onClick={() => setEditOpen(false)}>
               Отмена
             </Button>
             <Button onClick={handleSave} disabled={!canSave || isPreview || updateAction.isLoading}>

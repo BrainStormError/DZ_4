@@ -6,6 +6,8 @@ export interface User {
   id: string;
   fullName: string;
   email: string;
+  /** Google subject id; null for rows created before Google sign-in existed. */
+  googleSub?: string | null;
   birthDate: string; // ISO yyyy-mm-dd
   department: string;
   avatarUrl: string;

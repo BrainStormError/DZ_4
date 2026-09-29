@@ -1,13 +1,21 @@
 import { redirect } from 'next/navigation';
-import { resolveCurrentUser } from '@/lib/session';
+import { resolveCurrentUser, hasUnregisteredSession } from '@/lib/session';
 import { LoginForm } from './LoginForm';
 
-export default async function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams?: { error?: string };
+}) {
   const user = await resolveCurrentUser();
 
   if (user) {
     redirect('/');
   }
 
-  return <LoginForm />;
+  if (await hasUnregisteredSession()) {
+    redirect('/register');
+  }
+
+  return <LoginForm error={searchParams?.error} />;
 }
