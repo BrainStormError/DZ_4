@@ -1,7 +1,27 @@
 import { NextResponse } from 'next/server';
+import { logFailure } from './log';
 
 export function errorResponse(message: string, status: number) {
   return NextResponse.json({ error: message }, { status });
+}
+
+/**
+ * Runs a request handler and records an unexpected repository or database
+ * failure as an `error` entry naming the failed operation, before answering the
+ * client with the application's defined failure response. Validation and
+ * authorization refusals are returned normally, not thrown, so they never reach
+ * this path.
+ */
+export async function withFailureLogging(
+  operation: string,
+  handler: () => Promise<Response>
+): Promise<Response> {
+  try {
+    return await handler();
+  } catch {
+    logFailure(operation);
+    return errorResponse('Внутренняя ошибка сервера', 500);
+  }
 }
 
 export async function parseJsonBody<T>(request: Request): Promise<T | null> {

@@ -1,6 +1,11 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { errorResponse, originGuard, parseJsonBody } from '@/lib/api';
+import {
+  errorResponse,
+  originGuard,
+  parseJsonBody,
+  withFailureLogging,
+} from '@/lib/api';
 import { registrationCookieAttributes, registrationCookieName } from '@/lib/cookies';
 import { logEvent } from '@/lib/log';
 import { readRegistrationTicket } from '@/lib/registration-ticket';
@@ -29,66 +34,68 @@ function clearTicketCookie() {
 }
 
 export async function POST(request: Request) {
-  const blocked = originGuard(request);
-  if (blocked) return blocked;
+  return withFailureLogging('POST /api/auth/register', async () => {
+    const blocked = originGuard(request);
+    if (blocked) return blocked;
 
-  const raw = cookies().get(registrationCookieName())?.value;
-  const ticket = readRegistrationTicket(raw);
-  if (!ticket) {
-    return errorResponse('Регистрация не начата или истекла. Войдите заново.', 401);
-  }
+    const raw = cookies().get(registrationCookieName())?.value;
+    const ticket = readRegistrationTicket(raw);
+    if (!ticket) {
+      return errorResponse('Регистрация не начата или истекла. Войдите заново.', 401);
+    }
 
-  // A ticket is accepted only together with the unregistered session that
-  // produced it, whose confirmed address must match the ticket's.
-  const sessionEmail = await getUnregisteredEmail();
-  if (!sessionEmail || sessionEmail !== ticket.email.trim().toLowerCase()) {
-    return errorResponse('Регистрация не начата или истекла. Войдите заново.', 401);
-  }
+    // A ticket is accepted only together with the unregistered session that
+    // produced it, whose confirmed address must match the ticket's.
+    const sessionEmail = await getUnregisteredEmail();
+    if (!sessionEmail || sessionEmail !== ticket.email.trim().toLowerCase()) {
+      return errorResponse('Регистрация не начата или истекла. Войдите заново.', 401);
+    }
 
-  const body = await parseJsonBody<{
-    fullName?: unknown;
-    birthDate?: unknown;
-    department?: unknown;
-  }>(request);
-  if (!body) {
-    return errorResponse('Некорректный запрос', 400);
-  }
+    const body = await parseJsonBody<{
+      fullName?: unknown;
+      birthDate?: unknown;
+      department?: unknown;
+    }>(request);
+    if (!body) {
+      return errorResponse('Некорректный запрос', 400);
+    }
 
-  const fullName = typeof body.fullName === 'string' ? body.fullName.trim() : '';
-  const birthDate = typeof body.birthDate === 'string' ? body.birthDate.trim() : '';
-  const department =
-    typeof body.department === 'string' ? body.department.trim() : '';
+    const fullName = typeof body.fullName === 'string' ? body.fullName.trim() : '';
+    const birthDate = typeof body.birthDate === 'string' ? body.birthDate.trim() : '';
+    const department =
+      typeof body.department === 'string' ? body.department.trim() : '';
 
-  if (!fullName) return errorResponse('Укажите полное имя', 400);
-  if (!isIsoDate(birthDate)) return errorResponse('Укажите корректную дату рождения', 400);
-  if (!department) return errorResponse('Укажите отдел', 400);
+    if (!fullName) return errorResponse('Укажите полное имя', 400);
+    if (!isIsoDate(birthDate)) return errorResponse('Укажите корректную дату рождения', 400);
+    if (!department) return errorResponse('Укажите отдел', 400);
 
-  const existing = await findUserByEmail(ticket.email);
-  if (existing) {
+    const existing = await findUserByEmail(ticket.email);
+    if (existing) {
+      clearTicketCookie();
+      logEvent('registration', 'already_registered', { account: ticket.email });
+      return NextResponse.json({ user: toPublicUser(existing) });
+    }
+
+    // The role is fixed to `employee`; registration cannot create an administrator.
+    // The insert is conflict-safe, so a concurrent or replayed submission creates
+    // no second record and does not end in an internal error.
+    const user = await createEmployeeUser({
+      email: ticket.email,
+      fullName,
+      birthDate,
+      department,
+      googleSub: ticket.googleSub,
+    });
+
     clearTicketCookie();
-    logEvent('registration', 'already_registered', { account: ticket.email });
-    return NextResponse.json({ user: toPublicUser(existing) });
-  }
 
-  // The role is fixed to `employee`; registration cannot create an administrator.
-  // The insert is conflict-safe, so a concurrent or replayed submission creates
-  // no second record and does not end in an internal error.
-  const user = await createEmployeeUser({
-    email: ticket.email,
-    fullName,
-    birthDate,
-    department,
-    googleSub: ticket.googleSub,
+    if (!user) {
+      const raced = await findUserByEmail(ticket.email);
+      logEvent('registration', 'already_registered', { account: ticket.email });
+      return NextResponse.json({ user: raced ? toPublicUser(raced) : null });
+    }
+
+    logEvent('registration', 'created', { account: ticket.email });
+    return NextResponse.json({ user: toPublicUser(user) }, { status: 201 });
   });
-
-  clearTicketCookie();
-
-  if (!user) {
-    const raced = await findUserByEmail(ticket.email);
-    logEvent('registration', 'already_registered', { account: ticket.email });
-    return NextResponse.json({ user: raced ? toPublicUser(raced) : null });
-  }
-
-  logEvent('registration', 'created', { account: ticket.email });
-  return NextResponse.json({ user: toPublicUser(user) }, { status: 201 });
 }

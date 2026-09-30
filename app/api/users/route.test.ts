@@ -63,4 +63,20 @@ describe('GET /api/users', () => {
 
     expect(response.status).toBe(401);
   });
+
+  it('records an unexpected failure and still answers the defined response', async () => {
+    repo.listUsers.mockRejectedValueOnce(new Error('database unavailable'));
+    const onError = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const response = await GET();
+
+    expect(response.status).toBe(500);
+    const entry = JSON.parse(onError.mock.calls[0][0] as string) as Record<
+      string,
+      unknown
+    >;
+    expect(entry.level).toBe('error');
+    expect(entry.operation).toBe('GET /api/users');
+    onError.mockRestore();
+  });
 });

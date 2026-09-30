@@ -1,0 +1,94 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# A newer run on the same ref cancels the older one.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Lint, type check, tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+
+  # Build the image in the runner (the host only runs a prebuilt image), but
+  # only for a green merge to main.
+  build:
+    name: Build application image
+    needs: checks
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the image
+        run: |
+          docker build \
+            -t corp-gifts-app:${{ github.sha }} \
+            -t corp-gifts-app:latest \
+            .
+      - name: Save the image
+        run: docker save corp-gifts-app:${{ github.sha }} corp-gifts-app:latest | gzip > corp-gifts-app.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: image
+          path: corp-gifts-app.tar.gz
+          retention-days: 1
+
+  # Deliver the built image over SSH and restart the stack. The host's `.env`
+  # and the database volume are never touched, and the previously running image
+  # is retained as `corp-gifts-app:previous` for rollback.
+  deploy:
+    name: Deploy to host
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: image
+
+      - name: Configure SSH access
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Retain the running image as the rollback reference
+        run: |
+          ssh -i ~/.ssh/deploy_key \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
+            "docker image inspect corp-gifts-app:latest >/dev/null 2>&1 && docker tag corp-gifts-app:latest corp-gifts-app:previous || true"
+
+      - name: Deliver the new image
+        run: |
+          gzip -dc corp-gifts-app.tar.gz | \
+            ssh -i ~/.ssh/deploy_key \
+              "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
+              "docker load"
+
+      - name: Sync the stack definition and database init files
+        run: |
+          rsync -az --exclude='.env' -e "ssh -i ~/.ssh/deploy_key" \
+            docker-compose.yml db/ \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:${{ secrets.VPS_DEPLOY_DIR }}/"
+
+      - name: Restart the stack
+        run: |
+          ssh -i ~/.ssh/deploy_key \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
+            "cd '${{ secrets.VPS_DEPLOY_DIR }}' && docker compose up -d"
