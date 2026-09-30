@@ -2,8 +2,11 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
+import { DEMO_ACCOUNTS } from '@/lib/demo-accounts';
 import { ThemeSwitcher } from '@/components/layout/ThemeSwitcher';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Gift, AlertCircle, Loader2 } from 'lucide-react';
@@ -33,6 +36,8 @@ function GoogleMark() {
 
 const ERROR_LABELS: Record<string, string> = {
   AccessDenied: 'Не удалось войти: Google не подтвердил адрес почты аккаунта.',
+  CredentialsSignin:
+    'Не удалось войти: этот адрес не входит в список тестовых. Используйте один из адресов выше.',
   Configuration:
     'Вход не настроен. Проверьте GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET и NEXTAUTH_SECRET.',
   OAuthSignin: 'Не удалось начать вход через Google. Попробуйте ещё раз.',
@@ -41,9 +46,17 @@ const ERROR_LABELS: Record<string, string> = {
   Default: 'Не удалось войти. Попробуйте ещё раз.',
 };
 
-export function LoginForm({ error }: { error?: string }) {
-  const { login } = useAuth();
+export function LoginForm({
+  error,
+  demoEnabled = false,
+}: {
+  error?: string;
+  demoEnabled?: boolean;
+}) {
+  const { login, loginAsDemo } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [demoEmail, setDemoEmail] = useState('');
+  const [demoLoading, setDemoLoading] = useState(false);
   const errorMessage = error
     ? ERROR_LABELS[error] ?? ERROR_LABELS.Default
     : null;
@@ -55,6 +68,18 @@ export function LoginForm({ error }: { error?: string }) {
       await login();
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDemoSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const email = demoEmail.trim();
+    if (!email || demoLoading) return;
+    setDemoLoading(true);
+    try {
+      await loginAsDemo(email);
+    } finally {
+      setDemoLoading(false);
     }
   };
 
@@ -78,16 +103,70 @@ export function LoginForm({ error }: { error?: string }) {
             <CardTitle className="text-xl">Вход в систему</CardTitle>
             <CardDescription>
               Войдите с помощью аккаунта Google
+              {demoEnabled ? ' или тестового адреса' : ''}
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {errorMessage && (
+              <Alert variant="destructive" role="alert" className="mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{errorMessage}</AlertDescription>
+              </Alert>
+            )}
+            {demoEnabled && (
+              <>
+                <form onSubmit={handleDemoSubmit} className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="demo-email">Тестовый адрес</Label>
+                    <Input
+                      id="demo-email"
+                      type="email"
+                      value={demoEmail}
+                      onChange={(e) => setDemoEmail(e.target.value)}
+                      placeholder="адрес из списка ниже"
+                      autoComplete="email"
+                      required
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    variant="secondary"
+                    disabled={demoLoading || demoEmail.trim().length === 0}
+                    className="w-full gap-2"
+                  >
+                    {demoLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                    Войти как тестовый пользователь
+                  </Button>
+                </form>
+                <div
+                  className="mt-4 rounded-md border border-dashed border-input bg-muted/40 p-3"
+                  data-testid="demo-hint"
+                >
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Тестовые данные. Войти можно только под этими адресами:
+                  </p>
+                  <ul className="mt-1 flex flex-col gap-1">
+                    {DEMO_ACCOUNTS.map((account) => (
+                      <li key={account.email}>
+                        <button
+                          type="button"
+                          onClick={() => setDemoEmail(account.email)}
+                          className="text-xs text-primary underline-offset-4 hover:underline"
+                        >
+                          {account.email} — {account.label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="relative my-4 text-center">
+                  <span className="bg-card px-2 text-xs uppercase text-muted-foreground">
+                    или
+                  </span>
+                </div>
+              </>
+            )}
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              {errorMessage && (
-                <Alert variant="destructive" role="alert">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{errorMessage}</AlertDescription>
-                </Alert>
-              )}
               <Button type="submit" disabled={loading} className="w-full gap-2">
                 {loading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />

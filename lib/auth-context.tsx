@@ -7,6 +7,7 @@ import type { User } from './types';
 interface AuthState {
   user: User | null;
   login: () => Promise<void>;
+  loginAsDemo: (email: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -25,14 +26,18 @@ export function AuthProvider({
     await signIn('google', { callbackUrl: '/' });
   }, []);
 
+  const loginAsDemo = useCallback(async (email: string) => {
+    await signIn('demo', { email, callbackUrl: '/' });
+  }, []);
+
   const logout = useCallback(async () => {
     setUser(null);
     await signOut({ callbackUrl: '/login' });
   }, []);
 
   const value = useMemo<AuthState>(
-    () => ({ user, login, logout }),
-    [user, login, logout]
+    () => ({ user, login, loginAsDemo, logout }),
+    [user, login, loginAsDemo, logout]
   );
 
   return (

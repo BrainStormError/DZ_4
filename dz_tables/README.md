@@ -17,7 +17,7 @@
 | Параметр | Значение |
 | --- | --- |
 | Роли | `employee`, `admin` (enum `user_role`, `db/init/001_schema.sql:7`) |
-| Вход | Google OAuth 2.0, провайдер NextAuth v4 (`lib/auth-options.ts`) |
+| Вход | Google OAuth 2.0, провайдер NextAuth v4 (`lib/auth-options.ts`); при `DEMO_LOGIN=1` дополнительно демо-вход по тестовым адресам (`demo` credentials-провайдер) |
 | Cookie сессии | `next-auth.session-token`, подписана и `HttpOnly` (`lib/auth-options.ts`) |
 | Администратор | назначается вручную в БД (`UPDATE users SET role = 'admin' ...`) |
-| Демо-записи | `anna.smirnova@company.com`, `alexander.petrov@company.com` — данные для получателей, но войти под ними нельзя (нет Google-аккаунта) |
+| Демо-записи | `anna.smirnova@company.com` (сотрудник), `alexander.petrov@company.com` (администратор) — данные для получателей; при `DEMO_LOGIN=1` под ними можно войти с ролью из записи, иначе вход только через Google |

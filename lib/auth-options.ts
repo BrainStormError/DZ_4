@@ -1,9 +1,11 @@
 import { cookies } from 'next/headers';
 import type { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
+import CredentialsProvider from 'next-auth/providers/credentials';
 import { findUserByEmail, findUserByGoogleSub } from './repository';
 import { registrationCookieAttributes, registrationCookieName } from './cookies';
-import { requireSecret } from './config';
+import { requireSecret, isDemoLoginEnabled } from './config';
+import { isDemoAccount } from './demo-accounts';
 import { resolveSignInUser } from './identity';
 import { logEvent } from './log';
 import {
@@ -31,6 +33,23 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+    }),
+    // The demo sign-in shares the same JWT session pipeline as Google. It is
+    // accepted only for the documented test addresses and only while the
+    // demo switch is on; the role is never sent by the client.
+    CredentialsProvider({
+      id: 'demo',
+      name: 'Demo',
+      credentials: {
+        email: { label: 'Email', type: 'email' },
+      },
+      async authorize(credentials) {
+        const email = String(credentials?.email ?? '').trim().toLowerCase();
+        if (!isDemoLoginEnabled() || !isDemoAccount(email)) return null;
+        const stored = await findUserByEmail(email);
+        if (!stored) return null;
+        return { ...stored, id: stored.id, name: stored.fullName };
+      },
     }),
   ],
   session: {
@@ -62,6 +81,28 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user, account, profile }) {
+      if (account?.provider === 'demo') {
+        const demoEmail = user.email?.trim().toLowerCase();
+        if (!isDemoLoginEnabled()) {
+          logEvent('sign_in', 'refused', {
+            reason: 'demo_disabled',
+            account: demoEmail,
+          });
+          return false;
+        }
+        if (!demoEmail || !isDemoAccount(demoEmail)) {
+          logEvent('sign_in', 'refused', {
+            reason: 'demo_not_allowed',
+            account: demoEmail,
+          });
+          return false;
+        }
+        // A known demo address never needs a registration ticket.
+        clearRegistrationTicket();
+        logEvent('sign_in', 'accepted', { account: demoEmail, demo: true });
+        return true;
+      }
+
       if (account?.provider !== 'google') {
         logEvent('sign_in', 'refused', { reason: 'provider', account: user.email });
         return false;

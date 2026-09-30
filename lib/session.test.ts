@@ -74,6 +74,22 @@ describe('resolveCurrentUser', () => {
   });
 });
 
+describe('resolveCurrentUser after a demo sign-in', () => {
+  it.each([
+    ['anna.smirnova@company.com', 'u1', 'employee'],
+    ['alexander.petrov@company.com', 'u10', 'admin'],
+  ])('returns the stored record and role for %s', async (_email, id, role) => {
+    sessionState.session = { userId: id };
+    const record: User = { ...storedUser, id, role: role as User['role'] };
+    repo.findUserById.mockResolvedValue(record);
+
+    const user = await resolveCurrentUser();
+
+    expect(user).toBe(record);
+    expect(user?.role).toBe(role);
+  });
+});
+
 describe('session token integrity', () => {
   it('rejects a modified or unsigned session value', async () => {
     const secret = process.env.NEXTAUTH_SECRET as string;

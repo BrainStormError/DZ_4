@@ -37,6 +37,9 @@ services:
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
       REGISTRATION_TICKET_SECRET: ${REGISTRATION_TICKET_SECRET}
       NEXTAUTH_URL: ${NEXTAUTH_URL}
+      # Demo sign-in is enabled in this demo stack; set DEMO_LOGIN=0 to return
+      # to strict Google-only sign-in.
+      DEMO_LOGIN: ${DEMO_LOGIN:-1}
     ports:
       - "127.0.0.1:3000:3000"
     mem_limit: 384m

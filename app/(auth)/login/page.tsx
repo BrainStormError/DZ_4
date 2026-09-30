@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { resolveCurrentUser, hasUnregisteredSession } from '@/lib/session';
+import { isDemoLoginEnabled } from '@/lib/config';
 import { LoginForm } from './LoginForm';
 
 export default async function LoginPage({
@@ -17,5 +18,12 @@ export default async function LoginPage({
     redirect('/register');
   }
 
-  return <LoginForm error={searchParams?.error} />;
+  // The demo switch is read on the server so the disabled state is decided
+  // before any markup is sent: with it off, only the Google control renders.
+  return (
+    <LoginForm
+      error={searchParams?.error}
+      demoEnabled={isDemoLoginEnabled()}
+    />
+  );
 }

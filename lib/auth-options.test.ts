@@ -121,6 +121,158 @@ describe('authOptions.signIn', () => {
   });
 });
 
+describe('authOptions demo provider', () => {
+  // The raw provider entry keeps the configured options under `options`; core
+  // merges them in before use, so the effective provider id is `demo`.
+  const demoProvider = authOptions.providers.find(
+    (p) => (p as unknown as { options?: { id?: string } }).options?.id === 'demo'
+  ) as unknown as {
+    options: {
+      authorize: (
+        credentials: Record<string, string> | undefined
+      ) => Promise<{ email?: string; name?: string } | null>;
+    };
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    process.env.DEMO_LOGIN = '1';
+    repo.findUserByEmail.mockResolvedValue(
+      user({ email: 'anna.smirnova@company.com' })
+    );
+  });
+
+  afterEach(() => {
+    delete process.env.DEMO_LOGIN;
+  });
+
+  it('returns the stored record for an accepted demo address', async () => {
+    const result = await demoProvider.options.authorize({
+      email: 'anna.smirnova@company.com',
+    });
+
+    expect(result).not.toBeNull();
+    expect(result?.email).toBe('anna.smirnova@company.com');
+    expect(result?.name).toBe('Анна Смирнова');
+  });
+
+  it('returns null while the demo setting is off', async () => {
+    delete process.env.DEMO_LOGIN;
+
+    expect(
+      await demoProvider.options.authorize({ email: 'anna.smirnova@company.com' })
+    ).toBeNull();
+  });
+
+  it('returns null for an address outside the allow-list', async () => {
+    expect(
+      await demoProvider.options.authorize({ email: 'other@company.com' })
+    ).toBeNull();
+    expect(repo.findUserByEmail).not.toHaveBeenCalled();
+  });
+});
+
+describe('authOptions.signIn demo branch', () => {
+  function demoSignInInput(email: string) {
+    return {
+      user: { email },
+      account: { provider: 'demo' },
+      profile: undefined,
+    } as never;
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    delete process.env.DEMO_LOGIN;
+  });
+
+  it('accepts an allow-listed address when enabled', async () => {
+    process.env.DEMO_LOGIN = '1';
+
+    const result = await authOptions.callbacks!.signIn!(
+      demoSignInInput('anna.smirnova@company.com')
+    );
+
+    expect(result).toBe(true);
+    expect(log.logEvent).toHaveBeenCalledWith(
+      'sign_in',
+      'accepted',
+      expect.objectContaining({ demo: true })
+    );
+  });
+
+  it('refuses an address outside the allow-list when enabled', async () => {
+    process.env.DEMO_LOGIN = '1';
+
+    const result = await authOptions.callbacks!.signIn!(
+      demoSignInInput('other@company.com')
+    );
+
+    expect(result).toBe(false);
+    expect(log.logEvent).toHaveBeenCalledWith(
+      'sign_in',
+      'refused',
+      expect.objectContaining({ reason: 'demo_not_allowed' })
+    );
+  });
+
+  it('refuses an allow-listed address when disabled', async () => {
+    delete process.env.DEMO_LOGIN;
+
+    const result = await authOptions.callbacks!.signIn!(
+      demoSignInInput('anna.smirnova@company.com')
+    );
+
+    expect(result).toBe(false);
+    expect(log.logEvent).toHaveBeenCalledWith(
+      'sign_in',
+      'refused',
+      expect.objectContaining({ reason: 'demo_disabled' })
+    );
+  });
+});
+
+describe('authOptions.jwt demo resolution', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it.each([
+    ['anna.smirnova@company.com', 'employee'],
+    ['alexander.petrov@company.com', 'admin'],
+  ])('resolves %s to the stored id and role', async (email, role) => {
+    const id = `u-${email}`;
+    repo.findUserByEmail.mockResolvedValue(
+      user({ id, email, role: role as User['role'] })
+    );
+
+    const token = await authOptions.callbacks!.jwt!({
+      token: {},
+      user: { email },
+      profile: undefined,
+    } as never);
+
+    expect(token.userId).toBe(id);
+    expect(token.email).toBe(email);
+  });
+
+  it('marks an unknown demo-shaped address as unregistered', async () => {
+    repo.findUserByEmail.mockResolvedValue(null);
+
+    const token = await authOptions.callbacks!.jwt!({
+      token: {},
+      user: { email: 'ghost@company.com' },
+      profile: undefined,
+    } as never);
+
+    expect(token.userId).toBeUndefined();
+    expect(token.unregistered).toBe(true);
+  });
+});
+
 describe('authOptions production cookie attributes', () => {
   afterEach(() => {
     vi.unstubAllEnvs();

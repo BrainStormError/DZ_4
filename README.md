@@ -43,6 +43,7 @@ cp .env.example .env
 | `NEXTAUTH_SECRET` | секрет подписи сессионной cookie (например, `openssl rand -base64 32`) |
 | `REGISTRATION_TICKET_SECRET` | отдельный секрет подписи ticket регистрации; должен отличаться от `NEXTAUTH_SECRET` |
 | `NEXTAUTH_URL` | публичный HTTPS-адрес, по которому пользователи реально открывают приложение |
+| `DEMO_LOGIN` | `1` включает демо-вход по тестовым адресам на `/login`; любое другое значение (в том числе отсутствие) оставляет вход только через Google |
 
 Файл `.env` не коммитится. Если `DATABASE_URL` не задан, приложение не подменяет данные встроенными значениями, а сообщает об ошибке подключения. Если `NEXTAUTH_SECRET` или `REGISTRATION_TICKET_SECRET` не заданы или оставлены примером из `.env.example`, приложение сообщает об ошибке конфигурации вместо запуска входа.
 
@@ -206,9 +207,10 @@ docker compose up -d
   `UPDATE users SET role = 'admin' WHERE email = '<адрес>';`
 - Сессия хранится в подписанной `HttpOnly`-cookie и не читается клиентским JavaScript; выход очищает её на сервере. **Срок жизни сессии — 12 часов**, после чего она не аутентифицирует пользователя.
 - Cookie сессии и ticket регистрации в продакшене помечаются `Secure` и префиксом `__Secure-` независимо от написания `NEXTAUTH_URL`.
-- Демо-записи `anna.smirnova@company.com` и `alexander.petrov@company.com` остаются в базе как получатели подарков, но войти под ними нельзя: отдельного Google-аккаунта у них нет.
+- **Демо-вход по тестовым адресам.** При `DEMO_LOGIN=1` на `/login` над кнопкой Google появляется поле тестового адреса и подсказка с двумя адресами: `anna.smirnova@company.com` входит как сотрудник, `alexander.petrov@company.com` — как администратор. Роль берётся из записи в базе, а не из запроса, и создаётся та же подписанная `HttpOnly`-сессия, что и при входе через Google. Принимаются только эти два адреса: любой другой (включая реальный адрес из справочника) отклоняется с сообщением об ошибке и не создаёт сессию. При `DEMO_LOGIN` со значением, отличным от `1` (в том числе не заданном), поле и подсказка не отображаются, а сервер отклоняет демо-вход — остаётся строгий вход только через Google.
+- Демо-записи `anna.smirnova@company.com` и `alexander.petrov@company.com` остаются в базе как получатели подарков; в demo-режиме под ними можно войти, но отдельного Google-аккаунта у них нет.
 
-Чтобы настроить вход, создайте OAuth-клиент в Google Cloud, добавьте redirect URI `https://<публичный-хост>/api/auth/callback/google` и заполните `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `NEXTAUTH_SECRET`, `REGISTRATION_TICKET_SECRET` и `NEXTAUTH_URL` (см. `.env.example` и раздел «Развёртывание»).
+Чтобы настроить вход, создайте OAuth-клиент в Google Cloud, добавьте redirect URI `https://<публичный-хост>/api/auth/callback/google` и заполните `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `NEXTAUTH_SECRET`, `REGISTRATION_TICKET_SECRET`, `NEXTAUTH_URL` и `DEMO_LOGIN` (см. `.env.example` и раздел «Развёртывание»).
 
 ## Страницы приложения
 
