@@ -22,10 +22,10 @@ const mockSession = {
   googleSub: null,
 };
 
-vi.mock('next-auth/react', async (importOriginal) => {
-  const actual = await importOriginal();
+vi.mock('next-auth/react', async () => {
+  const actual = await vi.importActual('next-auth/react');
   return {
-    ...actual,
+    ...actual as object,
     signIn: vi.fn(),
     signOut: vi.fn(),
     SessionProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
