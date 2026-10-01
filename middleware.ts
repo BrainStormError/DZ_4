@@ -15,7 +15,7 @@ export function middleware(request: NextRequest) {
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https:",
     "font-src 'self'",
-    "connect-src 'self'",
+    "connect-src 'self' https://mc.yandex.ru https://yastatic.net https://yandex.ru",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
