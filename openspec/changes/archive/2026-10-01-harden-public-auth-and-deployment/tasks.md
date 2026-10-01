@@ -40,14 +40,14 @@
 
 ## 5. Host deployment
 
-- [ ] 5.1 Install the TLS endpoint on the host with a free dynamic-DNS name and point it at the loopback application port; verify the HTTPS address serves the application with a valid certificate
-- [ ] 5.2 Retire the quick tunnel currently used for sign-in; verify the previous address no longer serves the application and the tunnel is not in the start-up configuration
-- [ ] 5.3 Recreate the stack with the loopback binding and the documented environment file; verify the application port is refused from outside and the application is reachable through the HTTPS address
-- [ ] 5.4 Configure the provider console as documented — the exact redirect address and the consent configuration — and verify that an account which was never pre-registered in the console completes sign-in end to end
-- [ ] 5.5 Place strong, distinct signing secrets in the host environment file and confirm it is not tracked by the repository; verify the running application reports no misconfiguration and the file is absent from the repository's tracked files
+- [x] 5.1 Install the TLS endpoint on the host with a free dynamic-DNS name and point it at the loopback application port; verify the HTTPS address serves the application with a valid certificate
+- [x] 5.2 Retire the quick tunnel currently used for sign-in; verify the previous address no longer serves the application and the tunnel is not in the start-up configuration
+- [x] 5.3 Recreate the stack with the loopback binding and the documented environment file; verify the application port is refused from outside and the application is reachable through the HTTPS address
+- [x] 5.4 Configure the provider console as documented — the exact redirect address and the consent configuration — and verify that an account which was never pre-registered in the console completes sign-in end to end
+- [x] 5.5 Place strong, distinct signing secrets in the host environment file and confirm it is not tracked by the repository; verify the running application reports no misconfiguration and the file is absent from the repository's tracked files
 
 ## 6. Verification
 
-- [ ] 6.1 Pass the full flow on the built application: an employee sees no collected amount and no journal internals anywhere, an administrator sees both, participation still marks a declined recipient, a participation for an ineligible recipient is refused, an unknown account registers as an employee, and the container log shows the recorded security events; verify each observation
-- [x] 6.2 Run `npm run lint`, `npm run typecheck`, `npm test`, and `npm run build && npm run start`; verify all four succeed
-- [ ] 6.3 Compare the deployed configuration with the repository version using the documented check; verify the check reports no difference, and that a deliberately stale copy is reported
+- [x] 6.1 Pass the full flow on the built application: an employee sees no collected amount and no journal internals anywhere, an administrator sees both, participation still marks a declined recipient, a participation for an ineligible recipient is refused, an unknown account registers as an employee, and the container log shows the recorded security events; verify each observation
+- [x] 6.2 Run `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build && npm run start`; verify all four succeed
+- [x] 6.3 Compare the deployed configuration with the repository version using the documented check; verify the check reports no difference, and that a deliberately stale copy is reported

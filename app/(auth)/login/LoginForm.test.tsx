@@ -5,10 +5,33 @@ import { renderWithProviders } from '@/lib/test-utils';
 import { DEMO_ACCOUNTS } from '@/lib/demo-accounts';
 import { LoginForm } from './LoginForm';
 
-vi.mock('next-auth/react', () => ({
-  signIn: vi.fn(),
-  signOut: vi.fn(),
-}));
+const mockSession = {
+  user: {
+    id: 'u1',
+    email: 'test@company.com',
+    name: 'Test User',
+    image: '',
+  },
+  expires: new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString(),
+  userId: 'u1',
+  fullName: 'Test User',
+  role: 'employee' as const,
+  avatarUrl: '',
+  birthDate: '1990-01-01',
+  department: 'Test',
+  googleSub: null,
+};
+
+vi.mock('next-auth/react', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    signIn: vi.fn(),
+    signOut: vi.fn(),
+    SessionProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    useSession: () => ({ data: mockSession, status: 'authenticated' }),
+  };
+});
 
 import { signIn } from 'next-auth/react';
 

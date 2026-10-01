@@ -56,7 +56,7 @@ cp .env.example .env
 У развёрнутого стека должны быть выполнены условия:
 
 - **Исходящий доступ по HTTPS к эндпоинтам Google** (`accounts.google.com`, `oauth2.googleapis.com` и связанным с ними). Без egress вход невозможен.
-- **Адрес обратного вызова, который реально достижим.** Значение `NEXTAUTH_URL` должно совпадать с публичным адресом приложения и с redirect URI, зарегистрированным в Google Cloud: `https://<публичный-хост>/api/auth/callback/google`. Если адрес не совпадает, вход завершается сообщением об ошибке, а не «зависанием».
+- **Адрес обратного вызова, который реально достижим.** `NEXTAUTH_URL` — это **только origin публичного адреса**, без пути: `https://<публичный-хост>`. NextAuth сам добавляет `/api/auth`. Redirect URI, который нужно зарегистрировать в Google Cloud, — это `NEXTAUTH_URL` плюс `/api/auth/callback/google`, то есть `https://<публичный-хост>/api/auth/callback/google`. Если указать в `NEXTAUTH_URL` путь (например, сам callback), NextAuth строит неверные служебные адреса: Google вернёт `redirect_uri_mismatch`, а обработка ошибок уйдёт в цикл редиректов.
 
 TLS завершается на хосте перед приложением, поэтому внешний адрес всегда `https://…`. Сессионная cookie и cookie ticket регистрации в продакшене всегда помечаются флагом `Secure` и используют префикс `__Secure-`; это следует из режима запуска, а не из написания `NEXTAUTH_URL`. Локальная разработка на `http://localhost` продолжает работать: браузеры считают localhost защищённым контекстом.
 
@@ -147,7 +147,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS google_sub text UNIQUE;
    Сервис `app` стартует только после того, как база станет здоровой (`healthcheck` у `db`). Приложение подключается к базе по имени сервиса `db` через `DATABASE_URL`.
 
 5. Настройте консоль провайдера (Google Cloud → OAuth consent screen и OAuth client):
-   - **redirect URI**: ровно `https://<публичный-хост>/api/auth/callback/google` (совпадает со значением `NEXTAUTH_URL`);
+   - **redirect URI**: ровно `https://<публичный-хост>/api/auth/callback/google` (это `NEXTAUTH_URL`, к которому добавлен `/api/auth/callback/google`; сам `NEXTAUTH_URL` — только `https://<публичный-хост>`, без пути);
    - **User type**: `External`. Тип `Internal` допускает только аккаунты одного Workspace и не пустит внешнего проверяющего;
    - **Publishing status**: `In production` (или добавьте проверяющего в `Test users`, пока приложение в статусе `Testing`). Это и есть конфигурация согласия, позволяющая войти человеку, которого **не** регистрировали заранее.
 

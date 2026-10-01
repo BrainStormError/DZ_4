@@ -163,6 +163,12 @@ export const authOptions: NextAuthOptions = {
           (await findUserByEmail(email)) ?? (sub ? await findUserByGoogleSub(sub) : null);
         if (stored) {
           token.userId = stored.id;
+          token.fullName = stored.fullName;
+          token.role = stored.role;
+          token.avatarUrl = stored.avatarUrl;
+          token.birthDate = stored.birthDate;
+          token.department = stored.department;
+          token.googleSub = stored.googleSub;
           delete token.unregistered;
         } else {
           token.userId = undefined;
@@ -173,6 +179,12 @@ export const authOptions: NextAuthOptions = {
         const stored = await findUserByEmail(token.email);
         if (stored) {
           token.userId = stored.id;
+          token.fullName = stored.fullName;
+          token.role = stored.role;
+          token.avatarUrl = stored.avatarUrl;
+          token.birthDate = stored.birthDate;
+          token.department = stored.department;
+          token.googleSub = stored.googleSub;
           delete token.unregistered;
         }
       }
@@ -181,6 +193,12 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       session.userId = token.userId;
       session.unregistered = Boolean(token.unregistered);
+      session.fullName = token.fullName;
+      session.role = token.role;
+      session.avatarUrl = token.avatarUrl;
+      session.birthDate = token.birthDate;
+      session.department = token.department;
+      session.googleSub = token.googleSub;
       if (session.user && typeof token.email === 'string') {
         session.user.email = token.email;
       }

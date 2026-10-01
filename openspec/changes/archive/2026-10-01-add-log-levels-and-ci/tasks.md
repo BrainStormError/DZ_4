@@ -22,4 +22,4 @@
 ## 5. Verification
 
 - [x] 5.1 Run `npm run lint`, `npm run typecheck`, `npm test`, and `npm run build`; verify all four succeed
-- [ ] 5.2 Confirm end to end that a green merge to `main` deploys while a failing check blocks deployment, the host environment file and database volume are untouched, and the previous image remains available for rollback; verify each observation on the host
+- [x] 5.2 Confirm end to end that a green merge to `main` deploys while a failing check blocks deployment, the host environment file and database volume are untouched, and the previous image remains available for rollback; verify each observation on the host

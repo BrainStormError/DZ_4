@@ -23,8 +23,8 @@
 
 ## 5. Verification
 
-- [ ] 5.1 With the demo sign-in enabled, sign in as the employee and as the administrator test address; verify the employee sees the employee surface and no administrative data, and the administrator reaches the administrative section
-- [ ] 5.2 With the demo sign-in enabled, submit an address outside the documented set and a real stored employee address; verify both are refused with the defined error and no session is created
-- [ ] 5.3 With the demo sign-in enabled, verify Google sign-in still starts and completes on the same screen
-- [ ] 5.4 With the demo sign-in disabled, verify the screen offers only Google and a demo sign-in attempt is refused by the server
+- [x] 5.1 With the demo sign-in enabled, sign in as the employee and as the administrator test address; verify the employee sees the employee surface and no administrative data, and the administrator reaches the administrative section
+- [x] 5.2 With the demo sign-in enabled, submit an address outside the documented set and a real stored employee address; verify both are refused with the defined error and no session is created
+- [x] 5.3 With the demo sign-in enabled, verify Google sign-in still starts and completes on the same screen
+- [x] 5.4 With the demo sign-in disabled, verify the screen offers only Google and a demo sign-in attempt is refused by the server
 - [x] 5.5 Run `npm run lint`, `npm run typecheck`, and the test suite; verify all pass

@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import type { ReactElement } from 'react';
+import { SessionProvider } from 'next-auth/react';
 import { ThemeProvider } from '@/lib/theme-context';
-import { AuthProvider } from '@/lib/auth-context';
 import { DirectoryProvider } from '@/lib/directory-context';
 import { DataProvider } from '@/lib/data-context';
 import { DateProvider } from '@/lib/date-context';
@@ -16,15 +16,34 @@ export function renderWithProviders(
   ui: ReactElement,
   { user = null }: { user?: User | null } = {}
 ) {
+  const session = user
+    ? {
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.fullName,
+          image: user.avatarUrl,
+        },
+        expires: new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString(),
+        userId: user.id,
+        fullName: user.fullName,
+        role: user.role,
+        avatarUrl: user.avatarUrl,
+        birthDate: user.birthDate,
+        department: user.department,
+        googleSub: user.googleSub,
+      }
+    : undefined;
+
   return render(
-    <ThemeProvider>
-      <AuthProvider initialUser={user}>
+    <SessionProvider session={session}>
+      <ThemeProvider>
         <DateProvider>
           <DirectoryProvider>
             <DataProvider>{ui}</DataProvider>
           </DirectoryProvider>
         </DateProvider>
-      </AuthProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </SessionProvider>
   );
 }

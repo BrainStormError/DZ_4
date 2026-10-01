@@ -3,8 +3,7 @@ import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { Manrope } from 'next/font/google';
 import { Toaster } from 'sonner';
-import { AuthProvider } from '@/lib/auth-context';
-import { resolveCurrentUser } from '@/lib/session';
+import { SessionProvider } from 'next-auth/react';
 import { ThemeProvider } from '@/lib/theme-context';
 import { DateProvider } from '@/lib/date-context';
 
@@ -30,7 +29,6 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const initialUser = await resolveCurrentUser();
   const nonce = headers().get('x-nonce') ?? undefined;
 
   return (
@@ -39,11 +37,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <script nonce={nonce} dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body>
-        <ThemeProvider>
-          <AuthProvider initialUser={initialUser}>
+        <SessionProvider>
+          <ThemeProvider>
             <DateProvider>{children}</DateProvider>
-          </AuthProvider>
-        </ThemeProvider>
+          </ThemeProvider>
+        </SessionProvider>
         <Toaster />
       </body>
     </html>
