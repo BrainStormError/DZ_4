@@ -3,9 +3,7 @@ import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { Manrope } from 'next/font/google';
 import { Toaster } from 'sonner';
-import { SessionProvider } from 'next-auth/react';
-import { ThemeProvider } from '@/lib/theme-context';
-import { DateProvider } from '@/lib/date-context';
+import { Providers } from './providers';
 
 const manrope = Manrope({
   subsets: ['latin', 'cyrillic'],
@@ -37,11 +35,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <script nonce={nonce} dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body>
-        <SessionProvider>
-          <ThemeProvider>
-            <DateProvider>{children}</DateProvider>
-          </ThemeProvider>
-        </SessionProvider>
+        <Providers>{children}</Providers>
         <Toaster />
       </body>
     </html>

@@ -23,9 +23,9 @@ const mockSession = {
 };
 
 vi.mock('next-auth/react', async () => {
-  const actual = await vi.importActual('next-auth/react');
+  const actual = await vi.importActual<typeof import('next-auth/react')>('next-auth/react');
   return {
-    ...actual as object,
+    ...actual,
     signIn: vi.fn(),
     signOut: vi.fn(),
     SessionProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
