@@ -1,6 +1,30 @@
 import '@testing-library/jest-dom/vitest';
 import { vi } from 'vitest';
 
+const mockSessionResponse = {
+  user: null,
+  expires: new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString(),
+};
+
+const mockLogResponse = { ok: true };
+
+vi.stubGlobal('fetch', vi.fn(async (url: string | URL | Request) => {
+  const urlStr = typeof url === 'string' ? url : url instanceof URL ? url.toString() : url.url;
+  if (urlStr.includes('/api/auth/session')) {
+    return new Response(JSON.stringify(mockSessionResponse), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+  if (urlStr.includes('/api/auth/_log')) {
+    return new Response(JSON.stringify(mockLogResponse), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+  return new Response(null, { status: 404 });
+}));
+
 vi.mock('sonner', () => ({
   toast: {
     success: vi.fn(),
