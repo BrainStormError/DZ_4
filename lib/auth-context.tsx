@@ -12,7 +12,7 @@ interface AuthState {
 
 interface ExtendedSession {
   userId?: string;
-  email?: string;
+  user?: { email?: string | null };
   fullName?: string;
   role?: User['role'];
   avatarUrl?: string;
@@ -40,13 +40,15 @@ export function useAuth(): AuthState {
     return { user: null, login, loginAsDemo, logout };
   }
 
-  if (!session?.userId || !session?.email) {
+  const email = session?.user?.email?.trim().toLowerCase() || undefined;
+
+  if (!session?.userId || !email) {
     return { user: null, login, loginAsDemo, logout };
   }
 
   const user: User = {
     id: session.userId,
-    email: session.email,
+    email,
     fullName: session.fullName ?? '',
     role: session.role ?? 'employee',
     avatarUrl: session.avatarUrl ?? '',
