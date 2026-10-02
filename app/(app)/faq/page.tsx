@@ -11,6 +11,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ChatThread } from '@/components/features/ChatThread';
+import { ContentSkeleton } from '@/components/layout/ContentSkeleton';
 import { HelpCircle, Mail } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useChats } from '@/lib/data-context';
@@ -151,14 +152,7 @@ function FAQContent() {
 
 export default function FAQPage() {
   return (
-    <Suspense
-      fallback={
-        <div
-          className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8 min-h-[60vh]"
-          aria-busy="true"
-        />
-      }
-    >
+    <Suspense fallback={<ContentSkeleton />}>
       <FAQContent />
     </Suspense>
   );

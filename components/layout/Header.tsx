@@ -32,6 +32,26 @@ export function Header() {
   const pathname = usePathname();
   const mobileNavRef = useRef<HTMLElement>(null);
   const [hasNavOverflow, setHasNavOverflow] = useState(false);
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
+
+  useEffect(() => {
+    setPendingHref(null);
+  }, [pathname]);
+
+  const handleNavClick = (event: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (
+      event.button !== 0 ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+    setPendingHref(href);
+  };
+
+  const isActive = (href: string) => (pendingHref ?? pathname) === href;
 
   const isAdmin = user?.role === 'admin';
   const unreadCount = isAdmin ? countUnreadMessages(chats) : 0;
@@ -74,11 +94,12 @@ export function Header() {
     <>
       {navItems.map((item) => {
         const Icon = item.icon;
-        const active = pathname === item.href;
+        const active = isActive(item.href);
         return (
           <Link
             key={item.href}
             href={item.href}
+            onClick={(event) => handleNavClick(event, item.href)}
             className={cn(
               linkClassName,
               active
@@ -94,9 +115,10 @@ export function Header() {
       {isAdmin && (
         <Link
           href="/admin"
+          onClick={(event) => handleNavClick(event, '/admin')}
           className={cn(
             linkClassName,
-            pathname === '/admin'
+            isActive('/admin')
               ? 'bg-primary text-primary-foreground'
               : 'text-muted-foreground hover:text-foreground hover:bg-muted'
           )}
