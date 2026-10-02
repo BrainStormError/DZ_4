@@ -27,6 +27,11 @@ export async function query<T extends QueryResultRow = QueryResultRow>(
   return result.rows;
 }
 
+/** Runs a single trivial query so a caller can confirm the pool can reach PostgreSQL. */
+export async function pingDatabase(): Promise<void> {
+  await query('SELECT 1');
+}
+
 export async function withTransaction<T>(
   fn: (client: PoolClient) => Promise<T>
 ): Promise<T> {

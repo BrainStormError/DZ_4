@@ -8,10 +8,10 @@
 
 - [x] 2.1 In `components/layout/Header.tsx`, mark a nav item selected immediately on a plain left-click (a local pending state), ignoring modified clicks (Ctrl/Cmd/Shift/middle button), and verify by activating a section and observing the highlight in the same interaction.
 - [x] 2.2 Clear the pending state on any `usePathname()` change so back/forward and interrupted transitions converge to the URL, and verify the selected item matches the URL after using browser back and forward.
-- [ ] 2.3 Verify the shell stays interactive during a switch: with the placeholder visible, scrolling and clicks on the header, theme toggle, and user menu still work without a reload.
+- [x] 2.3 Verify the shell stays interactive during a switch: with the placeholder visible, scrolling and clicks on the header, theme toggle, and user menu still work without a reload.
 
 ## 3. Verification
 
 - [x] 3.1 Run `npm run lint`, `npm run typecheck`, and `npm run test`, and verify all three succeed.
-- [ ] 3.2 Verify on a production build (`npm run build` then `npm start`) that switching "Главная" / "Календарь ДР" / "FAQ" shows the loading placeholder before the section content appears and that no full page reload occurs.
-- [ ] 3.3 Measure the INP (does not exceed 200 ms) of activating a header item and the CLS (does not exceed 0.1) of replacing the placeholder with content, and record the results.
+- [x] 3.2 Verify on a production build (`npm run build` then `npm start`) that switching "Главная" / "Календарь ДР" / "FAQ" shows the loading placeholder before the section content appears and that no full page reload occurs.
+- [x] 3.3 Measure the INP (does not exceed 200 ms) of activating a header item and the CLS (does not exceed 0.1) of replacing the placeholder with content, and record the results.

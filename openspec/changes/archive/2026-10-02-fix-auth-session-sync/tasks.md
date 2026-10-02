@@ -19,16 +19,16 @@
 ## 4. Integration Testing — Manual Verification Flow
 
 - [x] 4.1 Start dev server (`npm run dev`). **Verify:** Server starts without errors.
-- [ ] 4.2 Test Google OAuth sign-in: click "Войти через Google", complete OAuth flow, land on registration page, fill form, submit. **Verify:** Redirected to `/`, user avatar + name visible in header top-right, dropdown shows "Выйти".
-- [ ] 4.3 Test "Поздравить / отправить средства" button: click, select recipient, enter amount, confirm. **Verify:** Toast shows success, dialog closes.
-- [ ] 4.4 Test chat: navigate to FAQ page, click "Написать админу" tab. **Verify:** Input field visible at bottom, can type and send message.
-- [ ] 4.5 Test logout: click avatar dropdown → "Выйти". **Verify:** Redirected to `/login`, session cleared.
-- [ ] 4.6 Test demo sign-in (if enabled): go to `/login`, click demo employee button. **Verify:** Signed in as employee, avatar visible.
-- [ ] 4.7 Test demo admin sign-in: click demo admin button. **Verify:** Signed in as admin, admin panel accessible.
+- [x] 4.2 Test Google OAuth sign-in: click "Войти через Google", complete OAuth flow, land on registration page, fill form, submit. **Verify:** Redirected to `/`, user avatar + name visible in header top-right, dropdown shows "Выйти".
+- [x] 4.3 Test "Поздравить / отправить средства" button: click, select recipient, enter amount, confirm. **Verify:** Toast shows success, dialog closes.
+- [x] 4.4 Test chat: navigate to FAQ page, click "Написать админу" tab. **Verify:** Input field visible at bottom, can type and send message.
+- [x] 4.5 Test logout: click avatar dropdown → "Выйти". **Verify:** Redirected to `/login`, session cleared.
+- [x] 4.6 Test demo sign-in (if enabled): go to `/login`, click demo employee button. **Verify:** Signed in as employee, avatar visible.
+- [x] 4.7 Test demo admin sign-in: click demo admin button. **Verify:** Signed in as admin, admin panel accessible.
 
 ## 5. Edge Cases & Polish
 
-- [ ] 5.1 Handle loading state in `Header`: show skeleton/placeholder while `status === 'loading'`. **Verify:** No flash of missing avatar on hard refresh.
-- [ ] 5.2 Ensure `signOut({ callbackUrl: '/login' })` in adapter works correctly. **Verify:** Logout redirects to `/login` page.
+- [x] 5.1 Handle loading state in `Header`: show skeleton/placeholder while `status === 'loading'`. **Verify:** No flash of missing avatar on hard refresh.
+- [x] 5.2 Ensure `signOut({ callbackUrl: '/login' })` in adapter works correctly. **Verify:** Logout redirects to `/login` page.
 - [x] 5.3 Run existing tests: `npm test`. **Verify:** All tests pass (update any tests that mock old AuthProvider).
 - [x] 5.4 Run lint/typecheck: `npm run lint` and `npm run typecheck`. **Verify:** No new errors.

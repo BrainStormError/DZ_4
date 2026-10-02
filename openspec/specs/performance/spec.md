@@ -94,7 +94,7 @@ If the first load of a key page does not fit within the LCP budget, the code of 
 
 ### Requirement: Server content on the first render
 
-The application MUST serve server-side markup with meaningful content on the first render, and not an empty document waiting for client-side hydration and reading of local storage. Restoring the theme and session MUST NOT lead to the disappearance of the page's main content before hydration.
+The application MUST serve server-side markup with meaningful content on the first render, and not an empty document waiting for client-side hydration and reading of local storage. Restoring the theme and session MUST NOT lead to the disappearance of the page's main content before hydration. The session MUST be known to the server before the page markup is sent, so that the content does not depend on the moment client JavaScript executes.
 
 #### Scenario: The first render contains content
 
@@ -105,6 +105,16 @@ The application MUST serve server-side markup with meaningful content on the fir
 
 - **WHEN** the theme and an active session are saved in local storage
 - **THEN** the main content remains visible throughout the restoration, without passing through a completely empty screen
+
+#### Scenario: The largest text block arrives from the server
+
+- **WHEN** the LCP of the key page is measured before hydration
+- **THEN** the largest text block is already present in the sent markup and its rendering does not wait for client JavaScript
+
+#### Scenario: The session is known before the markup is sent
+
+- **WHEN** the browser requests a page with an active session
+- **THEN** the server markup contains the content of that page, not a placeholder replaced after hydration
 
 ### Requirement: No continuous visual effects
 
@@ -143,3 +153,22 @@ The application MUST NOT request protected data while no session exists. The sig
 
 - **WHEN** the user signs in and the application opens
 - **THEN** the protected data is requested once and is displayed
+
+### Requirement: Responsive feedback when switching sections
+
+Section switching MUST present its feedback without waiting for the target route's server response, and that feedback MUST NOT cause layout shift. Activating a header navigation item MUST stay within the INP budget, and replacing the loading placeholder with the section content MUST stay within the CLS budget defined for the key pages.
+
+#### Scenario: Feedback does not wait for the route
+
+- **WHEN** the user activates a header navigation item
+- **THEN** the loading feedback is displayed before the target route's response arrives
+
+#### Scenario: The placeholder replacement does not shift the layout
+
+- **WHEN** the loading placeholder is replaced by the section content
+- **THEN** the CLS of the transition does not exceed 0.1
+
+#### Scenario: Activating a header item stays responsive
+
+- **WHEN** the user activates a header navigation item
+- **THEN** the interaction latency does not exceed 200 milliseconds

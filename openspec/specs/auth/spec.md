@@ -8,7 +8,7 @@ Provides sign-in for employees and administrators through Google OAuth 2.0, bind
 
 ### Requirement: Role-based access control
 
-The system MUST hide administrative capabilities from users with the `employee` role and MUST restrict access to the administrative section to the `admin` role.
+The system MUST hide administrative capabilities from users with the `employee` role and MUST restrict access to the administrative section to the `admin` role. The decision about access to a protected section MUST be made before the section markup is sent, so that protected content does not reach the response of an unauthorized user.
 
 #### Scenario: Employee without administrative access
 
@@ -19,6 +19,11 @@ The system MUST hide administrative capabilities from users with the `employee` 
 
 - **WHEN** a user with the `employee` role views the navigation
 - **THEN** the item for going to the administrative section is not displayed
+
+#### Scenario: A user without a session does not receive protected markup
+
+- **WHEN** a user without an active session requests a protected section
+- **THEN** the server does not send the markup of that section, but redirects to the login page
 
 ### Requirement: Directory resolved from the persistent store
 

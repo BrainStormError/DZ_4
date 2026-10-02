@@ -108,41 +108,37 @@ The administrator MUST be able to change the text of any wish on the board to mo
 
 ### Requirement: Showing congratulations by birthday
 
-The wish board MUST show congratulations only for employees whose birthday matches the current date. The administrator MUST be counted as an employee on a par with the others. If there are no birthday people today, the board MUST show congratulations for the nearest past birthday date — all employees born on that day. Congratulations for future birthdays MUST NEVER be shown.
+The wish board MUST show congratulations only for employees whose birthday coincides with the current date. The administrator MUST be counted as an employee on a par with the others. If there are no birthday people today, the board MUST NOT show congratulations for other dates — neither past nor future. Congratulations for future and past birthdays MUST NOT ever be shown.
 
 #### Scenario: There is a birthday person today
 
-- **WHEN** one or more employees' birthday matches the current date
+- **WHEN** one or more employees have a birthday that coincides with the current date
 - **THEN** the board shows wishes only for those employees
 
 #### Scenario: There are no birthday people today
 
-- **WHEN** no employee's birthday matches the current date
-- **THEN** the board shows wishes for the nearest past birthday date, including all employees born on that day
+- **WHEN** no employee's birthday coincides with the current date
+- **THEN** the board shows no wishes and does not move to other birthday dates
 
 #### Scenario: No wishes for the nearest birthday person
 
-- **WHEN** there is not a single wish for the selected birthday date
-- **THEN** the system shows an empty state and does not move on to earlier dates
+- **WHEN** there is not a single wish for today's birthday
+- **THEN** the system shows an empty state and does not move to other birthday dates
+
+#### Scenario: Congratulations for a past date are hidden
+
+- **WHEN** a wish is addressed to an employee whose birthday has already passed
+- **THEN** that wish is not displayed on the board
 
 #### Scenario: Future congratulations are hidden
 
-- **WHEN** a wish is addressed to an employee whose birthday has not yet occurred
-- **THEN** this wish is not displayed on the board
+- **WHEN** a wish is addressed to an employee whose birthday has not yet arrived
+- **THEN** that wish is not displayed on the board
 
 #### Scenario: The administrator is shown as a birthday person
 
-- **WHEN** the administrator's birthday matches the current date
-- **THEN** congratulations for the administrator are displayed on the board in the same way as for any employee
-
-### Requirement: A past birthday is read-only
-
-When there are no birthday people today, the board shows congratulations for the nearest past birthday date as a placeholder so that the page is not empty. For this past date the system MUST NOT offer creating new free wishes and MUST NOT offer sending a monetary congratulation.
-
-#### Scenario: The placeholder does not accept new congratulations
-
-- **WHEN** the board shows the nearest past birthday date because there are no birthday people today
-- **THEN** new free wishes for this date are unavailable, and the recipients of this date are unavailable for a monetary congratulation
+- **WHEN** the administrator's birthday coincides with the current date
+- **THEN** congratulations for the administrator are displayed on the board just like for any employee
 
 ### Requirement: The congratulations strip does not loop rendering
 
@@ -243,3 +239,36 @@ A wish created through the wish form or through a monetary congratulation, and a
 
 - **WHEN** a wish is created
 - **THEN** the stored wish references the creating user and the recipient from the directory, and the board still shows the author's real name with the corporate nickname
+
+### Requirement: Empty state of the wish board
+
+When the board cannot show a single card, it MUST remain on the page with the title and explain the reason: when there are no birthday people — that wishes are available on the birthday; when there are birthday people but no wishes — that there are no congratulations yet. The board MUST NOT disappear from the page and MUST NOT replace the empty state with wishes from other dates.
+
+#### Scenario: There are no birthday people today
+
+- **WHEN** no employee's birthday coincides with the current date
+- **THEN** the board remains on the page and shows an empty state explaining that wishes are available on the birthday
+
+#### Scenario: There are birthday people, but no wishes
+
+- **WHEN** an employee has a birthday today, but there is not a single wish for them yet
+- **THEN** the board shows an empty state with an invitation to leave the first wish
+
+### Requirement: The wish board uses the available width
+
+A congratulation card MUST stretch across the available strip width within the readable maximum, so that on wide screens the board does not leave a one-sided empty field. When the cards do not fill the strip width, the strip MUST be centered; when the cards do not fit, they MUST keep the minimum width, and scrolling remains manual. The strip MUST NOT turn into a grid.
+
+#### Scenario: One wish on a wide screen
+
+- **WHEN** one wish is shown on the board on a wide screen
+- **THEN** the card is stretched to the readable maximum, and the strip is centered, so that the free space is distributed at the edges rather than gathered on one side
+
+#### Scenario: Several wishes fit
+
+- **WHEN** the wish cards fit within the strip width
+- **THEN** the cards share the available width, and the strip remains a static bar without scrolling
+
+#### Scenario: The cards do not fit
+
+- **WHEN** there are more cards than fit within the strip width
+- **THEN** the cards keep the minimum width, the strip scrolls manually and preserves the hint about horizontal scrolling

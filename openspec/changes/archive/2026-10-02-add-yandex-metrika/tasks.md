@@ -12,8 +12,8 @@
 ## 3. Validate the built application
 
 - [x] 3.1 Run `npm run build` and verify the build succeeds with the extended CSP and the counter markup
-- [ ] 3.2 Start the built application, load a page, and verify the browser console shows no Content-Security-Policy violation, the Metrika `tag.js` request is not blocked, and no analytics UI is visible on the page
-- [ ] 3.3 Verify the page still cannot be framed while the counter is active by loading it inside an embedding page and confirming it does not render
+- [x] 3.2 Start the built application, load a page, and verify the browser console shows no Content-Security-Policy violation, the Metrika `tag.js` request is not blocked, and no analytics UI is visible on the page
+- [x] 3.3 Verify the page still cannot be framed while the counter is active by loading it inside an embedding page and confirming it does not render
 
 ## 4. Run the full checks
 
