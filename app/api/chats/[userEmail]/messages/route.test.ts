@@ -38,7 +38,7 @@ function request(body: unknown): Request {
 }
 
 function context(userEmail: string) {
-  return { params: { userEmail } };
+  return { params: Promise.resolve({ userEmail }) };
 }
 
 describe('POST /api/chats/[userEmail]/messages', () => {

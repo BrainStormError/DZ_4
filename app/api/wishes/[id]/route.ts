@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   return withFailureLogging('PATCH /api/wishes/[id]', async () => {
     const blocked = originGuard(request);
@@ -28,7 +28,8 @@ export async function PATCH(
     const text = body?.text?.trim();
     if (!text) return errorResponse('Текст пожелания не может быть пустым', 400);
 
-    const wish = await updateWishText(params.id, text);
+    const { id } = await params;
+    const wish = await updateWishText(id, text);
     if (!wish) return errorResponse('Пожелание не найдено', 404);
 
     return NextResponse.json(wish);

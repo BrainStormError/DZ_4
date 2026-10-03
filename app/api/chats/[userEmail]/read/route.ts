@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(
   request: Request,
-  { params }: { params: { userEmail: string } }
+  { params }: { params: Promise<{ userEmail: string }> }
 ) {
   return withFailureLogging('POST /api/chats/[userEmail]/read', async () => {
     const blocked = originGuard(request);
@@ -29,7 +29,8 @@ export async function POST(
       return errorResponse('Действие доступно только администратору', 403);
     }
 
-    const threadEmail = decodeThreadEmail(params.userEmail);
+    const { userEmail } = await params;
+    const threadEmail = decodeThreadEmail(userEmail);
     if (!threadEmail) {
       return errorResponse('Некорректный идентификатор беседы', 400);
     }

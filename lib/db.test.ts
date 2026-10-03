@@ -4,7 +4,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 const poolQuery = vi.hoisted(() => vi.fn());
 
 vi.mock('pg', () => ({
-  Pool: vi.fn(() => ({ query: poolQuery })),
+  Pool: vi.fn(function PoolMock() {
+    return { query: poolQuery };
+  }),
 }));
 
 import { pingDatabase } from './db';
