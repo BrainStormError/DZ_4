@@ -34,14 +34,15 @@ the same toolchain work.
   longer exists.
 - Drop `autoprefixer`, which Tailwind 4 makes redundant and which is the sole source of
   the `browserslist` finding.
-- Upgrade `jsdom` from 24 to 30, which no longer depends on the vulnerable `ws`; keep
-  `ws >=8.21.0` as a fallback constraint if a consumer still pulls it.
+- Keep `jsdom` at 24 and constrain `ws` to `>=8.21.0`: `jsdom` 30 removes the `ws`
+  dependency but its `undici` requires a newer Node than the CI/Docker Node 20 runtime, so
+  the locked install stays on `jsdom` 24 with `ws` overridden to a patched release.
 - Evaluate version-scoped `overrides` for transitive packages with no safe consumer
-  upgrade. After the Tailwind 4, standalone ESLint 10, and `jsdom` 30 migrations, every
-  remaining consumer resolves to a patched version naturally (`lodash` 4.18.1,
-  `@babel/runtime` 7.26.10, `ajv` 6.14.0, `cross-spawn` 7.0.6, `flatted` 3.4.2,
-  `minimatch` 10.2.6, `brace-expansion` 5.0.12), so no `overrides` are retained in the
-  final `package.json`.
+  upgrade. After the Tailwind 4 and standalone ESLint 10 migrations, every remaining
+  consumer resolves to a patched version naturally (`lodash` 4.18.1, `@babel/runtime`
+  7.26.10, `ajv` 6.14.0, `cross-spawn` 7.0.6, `flatted` 3.4.2, `minimatch` 10.2.6,
+  `brace-expansion` 5.0.12), so the only retained override is `ws` `8.21.0` for
+  `jsdom` 24.
 - Regenerate `package-lock.json` so `npm ci` stays reproducible in the Docker image and
   CI, and keep the lint step as a hard gate before the image build.
 
@@ -60,10 +61,10 @@ the same toolchain work.
 
 ## Impact
 
-- `package.json`, `package-lock.json`: version bumps, no retained `overrides`, dropped/
-  added dependencies (`tailwindcss`, `@tailwindcss/postcss`, `autoprefixer`, `eslint`,
-  `eslint-config-next`, `@eslint/js`, `typescript-eslint`, `eslint-plugin-react-hooks`,
-  `globals`, `vitest`, `jsdom`).
+- `package.json`, `package-lock.json`: version bumps, a retained `ws` `8.21.0` override,
+  dropped/added dependencies (`tailwindcss`, `@tailwindcss/postcss`, `autoprefixer`,
+  `eslint`, `eslint-config-next`, `@eslint/js`, `typescript-eslint`,
+  `eslint-plugin-react-hooks`, `globals`, `vitest`, `jsdom`).
 - `tailwind.config.ts` (migrated to CSS-first), `postcss.config.js` (plugin swap), and
   `app/globals.css` (`@tailwind` directives replaced by Tailwind 4 import), plus any
   `tailwindcss-animate` replacement needed by Tailwind 4.

@@ -25,8 +25,8 @@
 
 ## 5. jsdom, cleanup, and final scan
 
-- [x] 5.1 Upgrade `jsdom` to `^30` and verify `npm ls ws` shows no vulnerable `ws` (if the suite rejects jsdom 30, keep jsdom 24 and rely on the `ws` override instead), then run `npm test` to confirm the suite passes
-- [x] 5.2 Run a fresh `npm audit --json` and verify zero critical and zero high findings; remove any override entry that is no longer necessary while keeping the scan at zero
+- [x] 5.1 Keep `jsdom` 24 and constrain `ws` to `^8.21.0` via `overrides`, because `jsdom` 30's `undici` requires a newer Node than the CI/Docker Node 20 runtime; verify `npm ls ws` shows only the patched `ws` and run `npm test` to confirm the suite passes
+- [x] 5.2 Run a fresh `npm audit --json` and verify zero critical and zero high findings; remove any override entry that is no longer necessary while keeping the scan at zero (final retained override: `ws` 8.21.0)
 - [x] 5.3 Verify reproducibility: run `npm ci` from a clean checkout and confirm the install succeeds, the lockfile is unchanged, and the resolved scan result matches the local tree
 
 ## 6. End-to-end verification

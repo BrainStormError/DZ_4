@@ -102,11 +102,13 @@ Tailwind 4 performs vendor prefixing through its own pipeline, so `autoprefixer`
 redundant and is the only source of the `browserslist` finding. Remove it and its config
 entry. If any remaining dependency still pulls `browserslist`, constrain it to `>=4.28.7`.
 
-### D5: `jsdom` 30 for the `ws` finding
+### D5: `jsdom` stays on 24, `ws` constrained to a patched release
 
-`jsdom` 30 no longer depends on `ws`. If the installed test stack cannot accept jsdom 30,
-fall back to keeping jsdom 24 and constraining `ws` to `>=8.21.0`. Both satisfy the spec;
-the choice is verified by running the suite.
+`jsdom` 30 no longer depends on `ws`, but its `undici` dependency requires Node
+`>=18.20 || >=20.12 || >=22.13 || >=24.6`, while the Docker image and CI run Node 20. The
+test stack therefore stays on `jsdom` 24 and the vulnerable `ws` leaf is constrained to
+`>=8.21.0` via an override. Both paths satisfy the spec; the `jsdom` 24 + override path is
+chosen so the suite remains green on the pinned CI/Docker Node runtime.
 
 ### D6: Version-scoped overrides for the remaining leaves
 
@@ -130,11 +132,11 @@ line so incompatible majors are not forced together:
 
 After the Tailwind/ESLint migrations, several entries become unnecessary (for example the
 `glob`/`sucrase`/`micromatch` paths disappear); the final set is whatever the post-migration
-scan still reports. In the implemented tree that set is empty: after the Tailwind 4,
-standalone ESLint 10, and `jsdom` 30 migrations, every remaining consumer resolves to a
-patched version naturally, so `package.json` carries no `overrides`. A blanket single-version
-override for `minimatch`/`brace-expansion` is explicitly rejected: `minimatch@3` and
-`minimatch@9` have different APIs, as do the two `brace-expansion` majors.
+scan still reports. In the implemented tree that set is minimal: after the Tailwind 4,
+standalone ESLint 10, and the `jsdom` 24 fallback, every remaining consumer resolves to a
+patched version naturally, and the only retained override is `ws` `8.21.0` (for `jsdom` 24).
+A blanket single-version override for `minimatch`/`brace-expansion` is explicitly rejected:
+`minimatch@3` and `minimatch@9` have different APIs, as do the two `brace-expansion` majors.
 
 ### D7: Restore the lint gate in the script, keep CI ordering
 
