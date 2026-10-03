@@ -7,7 +7,7 @@ import { RegistrationForm } from './RegistrationForm';
 export const dynamic = 'force-dynamic';
 
 export default async function RegisterPage() {
-  const raw = cookies().get(registrationCookieName())?.value;
+  const raw = (await cookies()).get(registrationCookieName())?.value;
   const ticket = readRegistrationTicket(raw);
 
   // Without a valid, unexpired ticket there is nothing to register.

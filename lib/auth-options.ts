@@ -24,8 +24,8 @@ function googleSubOf(profile: unknown): string | null {
   return typeof sub === 'string' && sub ? sub : null;
 }
 
-function clearRegistrationTicket() {
-  cookies().set(registrationCookieName(), '', registrationCookieAttributes(0));
+async function clearRegistrationTicket() {
+  (await cookies()).set(registrationCookieName(), '', registrationCookieAttributes(0));
 }
 
 export const authOptions: NextAuthOptions = {
@@ -98,7 +98,7 @@ export const authOptions: NextAuthOptions = {
           return false;
         }
         // A known demo address never needs a registration ticket.
-        clearRegistrationTicket();
+        await clearRegistrationTicket();
         logEvent('sign_in', 'accepted', { account: demoEmail, demo: true });
         return true;
       }
@@ -133,7 +133,7 @@ export const authOptions: NextAuthOptions = {
 
       if (resolution.status === 'known') {
         // A known address never needs a registration ticket.
-        clearRegistrationTicket();
+        await clearRegistrationTicket();
         logEvent('sign_in', 'accepted', { account: email });
         return true;
       }
@@ -146,7 +146,7 @@ export const authOptions: NextAuthOptions = {
         googleSub: googleSubOf(profile),
         avatarUrl: user.image ?? null,
       });
-      cookies().set(
+      (await cookies()).set(
         registrationCookieName(),
         ticket,
         registrationCookieAttributes(REGISTRATION_TTL_SECONDS)

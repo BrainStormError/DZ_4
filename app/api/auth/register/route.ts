@@ -29,8 +29,8 @@ function isIsoDate(value: string): boolean {
   );
 }
 
-function clearTicketCookie() {
-  cookies().set(registrationCookieName(), '', registrationCookieAttributes(0));
+async function clearTicketCookie() {
+  (await cookies()).set(registrationCookieName(), '', registrationCookieAttributes(0));
 }
 
 export async function POST(request: Request) {
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     const blocked = originGuard(request);
     if (blocked) return blocked;
 
-    const raw = cookies().get(registrationCookieName())?.value;
+    const raw = (await cookies()).get(registrationCookieName())?.value;
     const ticket = readRegistrationTicket(raw);
     if (!ticket) {
       return errorResponse('Регистрация не начата или истекла. Войдите заново.', 401);
@@ -71,7 +71,7 @@ export async function POST(request: Request) {
 
     const existing = await findUserByEmail(ticket.email);
     if (existing) {
-      clearTicketCookie();
+      await clearTicketCookie();
       logEvent('registration', 'already_registered', { account: ticket.email });
       return NextResponse.json({ user: toPublicUser(existing) });
     }
@@ -87,7 +87,7 @@ export async function POST(request: Request) {
       googleSub: ticket.googleSub,
     });
 
-    clearTicketCookie();
+    await clearTicketCookie();
 
     if (!user) {
       const raced = await findUserByEmail(ticket.email);

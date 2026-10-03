@@ -14,7 +14,7 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(
   request: Request,
-  { params }: { params: { userEmail: string } }
+  { params }: { params: Promise<{ userEmail: string }> }
 ) {
   return withFailureLogging('POST /api/chats/[userEmail]/messages', async () => {
     const blocked = originGuard(request);
@@ -23,7 +23,8 @@ export async function POST(
     const user = await resolveCurrentUser();
     if (!user) return errorResponse('Требуется вход в систему', 401);
 
-    const threadEmail = decodeThreadEmail(params.userEmail);
+    const { userEmail } = await params;
+    const threadEmail = decodeThreadEmail(userEmail);
     if (!threadEmail) {
       return errorResponse('Некорректный идентификатор беседы', 400);
     }

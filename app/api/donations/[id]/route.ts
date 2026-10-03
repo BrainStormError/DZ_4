@@ -21,7 +21,7 @@ const REFUND_REASONS: RefundReason[] = ['refund_declined', 'emergency_refund'];
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   return withFailureLogging('PATCH /api/donations/[id]', async () => {
     const blocked = originGuard(request);
@@ -60,7 +60,8 @@ export async function PATCH(
       return errorResponse('При отказе от подарка сумма должна быть равна 0', 400);
     }
 
-    const target = await findUserById(params.id);
+    const { id } = await params;
+    const target = await findUserById(id);
     if (!target) return errorResponse('Сотрудник не найден', 404);
 
     if (await hasDeclinedRefund(target.id)) {
